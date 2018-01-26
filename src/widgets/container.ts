@@ -1,4 +1,4 @@
-import { BaseClass } from './class';
+import { BaseClass } from '../class';
 import { Widget } from './widget';
 
 export interface IContainer {}

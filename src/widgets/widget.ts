@@ -1,5 +1,5 @@
 import { BaseClass } from '../class';
-import { RuntimeContext } from './runtimecontext';
+import { RuntimeContext } from '../runtimecontext';
 
 export interface IWidget {
   addClass(className: string): void;

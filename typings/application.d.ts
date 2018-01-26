@@ -1,5 +1,6 @@
 import { BaseClass } from './class';
 import { IRuntimeContext } from './runtimecontext';
+import { Device } from './devices/device';
 export interface ILayout {
     classes: string[];
     css: IConfigCss[];
@@ -36,7 +37,7 @@ export declare class Application extends BaseClass implements IApplication {
     run(): void;
     route(route: string[]): void;
     addComponentContainer(id: any, module: any, args: any): any;
-    getDevice(): any;
+    getDevice(): Device;
     getBestFitLayout(): ILayout;
     setLayout(layout: ILayout, styleBaseUrl: string, imageBaseUrl: string, additionalCSS: IConfigCss[], additionalClasses: string[], additionalPreloadImages: string[], callback: () => void): void;
 }

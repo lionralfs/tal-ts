@@ -1,5 +1,5 @@
-import { BaseClass } from './class';
-import { Application } from './application';
+import { BaseClass } from '../class';
+import { Application } from '../application';
 export interface IDeviceCallbacks {
     onSuccess(deviceClass: Device): void;
     onError(ex: any): void;
