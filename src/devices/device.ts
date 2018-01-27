@@ -1,5 +1,5 @@
+import { Application, IConfiguration } from '../application';
 import { BaseClass } from '../class';
-import { Application } from '../application';
 
 export interface IDeviceCallbacks {
   onSuccess(deviceClass: Device): void;
@@ -9,29 +9,18 @@ export interface IDeviceCallbacks {
 export interface IDevice {
   setApplication(app: Application): void;
   addKeyEventListener(): void;
-  getTopLevelElement(): Element;
+  getTopLevelElement(): Node;
   addClassToElement(el: Element, className: string): void;
   preloadImage(url: string): void;
   loadStyleSheet(url: string, callback: (res?: string) => void): void;
   getCurrentRoute(): string[];
+  setElementClasses(el: Element, classNames: string[]): void;
 }
 
-export class Device extends BaseClass implements IDevice {
-  private application: Application;
-  private config: object;
-  private keyMap: object;
-
-  constructor(config: object) {
-    super();
-
-    this.application = null;
-    this.config = config;
-    this.keyMap = {};
-  }
-
-  static load(config, callbacks: IDeviceCallbacks) {
+export abstract class Device extends BaseClass implements IDevice {
+  public static load(config: IConfiguration, callbacks: IDeviceCallbacks) {
     try {
-      requirejs([config.modules.base].concat(config.modules.modifiers), function(DeviceClass) {
+      requirejs([config.modules.base].concat(config.modules.modifiers), DeviceClass => {
         try {
           callbacks.onSuccess(new DeviceClass(config));
         } catch (ex) {
@@ -47,23 +36,33 @@ export class Device extends BaseClass implements IDevice {
     }
   }
 
+  private application: Application;
+  private config: object;
+  private keyMap: object;
+
+  constructor(config: object) {
+    super();
+
+    this.application = null;
+    this.config = config;
+    this.keyMap = {};
+  }
+
   public setApplication(app: Application) {
     this.application = app;
   }
 
-  public addKeyEventListener() {}
+  public abstract addKeyEventListener();
 
-  public getTopLevelElement() {
-    return document.createElement('div');
-  }
+  public abstract getTopLevelElement();
 
-  public addClassToElement(el: Element, className: string) {}
+  public abstract addClassToElement(el: Element, className: string);
 
-  public preloadImage(url: string) {}
+  public abstract preloadImage(url: string);
 
-  public loadStyleSheet(url: string, callback?: (res: string) => void): void {}
+  public abstract loadStyleSheet(url: string, callback?: (res: string) => void);
 
-  public getCurrentRoute() {
-    return ['a'];
-  }
+  public abstract getCurrentRoute();
+
+  public abstract setElementClasses(el: Node, classNames: string[]);
 }

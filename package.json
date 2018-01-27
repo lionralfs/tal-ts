@@ -6,7 +6,8 @@
   "scripts": {
     "build": "tsc",
     "dev": "tsc -w",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "lint": "tslint --project ."
   },
   "repository": {
     "type": "git",
@@ -20,6 +21,8 @@
   "homepage": "https://github.com/lionralfs/tal-ts#readme",
   "devDependencies": {
     "@types/requirejs": "^2.1.31",
+    "tslint": "^5.9.1",
+    "tslint-config-prettier": "^1.6.0",
     "typescript": "^2.6.2"
   }
 }

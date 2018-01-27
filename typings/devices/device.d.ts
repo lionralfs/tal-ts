@@ -1,5 +1,5 @@
+import { Application, IConfiguration } from '../application';
 import { BaseClass } from '../class';
-import { Application } from '../application';
 export interface IDeviceCallbacks {
     onSuccess(deviceClass: Device): void;
     onError(ex: any): void;
@@ -7,23 +7,25 @@ export interface IDeviceCallbacks {
 export interface IDevice {
     setApplication(app: Application): void;
     addKeyEventListener(): void;
-    getTopLevelElement(): Element;
+    getTopLevelElement(): Node;
     addClassToElement(el: Element, className: string): void;
     preloadImage(url: string): void;
     loadStyleSheet(url: string, callback: (res?: string) => void): void;
     getCurrentRoute(): string[];
+    setElementClasses(el: Element, classNames: string[]): void;
 }
-export declare class Device extends BaseClass implements IDevice {
+export declare abstract class Device extends BaseClass implements IDevice {
+    static load(config: IConfiguration, callbacks: IDeviceCallbacks): void;
     private application;
     private config;
     private keyMap;
     constructor(config: object);
-    static load(config: any, callbacks: IDeviceCallbacks): void;
     setApplication(app: Application): void;
-    addKeyEventListener(): void;
-    getTopLevelElement(): HTMLDivElement;
-    addClassToElement(el: Element, className: string): void;
-    preloadImage(url: string): void;
-    loadStyleSheet(url: string, callback?: (res: string) => void): void;
-    getCurrentRoute(): string[];
+    abstract addKeyEventListener(): any;
+    abstract getTopLevelElement(): any;
+    abstract addClassToElement(el: Element, className: string): any;
+    abstract preloadImage(url: string): any;
+    abstract loadStyleSheet(url: string, callback?: (res: string) => void): any;
+    abstract getCurrentRoute(): any;
+    abstract setElementClasses(el: Node, classNames: string[]): any;
 }

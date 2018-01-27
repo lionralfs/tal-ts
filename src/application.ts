@@ -1,7 +1,8 @@
 import { BaseClass } from './class';
-import { RuntimeContext, IRuntimeContext } from './runtimecontext';
-import { Widget } from './widgets/widget';
 import { Device } from './devices/device';
+import { IRuntimeContext, RuntimeContext } from './runtimecontext';
+import { Container } from './widgets/container';
+import { Widget } from './widgets/widget';
 
 export interface ILayout {
   classes: string[];
@@ -14,6 +15,10 @@ export interface ILayout {
 
 export interface IConfiguration {
   css?: IConfigCss[];
+  modules: {
+    base: string;
+    modifiers: string[];
+  };
 }
 
 export interface IConfigCss {
@@ -26,6 +31,7 @@ export interface IApplication {
   run(): void;
   getBestFitLayout(): ILayout;
   addComponentContainer(id: any, module: any, args: any): any;
+  showComponent(id: string, requireModule: string, args?: object): void;
   setLayout(
     layout: ILayout,
     styleBaseUrl: string,
@@ -38,17 +44,17 @@ export interface IApplication {
   route(route: string[]): void;
 }
 
-export class Application extends BaseClass implements IApplication {
-  static runtimeContext: IRuntimeContext = RuntimeContext;
-
-  static getCurrentApplication() {
+export abstract class Application extends BaseClass implements IApplication {
+  public static getCurrentApplication() {
     return this.runtimeContext.getCurrentApplication();
   }
 
+  private static runtimeContext: IRuntimeContext = RuntimeContext;
+
   private rootElement: Element;
-  private rootWidget: Widget = null;
+  private rootWidget: Container = null;
   private focussedWidget: Widget = null;
-  private onReadyHandler: Function;
+  private onReadyHandler: () => void;
   private device: Device;
 
   private layout: any; // TODO
@@ -57,8 +63,8 @@ export class Application extends BaseClass implements IApplication {
     rootElement: Element,
     styleBaseUrl: string,
     imageBaseUrl: string,
-    onReadyHandler: Function,
-    configOverride: IConfiguration
+    onReadyHandler: () => void,
+    configOverride?: IConfiguration
   ) {
     super();
 
@@ -72,11 +78,11 @@ export class Application extends BaseClass implements IApplication {
     const config: IConfiguration = configOverride || antie.framework.deviceConfiguration;
 
     const deviceLoaded = (device: Device): void => {
-      let i;
+      let i: number;
       this.device = device;
       device.setApplication(this);
       device.addKeyEventListener();
-      let layout = this.getBestFitLayout();
+      const layout = this.getBestFitLayout();
       layout.css = layout.css || [];
       if (config.css) {
         for (i = 0; i < config.css.length; i++) {
@@ -86,8 +92,8 @@ export class Application extends BaseClass implements IApplication {
         }
       }
 
-      requirejs([layout.module], (layout: ILayout) => {
-        this.setLayout(layout, styleBaseUrl, imageBaseUrl, layout.css, layout.classes, [], () => {
+      requirejs([layout.module], (loadedLayout: ILayout) => {
+        this.setLayout(loadedLayout, styleBaseUrl, imageBaseUrl, loadedLayout.css, loadedLayout.classes, [], () => {
           this.run();
           this.route(device.getCurrentRoute());
         });
@@ -106,23 +112,23 @@ export class Application extends BaseClass implements IApplication {
     }
   }
 
-  public run() {
-    // intentionally left blank
-  }
+  public abstract run();
 
-  public route(route: string[]) {
-    // intentionally left blank
-  }
+  public abstract route(route: string[]);
 
-  public addComponentContainer(id: any, module: any, args: any) {
-    var container = new ComponentContainer(id);
+  public addComponentContainer(id: any, requireModule: any, args: any) {
+    const container = new ComponentContainer(id);
     this.rootWidget.appendChildWidget(container);
 
-    if (module) {
-      this.showComponent(id, module, args);
+    if (requireModule) {
+      this.showComponent(id, requireModule, args);
     }
 
     return container;
+  }
+
+  public showComponent(id: string, requireModule: string, args?: object) {
+    this.rootWidget.getChildWidget(id).show(requireModule, args);
   }
 
   public getDevice() {
@@ -156,7 +162,7 @@ export class Application extends BaseClass implements IApplication {
   ) {
     let i;
     this.layout = layout;
-    let tle = this.device.getTopLevelElement();
+    const tle = this.device.getTopLevelElement();
 
     let classes = layout.classes || [];
     if (additionalClasses) {
@@ -180,10 +186,9 @@ export class Application extends BaseClass implements IApplication {
     }
     if (callback) {
       let currentlyLoadingIndex = -1;
-      const self = this;
       const cssLoadedCallback = () => {
         if (++currentlyLoadingIndex < css.length) {
-          self.device.loadStyleSheet(styleBaseUrl + css[currentlyLoadingIndex], cssLoadedCallback);
+          this.device.loadStyleSheet(styleBaseUrl + css[currentlyLoadingIndex], cssLoadedCallback);
         } else {
           callback();
         }

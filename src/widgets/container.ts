@@ -1,10 +1,12 @@
 import { BaseClass } from '../class';
 import { Widget } from './widget';
 
-export interface IContainer {}
+export interface IContainer {
+  getChildWidget(id: string): Widget;
+}
 
 export class Container extends Widget implements IContainer {
-  private childWidgets: object;
+  private childWidgets: { [key: string]: Widget };
   private childWidgetOrder: Widget[];
   private activeChildWidget: Widget;
   private autoRenderChildren: boolean;
@@ -18,5 +20,9 @@ export class Container extends Widget implements IContainer {
     this.autoRenderChildren = true;
 
     this.addClass('container');
+  }
+
+  public getChildWidget(id: string): Widget {
+    return this.childWidgets[id];
   }
 }

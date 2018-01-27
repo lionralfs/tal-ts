@@ -1,27 +1,38 @@
+import { Application } from '../application';
 import { BaseClass } from '../class';
 import { RuntimeContext } from '../runtimecontext';
 
 export interface IWidget {
   addClass(className: string): void;
+  getCurrentApplication(): Application;
+  getClasses(): string[];
 }
 
-export class Widget extends BaseClass implements IWidget {
-  static widgetUniqueIDIndex = 0;
+export interface IShowOptions {
+  skipAnim?: boolean;
+  onComplete?: () => void;
+  fps?: number;
+  duration?: number;
+  easing?: string;
+  el?: Node;
+}
+
+export abstract class Widget extends BaseClass implements IWidget {
+  public static createUniqueID() {
+    const res = '#' + new Date().getTime() + '_' + this.widgetUniqueIDIndex++;
+    return res;
+  }
+
+  private static widgetUniqueIDIndex = 0;
 
   public id: string;
   public parentWidget: Widget;
-  public outputElement: Widget;
+  public outputElement: Node;
 
   private classNames: object;
   private eventListeners: object;
   private dataItem: object;
   private isFocussed: boolean;
-
-  static createUniqueID() {
-    const res = '#' + new Date().getTime() + '_' + this.widgetUniqueIDIndex++;
-    console.log(res);
-    return res;
-  }
 
   constructor(id?: string) {
     super();
@@ -37,7 +48,7 @@ export class Widget extends BaseClass implements IWidget {
     this.id = id ? id : Widget.createUniqueID();
   }
 
-  addClass(className) {
+  public addClass(className) {
     if (!this.classNames[className]) {
       this.classNames[className] = true;
       if (this.outputElement) {
@@ -47,7 +58,27 @@ export class Widget extends BaseClass implements IWidget {
     }
   }
 
-  getCurrentApplication() {
+  public getClasses(): string[] {
+    const names = [];
+    for (const i in this.classNames) {
+      if (this.classNames.hasOwnProperty(i)) {
+        names.push(i);
+      }
+    }
+    return names;
+  }
+
+  public getCurrentApplication(): Application {
     return RuntimeContext.getCurrentApplication();
+  }
+
+  public show(options: IShowOptions) {
+    if (this.outputElement) {
+      options.el = this.outputElement;
+      const device = this.getCurrentApplication().getDevice();
+      device.showElement(options);
+    } else {
+      throw new Error('Widget::show called - the current widget has not yet been rendered.');
+    }
   }
 }
