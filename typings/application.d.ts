@@ -1,5 +1,6 @@
 import { BaseClass } from './class';
 import { Device } from './devices/device';
+import { Button } from './widgets/button';
 export interface ILayout {
     classes: string[];
     css: IConfigCss[];
@@ -27,6 +28,8 @@ export interface IApplication {
     showComponent(id: string, requireModule: string, args?: object): void;
     setLayout(layout: ILayout, styleBaseUrl: string, imageBaseUrl: string, additionalCSS: IConfigCss[], additionalClasses: string[], additionalPreloadImages: string[], callback: () => void): void;
     route(route: string[]): void;
+    getDevice(): Device;
+    getFocussedWidget(): Button;
 }
 export declare abstract class Application extends BaseClass implements IApplication {
     static getCurrentApplication(): object;
@@ -45,4 +48,5 @@ export declare abstract class Application extends BaseClass implements IApplicat
     getDevice(): Device;
     getBestFitLayout(): ILayout;
     setLayout(layout: ILayout, styleBaseUrl: string, imageBaseUrl: string, additionalCSS: IConfigCss[], additionalClasses: string[], additionalPreloadImages: string[], callback: () => void): void;
+    getFocussedWidget(): Button;
 }

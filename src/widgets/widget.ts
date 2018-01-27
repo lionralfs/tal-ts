@@ -1,11 +1,16 @@
 import { Application } from '../application';
 import { BaseClass } from '../class';
+import { Device } from '../devices/device';
 import { RuntimeContext } from '../runtimecontext';
+import { ComponentContainer } from './componentcontainer';
 
 export interface IWidget {
   addClass(className: string): void;
   getCurrentApplication(): Application;
   getClasses(): string[];
+  removeFocus(): void;
+  removeClass(className: string): void;
+  render(device: Device): void;
 }
 
 export interface IShowOptions {
@@ -26,13 +31,13 @@ export abstract class Widget extends BaseClass implements IWidget {
   private static widgetUniqueIDIndex = 0;
 
   public id: string;
-  public parentWidget: Widget;
+  public parentWidget: ComponentContainer;
   public outputElement: Node;
+  public isFocussed: boolean;
 
   private classNames: object;
   private eventListeners: object;
   private dataItem: object;
-  private isFocussed: boolean;
 
   constructor(id?: string) {
     super();
@@ -74,11 +79,33 @@ export abstract class Widget extends BaseClass implements IWidget {
 
   public show(options: IShowOptions) {
     if (this.outputElement) {
+      const newOptions = { ...options, el: this.outputElement };
       options.el = this.outputElement;
       const device = this.getCurrentApplication().getDevice();
-      device.showElement(options);
+      device.showElement(newOptions);
     } else {
       throw new Error('Widget::show called - the current widget has not yet been rendered.');
     }
+  }
+
+  public removeFocus() {
+    this.removeClass('focus');
+    this.isFocussed = false;
+  }
+
+  public removeClass(className: string) {
+    if (this.classNames[className]) {
+      delete this.classNames[className];
+      if (this.outputElement) {
+        const device = this.getCurrentApplication().getDevice();
+        device.setElementClasses(this.outputElement, this.getClasses());
+      }
+    }
+  }
+
+  public render(device: Device) {
+    throw new Error(
+      "Widget::render called - the subclass for widget '" + this.id + "' must have not overridden the render method."
+    );
   }
 }

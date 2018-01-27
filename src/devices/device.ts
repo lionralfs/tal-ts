@@ -1,9 +1,14 @@
 import { Application, IConfiguration } from '../application';
 import { BaseClass } from '../class';
+import { IShowOptions } from '../widgets/widget';
 
 export interface IDeviceCallbacks {
   onSuccess(deviceClass: Device): void;
   onError(ex: any): void;
+}
+
+export interface IShowElementOptions extends IShowOptions {
+  el: Node;
 }
 
 export interface IDevice {
@@ -15,6 +20,8 @@ export interface IDevice {
   loadStyleSheet(url: string, callback: (res?: string) => void): void;
   getCurrentRoute(): string[];
   setElementClasses(el: Element, classNames: string[]): void;
+  showElement(options: IShowElementOptions): object;
+  getConfig(): object;
 }
 
 export abstract class Device extends BaseClass implements IDevice {
@@ -52,6 +59,10 @@ export abstract class Device extends BaseClass implements IDevice {
     this.application = app;
   }
 
+  public getConfig() {
+    return this.config;
+  }
+
   public abstract addKeyEventListener();
 
   public abstract getTopLevelElement();
@@ -65,4 +76,6 @@ export abstract class Device extends BaseClass implements IDevice {
   public abstract getCurrentRoute();
 
   public abstract setElementClasses(el: Node, classNames: string[]);
+
+  public abstract showElement(options: IShowElementOptions);
 }

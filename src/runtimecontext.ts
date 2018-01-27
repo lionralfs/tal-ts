@@ -10,7 +10,7 @@ export interface IRuntimeContext extends BaseClass {
 }
 
 export class RuntimeContextClass extends BaseClass implements IRuntimeContext {
-  private applicationObject: Application;
+  private static applicationObject: Application;
 
   constructor() {
     super();
@@ -18,21 +18,21 @@ export class RuntimeContextClass extends BaseClass implements IRuntimeContext {
   }
 
   public clearCurrentApplication() {
-    this.applicationObject = null;
+    RuntimeContextClass.applicationObject = null;
   }
 
   public setCurrentApplication(app: Application) {
-    if (this.applicationObject) {
+    if (RuntimeContextClass.applicationObject) {
       throw new Error(
         'RuntimeContext.setCurrentApplication called for a second time. You can only have one application instance running at any time.'
       );
     } else {
-      this.applicationObject = app;
+      RuntimeContextClass.applicationObject = app;
     }
   }
 
   public getCurrentApplication() {
-    return this.applicationObject;
+    return RuntimeContextClass.applicationObject;
   }
 
   public getDevice(): Device {

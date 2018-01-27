@@ -1,3 +1,4 @@
+import { Historian } from '../historian';
 import { Device, IDevice } from './device';
 
 export class BrowserDevice extends Device implements IDevice {

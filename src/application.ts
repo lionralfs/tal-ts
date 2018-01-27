@@ -3,6 +3,7 @@ import { Device } from './devices/device';
 import { IRuntimeContext, RuntimeContext } from './runtimecontext';
 import { Container } from './widgets/container';
 import { Widget } from './widgets/widget';
+import { Button } from './widgets/button';
 
 export interface ILayout {
   classes: string[];
@@ -42,6 +43,8 @@ export interface IApplication {
     callback: () => void
   ): void;
   route(route: string[]): void;
+  getDevice(): Device;
+  getFocussedWidget(): Button;
 }
 
 export abstract class Application extends BaseClass implements IApplication {
@@ -53,7 +56,7 @@ export abstract class Application extends BaseClass implements IApplication {
 
   private rootElement: Element;
   private rootWidget: Container = null;
-  private focussedWidget: Widget = null;
+  private focussedWidget: Button = null;
   private onReadyHandler: () => void;
   private device: Device;
 
@@ -199,5 +202,9 @@ export abstract class Application extends BaseClass implements IApplication {
         this.device.loadStyleSheet(styleBaseUrl + css[i]);
       }
     }
+  }
+
+  public getFocussedWidget() {
+    return this.focussedWidget;
   }
 }
