@@ -1,5 +1,5 @@
 import { BaseClass } from './class';
-import { Device } from './devices/device';
+import { Device, IDeviceConfig } from './devices/device';
 import { Button } from './widgets/button';
 export interface ILayout {
     classes: string[];
@@ -8,13 +8,6 @@ export interface ILayout {
     height: number;
     module: string;
     preloadImages?: string[];
-}
-export interface IConfiguration {
-    css?: IConfigCss[];
-    modules: {
-        base: string;
-        modifiers: string[];
-    };
 }
 export interface IConfigCss {
     width: number;
@@ -40,7 +33,7 @@ export declare abstract class Application extends BaseClass implements IApplicat
     private onReadyHandler;
     private device;
     private layout;
-    constructor(rootElement: Element, styleBaseUrl: string, imageBaseUrl: string, onReadyHandler: () => void, configOverride?: IConfiguration);
+    constructor(rootElement: Element, styleBaseUrl: string, imageBaseUrl: string, onReadyHandler: () => void, configOverride?: IDeviceConfig);
     abstract run(): any;
     abstract route(route: string[]): any;
     addComponentContainer(id: any, requireModule: any, args: any): any;

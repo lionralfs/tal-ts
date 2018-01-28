@@ -1,6 +1,33 @@
-import { Application, IConfiguration } from '../application';
+import { Application, IConfigCss } from '../application';
 import { BaseClass } from '../class';
 import { IShowOptions } from '../widgets/widget';
+export interface IDeviceConfig {
+    css?: IConfigCss[];
+    modules: {
+        base: string;
+        modifiers: string[];
+    };
+    mediasets?: {
+        tv: string;
+        radio: string;
+    };
+    logging?: {
+        level: string;
+        strategy?: string;
+    };
+    input: {
+        map: {
+            [key: string]: any;
+        };
+    };
+}
+export interface ILoggingMethods {
+    log: (message?: any, ...optionalParams: any[]) => void;
+    debug: (message?: any, ...optionalParams: any[]) => void;
+    info: (message?: any, ...optionalParams: any[]) => void;
+    warn: (message?: any, ...optionalParams: any[]) => void;
+    error: (message?: any, ...optionalParams: any[]) => void;
+}
 export interface IDeviceCallbacks {
     onSuccess(deviceClass: Device): void;
     onError(ex: any): void;
@@ -21,11 +48,14 @@ export interface IDevice {
     getConfig(): object;
 }
 export declare abstract class Device extends BaseClass implements IDevice {
-    static load(config: IConfiguration, callbacks: IDeviceCallbacks): void;
+    static load(config: IDeviceConfig, callbacks: IDeviceCallbacks): void;
+    static addLoggingMethod(moduleId: string, loggingMethods: object): void;
+    private static loggingStrategies;
+    private static filteredLoggingMethods;
     private application;
     private config;
     private keyMap;
-    constructor(config: object);
+    constructor(config: IDeviceConfig);
     setApplication(app: Application): void;
     getConfig(): object;
     abstract addKeyEventListener(): any;

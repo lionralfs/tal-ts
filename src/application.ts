@@ -1,9 +1,9 @@
 import { BaseClass } from './class';
-import { Device } from './devices/device';
+import { Device, IDeviceConfig } from './devices/device';
 import { IRuntimeContext, RuntimeContext } from './runtimecontext';
+import { Button } from './widgets/button';
 import { Container } from './widgets/container';
 import { Widget } from './widgets/widget';
-import { Button } from './widgets/button';
 
 export interface ILayout {
   classes: string[];
@@ -12,14 +12,6 @@ export interface ILayout {
   height: number;
   module: string;
   preloadImages?: string[];
-}
-
-export interface IConfiguration {
-  css?: IConfigCss[];
-  modules: {
-    base: string;
-    modifiers: string[];
-  };
 }
 
 export interface IConfigCss {
@@ -67,7 +59,7 @@ export abstract class Application extends BaseClass implements IApplication {
     styleBaseUrl: string,
     imageBaseUrl: string,
     onReadyHandler: () => void,
-    configOverride?: IConfiguration
+    configOverride?: IDeviceConfig
   ) {
     super();
 
@@ -78,7 +70,7 @@ export abstract class Application extends BaseClass implements IApplication {
     this.focussedWidget = null;
     this.onReadyHandler = onReadyHandler;
 
-    const config: IConfiguration = configOverride || antie.framework.deviceConfiguration;
+    const config: IDeviceConfig = configOverride || antie.framework.deviceConfiguration;
 
     const deviceLoaded = (device: Device): void => {
       let i: number;
