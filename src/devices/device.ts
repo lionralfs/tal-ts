@@ -43,6 +43,13 @@ export abstract class Device extends BaseClass implements IDevice {
     }
   }
 
+  public static addLoggingMethod(moduleId: string, loggingMethods: object) {
+    this.loggingStrategies[moduleId] = loggingMethods;
+  }
+
+  private static loggingStrategies: { [key: string]: object } = {};
+  private static filteredLoggingMethods = null;
+
   private application: Application;
   private config: object;
   private keyMap: object;
