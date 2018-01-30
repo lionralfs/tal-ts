@@ -185,52 +185,52 @@ export class ComponentContainer extends Container implements IComponentContainer
     const lastComponent = this.historyStack.pop();
     if (lastComponent) {
       this.previousFocus = lastComponent.previousFocus;
-      this.show(lastComponent.module, lastComponent.args, true, lastComponent.state, true, _focus);
+      this.show(lastComponent.module, lastComponent.args, true, lastComponent.state, true, focus);
     } else {
       this.hide(null, null, false, null, false);
     }
   }
 
   /**
-   *
+   * Hide the component within this container.
    * @param focusToComponent
    * @param args
    * @param keepHistory
    * @param state
    * @param fromBack
    */
-  public hide(focusToComponent, args, keepHistory, state: object, fromBack) {
+  public hide(focusToComponent, args, keepHistory, state: object, fromBack: boolean) {
     if (this.currentComponent) {
       const evt = new ComponentEvent('beforehide', this, this.currentComponent, args, state, fromBack);
-      this._currentComponent.bubbleEvent(evt);
+      this.currentComponent.bubbleEvent(evt);
 
       var _state = keepHistory ? this.currentComponent.getCurrentState() : null;
 
       // remove the child widget, but if default event is prevented, keep the output element in the DOM
       this.removeChildWidget(this.currentComponent, evt.isDefaultPrevented());
 
-      const _component = this.currentComponent;
+      const currentComponent = this.currentComponent;
       this.currentComponent = null;
 
       // set the parent widget so the next event bubbles correctly through the tree
-      _component.parentWidget = this;
-      _component.bubbleEvent(new ComponentEvent('afterhide', this, _component, args, state, fromBack));
+      currentComponent.parentWidget = this;
+      currentComponent.bubbleEvent(new ComponentEvent('afterhide', this, currentComponent, args, state, fromBack));
       // and clear it again
-      _component.parentWidget = null;
+      currentComponent.parentWidget = null;
 
       if (keepHistory) {
         if (!fromBack) {
           this.historyStack.push({
             module: this.currentModule,
             args: this.currentArgs,
-            state,
+            state: _state,
             previousFocus: this.previousFocus
           });
         }
       } else {
         // Reset the history stack when a component is shown in this container without explicitly
         // enabling history.
-        if (_component.getIsModal() && !fromBack) {
+        if (currentComponent.getIsModal() && !fromBack) {
           if (this.historyStack.length > 0) {
             this.historyStack[0].previousFocus.focus();
           } else if (this.previousFocus) {

@@ -1,4 +1,6 @@
-export class KeyEvent extends Event {
+import { BaseEvent } from './event';
+
+export class KeyEvent extends BaseEvent {
   // TODO: maybe use an enum instead
   public static VK_ENTER = 13;
   public static VK_LEFT = 37;

@@ -1,11 +1,16 @@
 import { Application } from '../application';
 import { BaseClass } from '../class';
 import { Device } from '../devices/device';
+import { BaseEvent } from '../events/event';
 import { RuntimeContext } from '../runtimecontext';
 import { ComponentContainer } from './componentcontainer';
+import { Container } from './container';
 
 export interface IWidget {
   addClass(className: string): void;
+  fireEvent(ev: BaseEvent);
+  bubbleEvent(ev: BaseEvent);
+  isFocusable(): boolean;
   getCurrentApplication(): Application;
   getClasses(): string[];
   removeFocus(): void;
@@ -31,12 +36,12 @@ export abstract class Widget extends BaseClass implements IWidget {
   private static widgetUniqueIDIndex = 0;
 
   public id: string;
-  public parentWidget: ComponentContainer;
-  public outputElement: Node;
+  public parentWidget: Container;
+  public outputElement: HTMLElement;
   public isFocussed: boolean;
 
   private classNames: object;
-  private eventListeners: object;
+  private eventListeners: { [key: string]: Array<(...args: any[]) => void> };
   private dataItem: object;
 
   constructor(id?: string) {
@@ -73,6 +78,48 @@ export abstract class Widget extends BaseClass implements IWidget {
     return names;
   }
 
+  public fireEvent(ev) {
+    const listeners = this.eventListeners[ev.type];
+    if (listeners) {
+      for (const func in listeners) {
+        if (listeners.hasOwnProperty(func)) {
+          try {
+            listeners[func](ev);
+          } catch (exception) {
+            const logger = this.getCurrentApplication()
+              .getDevice()
+              .getLogger();
+            logger.error(
+              `Error in ${ev.type} event listener on widget ${this.id}: ${exception.message}`,
+              exception,
+              listeners[func]
+            );
+          }
+        }
+      }
+    }
+  }
+
+  public bubbleEvent(ev: BaseEvent) {
+    this.fireEvent(ev);
+    if (!ev.isPropagationStopped()) {
+      if (this.parentWidget) {
+        this.parentWidget.bubbleEvent(ev);
+      } else {
+        ev.stopPropagation();
+      }
+    }
+  }
+
+  /**
+   * Checks to see if a widget is focussable, i.e. contains an enabled button.
+   */
+  public isFocusable(): boolean {
+    // a widget can receive focus if any of it's children or children-of-children are Buttons
+    // We're not a button and we have no children, so we're not.
+    return false;
+  }
+
   public getCurrentApplication(): Application {
     return RuntimeContext.getCurrentApplication();
   }
@@ -85,6 +132,26 @@ export abstract class Widget extends BaseClass implements IWidget {
       device.showElement(newOptions);
     } else {
       throw new Error('Widget::show called - the current widget has not yet been rendered.');
+    }
+  }
+
+  /**
+   * Hides a widget. If animation is enabled the widget will be faded out of view.
+   * Returns `true` if animation was called, otherwise `false`
+   */
+  public hide(options: {
+    skipAnim?: boolean;
+    onComplete?: () => void;
+    fps?: number;
+    duration?: number;
+    easing?: string;
+  }) {
+    if (this.outputElement) {
+      const newOptions = { ...options, el: this.outputElement };
+      const device = this.getCurrentApplication().getDevice();
+      device.hideElement(newOptions);
+    } else {
+      throw new Error('Widget::hide called - the current widget has not yet been rendered.');
     }
   }
 
@@ -103,9 +170,5 @@ export abstract class Widget extends BaseClass implements IWidget {
     }
   }
 
-  public render(device: Device) {
-    throw new Error(
-      "Widget::render called - the subclass for widget '" + this.id + "' must have not overridden the render method."
-    );
-  }
+  public abstract render(device: Device): HTMLElement;
 }

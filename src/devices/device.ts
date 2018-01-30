@@ -24,6 +24,19 @@ export interface IDeviceConfig {
   };
 }
 
+export interface IAnimOptions {
+  el: Node;
+  to?: {
+    left?: number;
+    right?: number;
+  };
+  skipAnim?: boolean;
+  onComplete?: () => void;
+  fps?: number;
+  duration?: number;
+  easing?: string;
+}
+
 export interface ILoggingMethods {
   log: (message?: any, ...optionalParams: any[]) => void;
   debug: (message?: any, ...optionalParams: any[]) => void;
@@ -43,16 +56,21 @@ export interface IShowElementOptions extends IShowOptions {
 
 export interface IDevice {
   setApplication(app: Application): void;
-  addKeyEventListener(): void;
   getTopLevelElement(): Node;
-  addClassToElement(el: Element, className: string): void;
   preloadImage(url: string): void;
-  loadStyleSheet(url: string, callback: (res?: string) => void): void;
   getCurrentRoute(): string[];
-  setElementClasses(el: Element, classNames: string[]): void;
+  appendChildElement(to: Node, el: Node): void;
+  setElementClasses(el: Node, classNames: string[]): void;
+  removeClassFromElement(el: Node, className: string, deep?: boolean): void;
+  addClassToElement(el: Node, className: string): void;
+  addKeyEventListener(): void;
+  getChildElementsByTagName(el: Node, tagName: string): Node[];
   showElement(options: IShowElementOptions): object;
+  loadStyleSheet(url: string, callback: (res?: string) => void): void;
+  clearElement(el: HTMLElement): void;
   getConfig(): object;
   getLogger(): ILoggingMethods;
+  getKeyMap(): { [key: string]: number };
 }
 
 export abstract class Device extends BaseClass implements IDevice {
@@ -84,9 +102,10 @@ export abstract class Device extends BaseClass implements IDevice {
   private static loggingStrategies: { [key: string]: object } = {};
   private static filteredLoggingMethods: ILoggingMethods = null;
 
-  private application: Application;
+  protected application: Application;
+
   private config: object;
-  private keyMap: object;
+  private keyMap: { [key: string]: number };
 
   constructor(config: IDeviceConfig) {
     super();
@@ -103,67 +122,67 @@ export abstract class Device extends BaseClass implements IDevice {
         DOWN: KeyEvent.VK_DOWN,
         LEFT: KeyEvent.VK_LEFT,
         RIGHT: KeyEvent.VK_RIGHT,
-        ENTER: KeyEvent.VK_ENTER
-        // BACK: KeyEvent.VK_BACK,
-        // SPACE: KeyEvent.VK_SPACE,
-        // BACK_SPACE: KeyEvent.VK_BACK_SPACE,
-        // PLAY: KeyEvent.VK_PLAY,
-        // PAUSE: KeyEvent.VK_PAUSE,
-        // PLAY_PAUSE: KeyEvent.VK_PLAY_PAUSE,
-        // STOP: KeyEvent.VK_STOP,
-        // PREV: KeyEvent.VK_PREV,
-        // NEXT: KeyEvent.VK_NEXT,
-        // FAST_FWD: KeyEvent.VK_FAST_FWD,
-        // REWIND: KeyEvent.VK_REWIND,
-        // SUBTITLE: KeyEvent.VK_SUBTITLE,
-        // INFO: KeyEvent.VK_INFO,
-        // VOLUME_UP: KeyEvent.VK_VOLUME_UP,
-        // VOLUME_DOWN: KeyEvent.VK_VOLUME_DOWN,
-        // MUTE: KeyEvent.VK_MUTE,
-        // RED: KeyEvent.VK_RED,
-        // GREEN: KeyEvent.VK_GREEN,
-        // YELLOW: KeyEvent.VK_YELLOW,
-        // BLUE: KeyEvent.VK_BLUE,
-        // HELP: KeyEvent.VK_HELP,
-        // SEARCH: KeyEvent.VK_SEARCH,
-        // AD: KeyEvent.VK_AUDIODESCRIPTION,
-        // HD: KeyEvent.VK_HD,
-        // A: KeyEvent.VK_A,
-        // B: KeyEvent.VK_B,
-        // C: KeyEvent.VK_C,
-        // D: KeyEvent.VK_D,
-        // E: KeyEvent.VK_E,
-        // F: KeyEvent.VK_F,
-        // G: KeyEvent.VK_G,
-        // H: KeyEvent.VK_H,
-        // I: KeyEvent.VK_I,
-        // J: KeyEvent.VK_J,
-        // K: KeyEvent.VK_K,
-        // L: KeyEvent.VK_L,
-        // M: KeyEvent.VK_M,
-        // N: KeyEvent.VK_N,
-        // O: KeyEvent.VK_O,
-        // P: KeyEvent.VK_P,
-        // Q: KeyEvent.VK_Q,
-        // R: KeyEvent.VK_R,
-        // S: KeyEvent.VK_S,
-        // T: KeyEvent.VK_T,
-        // U: KeyEvent.VK_U,
-        // V: KeyEvent.VK_V,
-        // W: KeyEvent.VK_W,
-        // X: KeyEvent.VK_X,
-        // Y: KeyEvent.VK_Y,
-        // Z: KeyEvent.VK_Z,
-        // '0': KeyEvent.VK_0,
-        // '1': KeyEvent.VK_1,
-        // '2': KeyEvent.VK_2,
-        // '3': KeyEvent.VK_3,
-        // '4': KeyEvent.VK_4,
-        // '5': KeyEvent.VK_5,
-        // '6': KeyEvent.VK_6,
-        // '7': KeyEvent.VK_7,
-        // '8': KeyEvent.VK_8,
-        // '9': KeyEvent.VK_9
+        ENTER: KeyEvent.VK_ENTER,
+        BACK: KeyEvent.VK_BACK,
+        SPACE: KeyEvent.VK_SPACE,
+        BACK_SPACE: KeyEvent.VK_BACK_SPACE,
+        PLAY: KeyEvent.VK_PLAY,
+        PAUSE: KeyEvent.VK_PAUSE,
+        PLAY_PAUSE: KeyEvent.VK_PLAY_PAUSE,
+        STOP: KeyEvent.VK_STOP,
+        PREV: KeyEvent.VK_PREV,
+        NEXT: KeyEvent.VK_NEXT,
+        FAST_FWD: KeyEvent.VK_FAST_FWD,
+        REWIND: KeyEvent.VK_REWIND,
+        SUBTITLE: KeyEvent.VK_SUBTITLE,
+        INFO: KeyEvent.VK_INFO,
+        VOLUME_UP: KeyEvent.VK_VOLUME_UP,
+        VOLUME_DOWN: KeyEvent.VK_VOLUME_DOWN,
+        MUTE: KeyEvent.VK_MUTE,
+        RED: KeyEvent.VK_RED,
+        GREEN: KeyEvent.VK_GREEN,
+        YELLOW: KeyEvent.VK_YELLOW,
+        BLUE: KeyEvent.VK_BLUE,
+        HELP: KeyEvent.VK_HELP,
+        SEARCH: KeyEvent.VK_SEARCH,
+        AD: KeyEvent.VK_AUDIODESCRIPTION,
+        HD: KeyEvent.VK_HD,
+        A: KeyEvent.VK_A,
+        B: KeyEvent.VK_B,
+        C: KeyEvent.VK_C,
+        D: KeyEvent.VK_D,
+        E: KeyEvent.VK_E,
+        F: KeyEvent.VK_F,
+        G: KeyEvent.VK_G,
+        H: KeyEvent.VK_H,
+        I: KeyEvent.VK_I,
+        J: KeyEvent.VK_J,
+        K: KeyEvent.VK_K,
+        L: KeyEvent.VK_L,
+        M: KeyEvent.VK_M,
+        N: KeyEvent.VK_N,
+        O: KeyEvent.VK_O,
+        P: KeyEvent.VK_P,
+        Q: KeyEvent.VK_Q,
+        R: KeyEvent.VK_R,
+        S: KeyEvent.VK_S,
+        T: KeyEvent.VK_T,
+        U: KeyEvent.VK_U,
+        V: KeyEvent.VK_V,
+        W: KeyEvent.VK_W,
+        X: KeyEvent.VK_X,
+        Y: KeyEvent.VK_Y,
+        Z: KeyEvent.VK_Z,
+        '0': KeyEvent.VK_0,
+        '1': KeyEvent.VK_1,
+        '2': KeyEvent.VK_2,
+        '3': KeyEvent.VK_3,
+        '4': KeyEvent.VK_4,
+        '5': KeyEvent.VK_5,
+        '6': KeyEvent.VK_6,
+        '7': KeyEvent.VK_7,
+        '8': KeyEvent.VK_8,
+        '9': KeyEvent.VK_9
       };
 
       for (const code in config.input.map) {
@@ -271,19 +290,83 @@ export abstract class Device extends BaseClass implements IDevice {
     return Device.filteredLoggingMethods;
   }
 
+  public getKeyMap() {
+    return this.keyMap;
+  }
+
+  public abstract preloadImage(url: string): void;
+
+  public abstract getCurrentRoute(): string[];
+
+  public abstract appendChildElement(to: Node, el: Node): void;
+
+  public abstract setElementClasses(el: Node, classNames: string[]): void;
+
+  public abstract removeClassFromElement(el: Node, className: string, deep?: boolean): void;
+
+  public abstract addClassToElement(el: Node, className: string);
+
+  /**
+   * Adds global key event listener(s) to the user-agent.
+   * This must be added in a way that all key events within the user-agent
+   * cause self._application.bubbleEvent(...) to be called with a {@link KeyEvent}
+   * object with the mapped keyCode.
+   *
+   * @example
+   * document.onkeydown = function(e) {
+   *     self._application.bubbleEvent(new KeyEvent('keydown', keyMap[e.keyCode]));
+   * };
+   */
   public abstract addKeyEventListener();
 
-  public abstract getTopLevelElement();
+  public abstract getChildElementsByTagName(el: Node, tagName: string): Node[];
 
-  public abstract addClassToElement(el: Element, className: string);
+  public abstract getTopLevelElement(): Node;
 
-  public abstract preloadImage(url: string);
+  public abstract getStylesheetElements(): Node[];
 
-  public abstract loadStyleSheet(url: string, callback?: (res: string) => void);
+  public abstract getElementOffset(el: HTMLElement): { top: number; left: number };
 
-  public abstract getCurrentRoute();
+  public abstract getElementSize(el: HTMLElement): { width: number; height: number };
 
-  public abstract setElementClasses(el: Node, classNames: string[]);
+  public abstract setElementSize(el: HTMLElement, size: { width?: number; height?: number }): void;
 
-  public abstract showElement(options: IShowElementOptions);
+  public abstract scrollElementTo(options: IAnimOptions);
+
+  public abstract moveElementTo(options: IAnimOptions);
+
+  public abstract hideElement(options: IAnimOptions);
+
+  public abstract showElement(options: IAnimOptions);
+
+  public abstract tweenElementStyle(options: IAnimOptions); // TODO: check options
+
+  public abstract stopAnimation(anim: object); // TODO: implement anim interface
+
+  public abstract loadStyleSheet(url: string, callback?: (res: string) => void): void;
+
+  /**
+   * Clears the content of an element.
+   * @param el The element you are removing the content from.
+   */
+  public abstract clearElement(el: HTMLElement): void;
+
+  public abstract createContainer(id?: string, classNames?: string[]): HTMLElement;
+
+  public abstract createLabel(id?: string, classNames?: string[], text?: string): Node;
+
+  public abstract createButton(id?: string, classNames?: string[]): Node;
+
+  public abstract createList(id?: string, classNames?: string[]): Node;
+
+  public abstract createListItem(id?: string, classNames?: string[]): Node;
+
+  public abstract createImage(
+    src: string,
+    id?: string,
+    classNames?: string[],
+    size?: { width?: number; height?: number },
+    onLoad?: (...args: any[]) => void,
+    onError?: (...args: any[]) => void
+  ): Node;
 }

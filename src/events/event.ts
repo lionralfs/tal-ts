@@ -3,9 +3,9 @@ import { RuntimeContext } from '../runtimecontext';
 
 // TODO: write interface
 
-export abstract class Event extends BaseClass {
+export abstract class BaseEvent extends BaseClass {
   public static addEventListener(ev: string, func: () => void) {
-    let listeners = Event.eventListeners[ev];
+    let listeners = this.eventListeners[ev];
     if (typeof listeners === 'undefined') {
       listeners = [];
       this.eventListeners[ev] = listeners;
@@ -44,7 +44,7 @@ export abstract class Event extends BaseClass {
   }
 
   private static eventCount: number = 0;
-  private static eventListeners: { [key: string]: Array<() => void> } = {};
+  private static eventListeners: { [key: string]: Array<(...args: any[]) => void> } = {};
 
   public type: string;
 
@@ -56,14 +56,14 @@ export abstract class Event extends BaseClass {
     this.type = type;
     this.propagationStopped = false;
     this.defaultPrevented = false;
-    Event.eventCount++;
+    BaseEvent.eventCount++;
   }
 
   public stopPropagation() {
     this.propagationStopped = true;
-    Event.eventCount--;
-    if (!Event.eventCount) {
-      Event.fireEvent('emptyStack');
+    BaseEvent.eventCount--;
+    if (!BaseEvent.eventCount) {
+      BaseEvent.fireEvent('emptyStack');
     }
   }
 

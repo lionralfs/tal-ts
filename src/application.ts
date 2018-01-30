@@ -1,9 +1,11 @@
 import { BaseClass } from './class';
 import { Device, IDeviceConfig } from './devices/device';
+import { BaseEvent } from './events/event';
 import { IRuntimeContext, RuntimeContext } from './runtimecontext';
 import { Button } from './widgets/button';
 import { Container } from './widgets/container';
 import { Widget } from './widgets/widget';
+import { ComponentContainer } from './widgets/componentcontainer';
 
 export interface ILayout {
   classes: string[];
@@ -36,6 +38,7 @@ export interface IApplication {
   ): void;
   route(route: string[]): void;
   getDevice(): Device;
+  bubbleEvent(evt: BaseEvent): void;
   getFocussedWidget(): Button;
 }
 
@@ -128,6 +131,12 @@ export abstract class Application extends BaseClass implements IApplication {
 
   public getDevice() {
     return this.device;
+  }
+
+  public bubbleEvent(evt: BaseEvent) {
+    if (this.focussedWidget) {
+      this.focussedWidget.bubbleEvent(evt);
+    }
   }
 
   public getBestFitLayout(): ILayout {
