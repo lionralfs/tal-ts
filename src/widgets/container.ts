@@ -1,5 +1,8 @@
 import { BaseClass } from '../class';
 import { Device } from '../devices/device';
+import { BlurEvent } from '../events/blurevent';
+import { FocusEvent } from '../events/focusevent';
+import { Button } from './button';
 import { IWidget, Widget } from './widget';
 
 export interface IContainer {
@@ -14,7 +17,7 @@ export interface IContainer {
 export class Container extends Widget implements IContainer {
   public activeChildWidget: Widget;
   public childWidgets: { [key: string]: Widget };
-  private childWidgetOrder: Widget[];
+  protected childWidgetOrder: Widget[];
   private autoRenderChildren: boolean;
 
   constructor(id: string) {
@@ -26,6 +29,39 @@ export class Container extends Widget implements IContainer {
     this.autoRenderChildren = true;
 
     this.addClass('container');
+  }
+
+  /**
+   * Removes a specific child widget from this widget.
+   * @param widget The child widget to remove.
+   * @param retainElement Pass `true` to retain the child output element of the given widget
+   */
+  public removeChildWidget(widget: Widget, retainElement?: boolean): void {
+    if (!widget) {
+      return;
+    }
+
+    const widgetIndex = this.getIndexOfChildWidget(widget);
+    if (widgetIndex < 0) {
+      return;
+    }
+
+    if (widget.isFocussed()) {
+      const logger = this.getCurrentApplication()
+        .getDevice()
+        .getLogger();
+      logger.warn('Removing widget that currently has focus: ' + widget.id);
+    }
+
+    if (!retainElement && widget.outputElement) {
+      const device = this.getCurrentApplication().getDevice();
+      device.removeElement(widget.outputElement);
+    }
+
+    this.childWidgetOrder.splice(widgetIndex, 1);
+    delete this.childWidgets[widget.id];
+
+    widget.parentWidget = null;
   }
 
   /**
@@ -53,6 +89,10 @@ export class Container extends Widget implements IContainer {
     return this.childWidgetOrder;
   }
 
+  public getIndexOfChildWidget(widget: Widget): number {
+    return this.childWidgetOrder.indexOf(widget);
+  }
+
   /**
    * Renders the widget and any child widgets to device-specific output.
    *
@@ -78,7 +118,7 @@ export class Container extends Widget implements IContainer {
    * Appends a child widget to this widget.
    * @param widget The child widget to add.
    */
-  public appendChildWidget(widget: Widget) {
+  public appendChildWidget<K extends Widget>(widget: K) {
     if (!this.hasChildWidget(widget.id)) {
       this.childWidgets[widget.id] = widget;
       this.childWidgetOrder.push(widget);
@@ -120,7 +160,7 @@ export class Container extends Widget implements IContainer {
     if (!widget) {
       return false;
     }
-    if (this.hasChildWidget(widget.id) && widget.isFocusable()) {
+    if (this.hasChildWidget(widget.id) && widget.isFocusable() && widget instanceof Button) {
       if (this.activeChildWidget && this.activeChildWidget !== widget) {
         this.activeChildWidget.removeClass('active');
         this.setActiveChildFocussed(false);
@@ -133,12 +173,12 @@ export class Container extends Widget implements IContainer {
         let widgetIterator: Container = this;
         while (widgetIterator.parentWidget) {
           widgetIterator.parentWidget.activeChildWidget = widgetIterator;
-          widgetIterator.isFocussed = true;
+          widgetIterator.focussed = true;
 
           widgetIterator = widgetIterator.parentWidget;
         }
       }
-      if (this.isFocussed) {
+      if (this.focussed) {
         this.setActiveChildFocussed(true);
       }
       return true;
@@ -150,9 +190,9 @@ export class Container extends Widget implements IContainer {
    * Flags the active child as focussed or blurred.
    * @param focus `true` if the active child is to be focussed, `false` if the active child is to be blurred.
    */
-  private setActiveChildFocussed(focus) {
-    if (this.activeChildWidget && this.activeChildWidget.isFocussed !== focus) {
-      this.activeChildWidget.isFocussed = focus;
+  protected setActiveChildFocussed(focus) {
+    if (this.activeChildWidget && this.activeChildWidget.focussed !== focus) {
+      this.activeChildWidget.focussed = focus;
       if (focus) {
         this.activeChildWidget.addClass('focus');
         this.activeChildWidget.bubbleEvent(new FocusEvent(this.activeChildWidget));
@@ -162,7 +202,9 @@ export class Container extends Widget implements IContainer {
         this.activeChildWidget.removeClass('focus');
         this.activeChildWidget.bubbleEvent(new BlurEvent(this.activeChildWidget));
       }
-      this.activeChildWidget.setActiveChildFocussed(focus);
+      if (this.activeChildWidget instanceof Container) {
+        this.activeChildWidget.setActiveChildFocussed(focus);
+      }
     }
   }
 }

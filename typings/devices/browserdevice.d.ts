@@ -123,6 +123,11 @@ export declare class BrowserDevice extends Device {
         width?: number;
         height?: number;
     }, onLoad?: (...args: any[]) => void, onError?: (...args: any[]) => void): Node;
+    /**
+     * Removes an element from its parent.
+     * @param el The element to remove.
+     */
+    removeElement(el: HTMLElement): void;
     private trim(str);
     /**
      * Creates an element in the device's user-agent.

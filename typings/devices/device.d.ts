@@ -129,11 +129,12 @@ export declare abstract class Device extends BaseClass implements IDevice {
     abstract clearElement(el: HTMLElement): void;
     abstract createContainer(id?: string, classNames?: string[]): HTMLElement;
     abstract createLabel(id?: string, classNames?: string[], text?: string): Node;
-    abstract createButton(id?: string, classNames?: string[]): Node;
+    abstract createButton(id?: string, classNames?: string[]): HTMLElement;
     abstract createList(id?: string, classNames?: string[]): Node;
     abstract createListItem(id?: string, classNames?: string[]): Node;
     abstract createImage(src: string, id?: string, classNames?: string[], size?: {
         width?: number;
         height?: number;
     }, onLoad?: (...args: any[]) => void, onError?: (...args: any[]) => void): Node;
+    abstract removeElement(el: HTMLElement): void;
 }

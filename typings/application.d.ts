@@ -43,6 +43,11 @@ export declare abstract class Application extends BaseClass implements IApplicat
     showComponent(id: string, requireModule: string, args?: object): void;
     getDevice(): Device;
     bubbleEvent(evt: BaseEvent): void;
+    /**
+     * Set the currently focussed Button.
+     * @param button The button that has recieved focus.
+     */
+    setFocussedWidget(button: Button): void;
     getBestFitLayout(): ILayout;
     setLayout(layout: ILayout, styleBaseUrl: string, imageBaseUrl: string, additionalCSS: IConfigCss[], additionalClasses: string[], additionalPreloadImages: string[], callback: () => void): void;
     getFocussedWidget(): Button;

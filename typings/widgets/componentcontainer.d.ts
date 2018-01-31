@@ -53,14 +53,14 @@ export declare class ComponentContainer extends Container implements IComponentC
      */
     back(): void;
     /**
-     *
+     * Hide the component within this container.
      * @param focusToComponent
      * @param args
      * @param keepHistory
      * @param state
      * @param fromBack
      */
-    hide(focusToComponent: any, args: any, keepHistory: any, state: object, fromBack: any): void;
+    hide(focusToComponent: any, args: any, keepHistory: any, state: object, fromBack: boolean): void;
     /**
      *
      */

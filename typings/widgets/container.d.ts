@@ -13,9 +13,15 @@ export declare class Container extends Widget implements IContainer {
     childWidgets: {
         [key: string]: Widget;
     };
-    private childWidgetOrder;
+    protected childWidgetOrder: Widget[];
     private autoRenderChildren;
     constructor(id: string);
+    /**
+     * Removes a specific child widget from this widget.
+     * @param widget The child widget to remove.
+     * @param retainElement Pass `true` to retain the child output element of the given widget
+     */
+    removeChildWidget(widget: Widget, retainElement?: boolean): void;
     /**
      * Checks to see if a specific widget is a direct child of this widget.
      * @param id The widget id of the widget to check to see if it is a direct child of this widget.
@@ -32,6 +38,7 @@ export declare class Container extends Widget implements IContainer {
      * @returns An array of all this widget's children.
      */
     getChildWidgets(): Widget[];
+    getIndexOfChildWidget(widget: Widget): number;
     /**
      * Renders the widget and any child widgets to device-specific output.
      *
@@ -45,7 +52,7 @@ export declare class Container extends Widget implements IContainer {
      * Appends a child widget to this widget.
      * @param widget The child widget to add.
      */
-    appendChildWidget(widget: Widget): Widget;
+    appendChildWidget<K extends Widget>(widget: K): K;
     /**
      * Attempt to set focus to the given child widget.
      *
@@ -68,5 +75,5 @@ export declare class Container extends Widget implements IContainer {
      * Flags the active child as focussed or blurred.
      * @param focus `true` if the active child is to be focussed, `false` if the active child is to be blurred.
      */
-    private setActiveChildFocussed(focus);
+    protected setActiveChildFocussed(focus: any): void;
 }

@@ -355,7 +355,7 @@ export abstract class Device extends BaseClass implements IDevice {
 
   public abstract createLabel(id?: string, classNames?: string[], text?: string): Node;
 
-  public abstract createButton(id?: string, classNames?: string[]): Node;
+  public abstract createButton(id?: string, classNames?: string[]): HTMLElement;
 
   public abstract createList(id?: string, classNames?: string[]): Node;
 
@@ -369,4 +369,6 @@ export abstract class Device extends BaseClass implements IDevice {
     onLoad?: (...args: any[]) => void,
     onError?: (...args: any[]) => void
   ): Node;
+
+  public abstract removeElement(el: HTMLElement): void;
 }

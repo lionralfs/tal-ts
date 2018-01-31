@@ -38,7 +38,7 @@ export abstract class Widget extends BaseClass implements IWidget {
   public id: string;
   public parentWidget: Container;
   public outputElement: HTMLElement;
-  public isFocussed: boolean;
+  public focussed: boolean;
 
   private classNames: object;
   private eventListeners: { [key: string]: Array<(...args: any[]) => void> };
@@ -52,7 +52,7 @@ export abstract class Widget extends BaseClass implements IWidget {
     this.outputElement = null;
     this.eventListeners = {};
     this.dataItem = null; // Any data item bound to this widget
-    this.isFocussed = false;
+    this.focussed = false;
 
     // ensure all widgets have an ID
     this.id = id ? id : Widget.createUniqueID();
@@ -76,6 +76,22 @@ export abstract class Widget extends BaseClass implements IWidget {
       }
     }
     return names;
+  }
+
+  /**
+   * Add an event listener function to this widget.
+   * @param ev The event type to listen for (e.g. `keydown`)
+   * @param func The handler to be called when the event is fired.
+   */
+  public addEventListener(ev: string, func: (...args: any[]) => void) {
+    let listeners = this.eventListeners[ev];
+    if (typeof listeners === 'undefined') {
+      listeners = [];
+      this.eventListeners[ev] = listeners;
+    }
+    if (listeners.indexOf(func) === -1) {
+      listeners.push(func);
+    }
   }
 
   public fireEvent(ev) {
@@ -139,7 +155,7 @@ export abstract class Widget extends BaseClass implements IWidget {
    * Hides a widget. If animation is enabled the widget will be faded out of view.
    * Returns `true` if animation was called, otherwise `false`
    */
-  public hide(options: {
+  public hide(options?: {
     skipAnim?: boolean;
     onComplete?: () => void;
     fps?: number;
@@ -157,7 +173,22 @@ export abstract class Widget extends BaseClass implements IWidget {
 
   public removeFocus() {
     this.removeClass('focus');
-    this.isFocussed = false;
+    this.focussed = false;
+  }
+
+  /**
+   * Get if this widget is in the current focus path.
+   * returns `true` if this widget is in the focus path, otherwise `false`.
+   */
+  public isFocussed(): boolean {
+    return this.focussed;
+  }
+
+  /**
+   * Returns whether the widget is a Component, `true` if the widget is a Component.
+   */
+  public isComponent() {
+    return false;
   }
 
   public removeClass(className: string) {

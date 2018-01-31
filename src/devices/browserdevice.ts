@@ -211,7 +211,7 @@ export class BrowserDevice extends Device {
       } catch (e) {
         // log?
       } finally {
-        style.parentNode.removeChild(style);
+        this.removeElement(style);
       }
       return false;
     };
@@ -245,7 +245,7 @@ export class BrowserDevice extends Device {
         const done = () => {
           img.onerror = () => null;
           callback(url);
-          img.parentNode.removeChild(img);
+          this.removeElement(img);
         };
         img.onerror = done;
         this.getTopLevelElement().appendChild(img);
@@ -353,6 +353,16 @@ export class BrowserDevice extends Device {
       el.onerror = onError;
     }
     return el;
+  }
+
+  /**
+   * Removes an element from its parent.
+   * @param el The element to remove.
+   */
+  public removeElement(el: HTMLElement) {
+    if (el.parentNode) {
+      el.parentNode.removeChild(el);
+    }
   }
 
   private trim(str: string): string {

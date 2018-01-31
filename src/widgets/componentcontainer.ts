@@ -1,3 +1,4 @@
+import { ComponentEvent } from '../events/componentevent';
 import { Button } from './button';
 import { Component } from './component';
 import { Container } from './container';
@@ -93,9 +94,9 @@ export class ComponentContainer extends Container implements IComponentContainer
         this.previousFocus = focus;
       }
 
-      if (!this.isFocussed) {
+      if (!this.focussed) {
         // We don't have focus, so any of our children shouldn't
-        // (_isFocussed state can be set to true if focussed widget is in a unloaded component)
+        // (focussed state can be set to true if focussed widget is in a unloaded component)
         let p = this.currentComponent;
         while (p) {
           p.removeFocus();
@@ -204,7 +205,7 @@ export class ComponentContainer extends Container implements IComponentContainer
       const evt = new ComponentEvent('beforehide', this, this.currentComponent, args, state, fromBack);
       this.currentComponent.bubbleEvent(evt);
 
-      var _state = keepHistory ? this.currentComponent.getCurrentState() : null;
+      const newState = keepHistory ? this.currentComponent.getCurrentState() : null;
 
       // remove the child widget, but if default event is prevented, keep the output element in the DOM
       this.removeChildWidget(this.currentComponent, evt.isDefaultPrevented());
@@ -223,7 +224,7 @@ export class ComponentContainer extends Container implements IComponentContainer
           this.historyStack.push({
             module: this.currentModule,
             args: this.currentArgs,
-            state: _state,
+            state: newState,
             previousFocus: this.previousFocus
           });
         }
@@ -240,7 +241,7 @@ export class ComponentContainer extends Container implements IComponentContainer
         this.historyStack = [];
       }
     }
-    if (this.isFocussed && focusToComponent) {
+    if (this.focussed && focusToComponent) {
       this.parentWidget.setActiveChildWidget(this.parentWidget.childWidgets[focusToComponent]);
     }
   }

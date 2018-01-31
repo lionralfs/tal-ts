@@ -3,9 +3,9 @@ import { Device, IDeviceConfig } from './devices/device';
 import { BaseEvent } from './events/event';
 import { IRuntimeContext, RuntimeContext } from './runtimecontext';
 import { Button } from './widgets/button';
+import { ComponentContainer } from './widgets/componentcontainer';
 import { Container } from './widgets/container';
 import { Widget } from './widgets/widget';
-import { ComponentContainer } from './widgets/componentcontainer';
 
 export interface ILayout {
   classes: string[];
@@ -136,6 +136,18 @@ export abstract class Application extends BaseClass implements IApplication {
   public bubbleEvent(evt: BaseEvent) {
     if (this.focussedWidget) {
       this.focussedWidget.bubbleEvent(evt);
+    }
+  }
+
+  /**
+   * Set the currently focussed Button.
+   * @param button The button that has recieved focus.
+   */
+  public setFocussedWidget(button: Button) {
+    // Check to see the widget is a Button and itself has correct focus state before recording
+    // it as the focussed widget.
+    if (button instanceof Button && button.isFocussed()) {
+      this.focussedWidget = button;
     }
   }
 
