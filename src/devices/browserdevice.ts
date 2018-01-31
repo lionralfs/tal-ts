@@ -205,14 +205,11 @@ export class BrowserDevice extends Device {
       style.innerHTML = 'body {};';
       style.className = 'added-by-antie';
       document.getElementsByTagName('head')[0].appendChild(style);
-      try {
-        style.sheet.cssRules;
+      const styleTest: any = style; // Workaround for TS Error: Property 'cssRules' does not exist on type 'StyleSheet'.
+      if (styleTest.sheet && styleTest.sheet.cssRules) {
         return true;
-      } catch (e) {
-        // log?
-      } finally {
-        this.removeElement(style);
       }
+      this.removeElement(style);
       return false;
     };
 
@@ -223,10 +220,10 @@ export class BrowserDevice extends Device {
       style.className = 'added-by-antie';
       document.getElementsByTagName('head')[0].appendChild(style);
       const interval = window.setInterval(() => {
-        try {
-          style.sheet.cssRules;
+        const styleTest: any = style; // Workaround for TS Error: Property 'cssRules' does not exist on type 'StyleSheet'.
+        if (styleTest.sheet && styleTest.sheet.cssRules) {
           window.clearInterval(interval);
-        } catch (ex) {
+        } else {
           return;
         }
         callback(url);
@@ -279,7 +276,7 @@ export class BrowserDevice extends Device {
    * @param id The id of the element to create.
    * @param classNames An array of class names to apply to the element.
    */
-  public createContainer(id?: string, classNames?: string[]): Node {
+  public createContainer(id?: string, classNames?: string[]): HTMLElement {
     return this.createElement('div', id, classNames);
   }
 
@@ -300,7 +297,7 @@ export class BrowserDevice extends Device {
    * @param id The id of the element to create.
    * @param classNames An array of class names to apply to the element.
    */
-  public createButton(id?: string, classNames?: string[]): Node {
+  public createButton(id?: string, classNames?: string[]): HTMLElement {
     return this.createElement('div', id, classNames);
   }
 
@@ -392,18 +389,3 @@ export class BrowserDevice extends Device {
     return el;
   }
 }
-
-const test = new BrowserDevice({
-  modules: {
-    base: 'string',
-    modifiers: ['string']
-  },
-  input: {
-    map: {
-      '8': 'BACK',
-      '13': 'ENTER',
-      '43': 'ENTER',
-      '37': 'LEFT'
-    }
-  }
-});

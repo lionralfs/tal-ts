@@ -1,7 +1,6 @@
 import { Button } from './button';
 import { Container } from './container';
 export interface IComponentContainer {
-    show(module: string, args?: object, keepHistory?: boolean, state?: object, fromBack?: boolean, focus?: Button): void;
     pushComponent(module: string, args?: object): void;
     getContent(): Container;
     back(): void;
@@ -39,17 +38,19 @@ export declare class ComponentContainer extends Container implements IComponentC
      * @param fromBack
      * @param focus
      */
-    show(module: string, args?: object, keepHistory?: boolean, state?: object, fromBack?: boolean, focus?: Button): void;
+    showComponent(module: string, args?: object, keepHistory?: boolean, state?: object, fromBack?: boolean, focus?: Button): void;
     /**
-     *
+     * Pushes a component into the history stack of the container (and shows it).
+     * @param module The requirejs module name of the component to show.
+     * @param args An optional object to pass arguments to the component.
      */
     pushComponent(module: string, args?: object): void;
     /**
-     *
+     * Returns the widget added to this container.
      */
     getContent(): Container;
     /**
-     *
+     * Return this component container to the previous component in the history.
      */
     back(): void;
     /**
@@ -60,7 +61,7 @@ export declare class ComponentContainer extends Container implements IComponentC
      * @param state
      * @param fromBack
      */
-    hide(focusToComponent: any, args: any, keepHistory: any, state: object, fromBack: boolean): void;
+    hideComponent(focusToComponent: string, args: object, keepHistory: boolean, state: object, fromBack: boolean): void;
     /**
      *
      */

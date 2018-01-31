@@ -1,10 +1,11 @@
+import { IDeviceConfig } from '../devices/device';
 import { IHistoryItem } from './componentcontainer';
 import { Container } from './container';
 export interface IComponent {
     hide(): void;
     getCurrentState(): IHistoryItem;
     getIsModal(): boolean;
-    getConfig(): object;
+    getConfig(): IDeviceConfig;
     isComponent(): boolean;
 }
 export declare class Component extends Container implements IComponent {
@@ -13,6 +14,6 @@ export declare class Component extends Container implements IComponent {
     hide(): void;
     getCurrentState(): any;
     getIsModal(): boolean;
-    getConfig(): object;
+    getConfig(): IDeviceConfig;
     isComponent(): boolean;
 }

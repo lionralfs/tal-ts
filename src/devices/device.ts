@@ -1,9 +1,11 @@
-import { Application, IConfigCss } from '../application';
+import { Application, IConfigCss, ILayout } from '../application';
 import { BaseClass } from '../class';
 import { KeyEvent } from '../events/keyevent';
 import { IShowOptions } from '../widgets/widget';
 
+// TODO: this needs more checks
 export interface IDeviceConfig {
+  pageStrategy?: string;
   css?: IConfigCss[];
   modules: {
     base: string;
@@ -22,6 +24,48 @@ export interface IDeviceConfig {
       [key: string]: any;
     };
   };
+  streaming?: {
+    video?: {
+      mediaURIFormat: string;
+      supported: ISupportedVideoStreaming[];
+    };
+    audio?: {
+      mediaURIFormat: string;
+      supported: ISupportedAudioStreaming[];
+    };
+  };
+  accessibility?: {
+    captions: {
+      supported: string[];
+    };
+  };
+  layouts?: ILayout[];
+  networking: { supportsJSONP: boolean };
+  capabilities: string[];
+  statLabels: {
+    deviceType?: string;
+    serviceType?: string;
+    browserType?: string;
+  };
+  widgets?: {
+    componentcontainer?: {
+      fade?: boolean;
+    };
+  };
+}
+
+export interface ISupportedVideoStreaming {
+  protocols: string[];
+  encodings: string[];
+  transferFormat: string[];
+  maximumBitRate: number;
+  maximumVideoLines: number;
+}
+
+export interface ISupportedAudioStreaming {
+  protocols: string[];
+  encodings: string[];
+  maximumBitRate: number;
 }
 
 export interface IAnimOptions {
@@ -76,18 +120,16 @@ export interface IDevice {
 export abstract class Device extends BaseClass implements IDevice {
   public static load(config: IDeviceConfig, callbacks: IDeviceCallbacks) {
     try {
-      requirejs(
-        [config.modules.base].concat(config.modules.modifiers),
-        (deviceClass: new (config: IDeviceConfig) => Device) => {
-          try {
-            callbacks.onSuccess(new deviceClass(config));
-          } catch (ex) {
-            if (callbacks.onError) {
-              callbacks.onError(ex);
-            }
+      requirejs([config.modules.base].concat(config.modules.modifiers), object => {
+        const deviceClassConstructor: new (config: IDeviceConfig) => Device = object[Object.keys(object)[0]];
+        try {
+          callbacks.onSuccess(new deviceClassConstructor(config));
+        } catch (ex) {
+          if (callbacks.onError) {
+            callbacks.onError(ex);
           }
         }
-      );
+      });
     } catch (ex) {
       if (callbacks.onError) {
         callbacks.onError(ex);
@@ -104,7 +146,7 @@ export abstract class Device extends BaseClass implements IDevice {
 
   protected application: Application;
 
-  private config: object;
+  private config: IDeviceConfig;
   private keyMap: { [key: string]: number };
 
   constructor(config: IDeviceConfig) {

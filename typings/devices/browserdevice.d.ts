@@ -83,7 +83,7 @@ export declare class BrowserDevice extends Device {
      * @param id The id of the element to create.
      * @param classNames An array of class names to apply to the element.
      */
-    createContainer(id?: string, classNames?: string[]): Node;
+    createContainer(id?: string, classNames?: string[]): HTMLElement;
     /**
      * Creates a label (an element that only contains text) in the device's user-agent.
      * @param id The id of the element to create.
@@ -96,7 +96,7 @@ export declare class BrowserDevice extends Device {
      * @param id The id of the element to create.
      * @param classNames An array of class names to apply to the element.
      */
-    createButton(id?: string, classNames?: string[]): Node;
+    createButton(id?: string, classNames?: string[]): HTMLElement;
     /**
      * Creates a list in the device's user-agent.
      * @param id The id of the element to create.

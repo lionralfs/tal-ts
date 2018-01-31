@@ -3,6 +3,7 @@ import { Device } from '../devices/device';
 import { BlurEvent } from '../events/blurevent';
 import { FocusEvent } from '../events/focusevent';
 import { Button } from './button';
+import { ComponentContainer } from './componentcontainer';
 import { IWidget, Widget } from './widget';
 
 export interface IContainer {
@@ -20,7 +21,7 @@ export class Container extends Widget implements IContainer {
   protected childWidgetOrder: Widget[];
   private autoRenderChildren: boolean;
 
-  constructor(id: string) {
+  constructor(id?: string) {
     super();
 
     this.childWidgets = {};
@@ -191,7 +192,11 @@ export class Container extends Widget implements IContainer {
    * @param focus `true` if the active child is to be focussed, `false` if the active child is to be blurred.
    */
   protected setActiveChildFocussed(focus) {
-    if (this.activeChildWidget && this.activeChildWidget.focussed !== focus) {
+    if (
+      this.activeChildWidget &&
+      this.activeChildWidget.focussed !== focus &&
+      this.activeChildWidget instanceof Button // TODO: check if this breaks stuff
+    ) {
       this.activeChildWidget.focussed = focus;
       if (focus) {
         this.activeChildWidget.addClass('focus');

@@ -15,7 +15,7 @@ export declare class Container extends Widget implements IContainer {
     };
     protected childWidgetOrder: Widget[];
     private autoRenderChildren;
-    constructor(id: string);
+    constructor(id?: string);
     /**
      * Removes a specific child widget from this widget.
      * @param widget The child widget to remove.

@@ -6,6 +6,7 @@
   "scripts": {
     "build": "tsc",
     "dev": "tsc -w",
+    "docs": "typedoc . --tsconfig tsconfig.json --out docs --exclude **/node_modules/** --theme minimal --ignoreCompilerErrors",
     "test": "echo \"Error: no test specified\" && exit 1",
     "lint": "tslint --project ."
   },
@@ -23,6 +24,7 @@
     "@types/requirejs": "^2.1.31",
     "tslint": "^5.9.1",
     "tslint-config-prettier": "^1.6.0",
+    "typedoc": "^0.9.0",
     "typescript": "^2.6.2"
   }
 }

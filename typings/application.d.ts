@@ -2,7 +2,7 @@ import { BaseClass } from './class';
 import { Device, IDeviceConfig } from './devices/device';
 import { BaseEvent } from './events/event';
 import { Button } from './widgets/button';
-import { ComponentContainer } from './widgets/componentcontainer';
+import { Container } from './widgets/container';
 export interface ILayout {
     classes: string[];
     css: IConfigCss[];
@@ -36,10 +36,10 @@ export declare abstract class Application extends BaseClass implements IApplicat
     private onReadyHandler;
     private device;
     private layout;
-    constructor(rootElement: Element, styleBaseUrl: string, imageBaseUrl: string, onReadyHandler: () => void, configOverride?: IDeviceConfig);
+    constructor(rootElement: Element, styleBaseUrl: string, imageBaseUrl: string, onReadyHandler: (...args: any[]) => void, configOverride?: IDeviceConfig);
     abstract run(): any;
     abstract route(route: string[]): any;
-    addComponentContainer(id: any, requireModule: any, args: any): ComponentContainer;
+    addComponentContainer(id: any, requireModule: any, args: any): Container;
     showComponent(id: string, requireModule: string, args?: object): void;
     getDevice(): Device;
     bubbleEvent(evt: BaseEvent): void;
@@ -50,5 +50,10 @@ export declare abstract class Application extends BaseClass implements IApplicat
     setFocussedWidget(button: Button): void;
     getBestFitLayout(): ILayout;
     setLayout(layout: ILayout, styleBaseUrl: string, imageBaseUrl: string, additionalCSS: IConfigCss[], additionalClasses: string[], additionalPreloadImages: string[], callback: () => void): void;
+    /**
+     * Set the root widget of the application.
+     * @param widget The new root widget.
+     */
+    setRootWidget(widget: Container): void;
     getFocussedWidget(): Button;
 }

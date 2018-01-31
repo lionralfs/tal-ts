@@ -1,7 +1,8 @@
-import { Application, IConfigCss } from '../application';
+import { Application, IConfigCss, ILayout } from '../application';
 import { BaseClass } from '../class';
 import { IShowOptions } from '../widgets/widget';
 export interface IDeviceConfig {
+    pageStrategy?: string;
     css?: IConfigCss[];
     modules: {
         base: string;
@@ -20,6 +21,48 @@ export interface IDeviceConfig {
             [key: string]: any;
         };
     };
+    streaming?: {
+        video?: {
+            mediaURIFormat: string;
+            supported: ISupportedVideoStreaming[];
+        };
+        audio?: {
+            mediaURIFormat: string;
+            supported: ISupportedAudioStreaming[];
+        };
+    };
+    accessibility?: {
+        captions: {
+            supported: string[];
+        };
+    };
+    layouts?: ILayout[];
+    networking: {
+        supportsJSONP: boolean;
+    };
+    capabilities: string[];
+    statLabels: {
+        deviceType?: string;
+        serviceType?: string;
+        browserType?: string;
+    };
+    widgets?: {
+        componentcontainer?: {
+            fade?: boolean;
+        };
+    };
+}
+export interface ISupportedVideoStreaming {
+    protocols: string[];
+    encodings: string[];
+    transferFormat: string[];
+    maximumBitRate: number;
+    maximumVideoLines: number;
+}
+export interface ISupportedAudioStreaming {
+    protocols: string[];
+    encodings: string[];
+    maximumBitRate: number;
 }
 export interface IAnimOptions {
     el: Node;
@@ -77,7 +120,7 @@ export declare abstract class Device extends BaseClass implements IDevice {
     private keyMap;
     constructor(config: IDeviceConfig);
     setApplication(app: Application): void;
-    getConfig(): object;
+    getConfig(): IDeviceConfig;
     getLogger(): ILoggingMethods;
     getKeyMap(): {
         [key: string]: number;

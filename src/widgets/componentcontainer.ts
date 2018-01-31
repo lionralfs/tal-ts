@@ -5,7 +5,7 @@ import { Container } from './container';
 import { Widget } from './widget';
 
 export interface IComponentContainer {
-  show(module: string, args?: object, keepHistory?: boolean, state?: object, fromBack?: boolean, focus?: Button): void;
+  // show(module: string, args?: object, keepHistory?: boolean, state?: object, fromBack?: boolean, focus?: Button): void;
   pushComponent(module: string, args?: object): void;
   getContent(): Container;
   back(): void;
@@ -66,7 +66,7 @@ export class ComponentContainer extends Container implements IComponentContainer
    * @param fromBack
    * @param focus
    */
-  public show(
+  public showComponent(
     module: string,
     args?: object,
     keepHistory?: boolean,
@@ -84,7 +84,7 @@ export class ComponentContainer extends Container implements IComponentContainer
 
       const focussedButton = this.getCurrentApplication().getFocussedWidget();
       if (this.currentComponent) {
-        this.hide(null, args, keepHistory, state, fromBack);
+        this.hideComponent(null, args, keepHistory, state, fromBack);
       }
 
       this.currentModule = module;
@@ -97,10 +97,12 @@ export class ComponentContainer extends Container implements IComponentContainer
       if (!this.focussed) {
         // We don't have focus, so any of our children shouldn't
         // (focussed state can be set to true if focussed widget is in a unloaded component)
-        let p = this.currentComponent;
+        let p: Container = this.currentComponent;
         while (p) {
           p.removeFocus();
-          p = p.activeChildWidget;
+          if (p.activeChildWidget instanceof Container) {
+            p = p.activeChildWidget;
+          }
         }
       }
 
@@ -164,21 +166,23 @@ export class ComponentContainer extends Container implements IComponentContainer
   }
 
   /**
-   *
+   * Pushes a component into the history stack of the container (and shows it).
+   * @param module The requirejs module name of the component to show.
+   * @param args An optional object to pass arguments to the component.
    */
   public pushComponent(module: string, args?: object) {
-    this.show(module, args, true);
+    this.showComponent(module, args, true);
   }
 
   /**
-   *
+   * Returns the widget added to this container.
    */
   public getContent(): Container {
     return this.currentComponent;
   }
 
   /**
-   *
+   * Return this component container to the previous component in the history.
    */
   public back() {
     const focus = this.currentComponent.getIsModal() ? this.previousFocus : null;
@@ -186,9 +190,9 @@ export class ComponentContainer extends Container implements IComponentContainer
     const lastComponent = this.historyStack.pop();
     if (lastComponent) {
       this.previousFocus = lastComponent.previousFocus;
-      this.show(lastComponent.module, lastComponent.args, true, lastComponent.state, true, focus);
+      this.showComponent(lastComponent.module, lastComponent.args, true, lastComponent.state, true, focus);
     } else {
-      this.hide(null, null, false, null, false);
+      this.hideComponent(null, null, false, null, false);
     }
   }
 
@@ -200,7 +204,7 @@ export class ComponentContainer extends Container implements IComponentContainer
    * @param state
    * @param fromBack
    */
-  public hide(focusToComponent, args, keepHistory, state: object, fromBack: boolean) {
+  public hideComponent(focusToComponent: string, args: object, keepHistory: boolean, state: object, fromBack: boolean) {
     if (this.currentComponent) {
       const evt = new ComponentEvent('beforehide', this, this.currentComponent, args, state, fromBack);
       this.currentComponent.bubbleEvent(evt);
@@ -287,11 +291,13 @@ export class ComponentContainer extends Container implements IComponentContainer
 
     // set the parent widget so the next event bubbles correctly through the tree
     newComponent.parentWidget = this;
-    newComponent.bubbleEvent(new ComponentEvent('load', this, ComponentContainer.knownComponents[module], args));
+    newComponent.bubbleEvent(
+      new ComponentEvent('load', this, ComponentContainer.knownComponents[module], args, null, null)
+    );
     // clear the parent widget again
     newComponent.parentWidget = null;
 
     // Show the component.
-    this.show(module, args, keepHistory, state);
+    this.showComponent(module, args, keepHistory, state);
   }
 }

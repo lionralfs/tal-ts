@@ -126,7 +126,7 @@ export class Button extends Container {
       this.addClass('buttonFocussed');
 
       // Fire a focus delay event if this button has had focus for more than x-seconds.
-      this.focusDelayHandle = setTimeout(() => {
+      this.focusDelayHandle = window.setTimeout(() => {
         this.bubbleEvent(new FocusDelayEvent(this));
       }, this.focusDelayTimeout);
 

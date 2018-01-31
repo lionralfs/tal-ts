@@ -7,6 +7,7 @@ import { ComponentContainer } from './widgets/componentcontainer';
 import { Container } from './widgets/container';
 import { Widget } from './widgets/widget';
 
+declare const antie: { framework: { deviceConfiguration: IDeviceConfig } };
 export interface ILayout {
   classes: string[];
   css: IConfigCss[];
@@ -52,7 +53,7 @@ export abstract class Application extends BaseClass implements IApplication {
   private rootElement: Element;
   private rootWidget: Container = null;
   private focussedWidget: Button = null;
-  private onReadyHandler: () => void;
+  private onReadyHandler: (...args: any[]) => void;
   private device: Device;
 
   private layout: any; // TODO
@@ -61,7 +62,7 @@ export abstract class Application extends BaseClass implements IApplication {
     rootElement: Element,
     styleBaseUrl: string,
     imageBaseUrl: string,
-    onReadyHandler: () => void,
+    onReadyHandler: (...args: any[]) => void,
     configOverride?: IDeviceConfig
   ) {
     super();
@@ -115,7 +116,7 @@ export abstract class Application extends BaseClass implements IApplication {
   public abstract route(route: string[]);
 
   public addComponentContainer(id: any, requireModule: any, args: any) {
-    const container = new ComponentContainer(id);
+    const container: Container = new ComponentContainer(id);
     this.rootWidget.appendChildWidget(container);
 
     if (requireModule) {
@@ -126,7 +127,10 @@ export abstract class Application extends BaseClass implements IApplication {
   }
 
   public showComponent(id: string, requireModule: string, args?: object) {
-    this.rootWidget.getChildWidget(id).show(requireModule, args);
+    const widget = this.rootWidget.getChildWidget(id);
+    if (widget instanceof ComponentContainer) {
+      widget.showComponent(requireModule, args);
+    }
   }
 
   public getDevice() {
@@ -152,18 +156,13 @@ export abstract class Application extends BaseClass implements IApplication {
   }
 
   public getBestFitLayout(): ILayout {
+    // TODO: add actual implementation
     return {
-      classes: ['asdf'],
-      css: [
-        {
-          width: 100,
-          height: 200,
-          files: []
-        }
-      ],
-      width: 100,
-      height: 200,
-      module: 'asdf'
+      classes: ['browserdevice720p'],
+      css: [],
+      height: 720,
+      module: 'layouts/layout720p',
+      width: 1280
     };
   }
 
@@ -214,6 +213,29 @@ export abstract class Application extends BaseClass implements IApplication {
       for (i = 0; i !== css.length; i += 1) {
         this.device.loadStyleSheet(styleBaseUrl + css[i]);
       }
+    }
+  }
+
+  /**
+   * Set the root widget of the application.
+   * @param widget The new root widget.
+   */
+  public setRootWidget(widget: Container) {
+    widget.addClass('rootwidget');
+    // if (widget instanceof List) {
+    //   widget.setRenderMode(List.RENDER_MODE_CONTAINER);
+    // }
+    this.rootWidget = widget;
+    this.rootWidget.focussed = true;
+    if (!this.rootWidget.outputElement) {
+      const device = this.getDevice();
+      device.appendChildElement(this.rootElement, widget.render(device));
+    }
+
+    if (this.onReadyHandler) {
+      this.rootWidget.addEventListener('applicationready', e => {
+        this.onReadyHandler(e);
+      });
     }
   }
 

@@ -1,3 +1,4 @@
+import { IDeviceConfig } from '../devices/device';
 import { RuntimeContext } from '../runtimecontext';
 import { IHistoryItem } from './componentcontainer';
 import { Container } from './container';
@@ -6,7 +7,7 @@ export interface IComponent {
   hide(): void;
   getCurrentState(): IHistoryItem;
   getIsModal(): boolean;
-  getConfig(): object;
+  getConfig(): IDeviceConfig;
   isComponent(): boolean;
 }
 
