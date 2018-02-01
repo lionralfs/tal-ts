@@ -99,7 +99,8 @@ export class MediaSource extends BaseClass {
   }
 
   /**
-   * Get the media type of this source. Either  <code>MediaType.MEDIA_TYPE_UNKNOWN</code>, <code>MediaType.MEDIA_TYPE_AUDIO</code> or <code>MediaType.MEDIA_TYPE_VIDEO</code>.
+   * Get the media type of this source. Either  `MediaType.MEDIA_TYPE_UNKNOWN`,
+   * `MediaType.MEDIA_TYPE_AUDIO` or `MediaType.MEDIA_TYPE_VIDEO`.
    * Returns the media type of this content.
    */
   public getMediaType(): number {
