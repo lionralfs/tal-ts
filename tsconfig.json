@@ -6,6 +6,7 @@
     "sourceMap": true,
     "declaration": true,
     "declarationDir": "typings"
+    // "noImplicitAny": true
   },
   "include": ["src/**/*.ts"],
   "exclude": ["node_modules"]

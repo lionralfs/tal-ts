@@ -1,5 +1,6 @@
 import { Application, IConfigCss, ILayout } from '../application';
 import { BaseClass } from '../class';
+import { ISize } from '../widgets/image';
 import { IShowOptions } from '../widgets/widget';
 export interface IDeviceConfig {
     pageStrategy?: string;
@@ -101,7 +102,7 @@ export interface IDevice {
     addClassToElement(el: Node, className: string): void;
     addKeyEventListener(): void;
     getChildElementsByTagName(el: Node, tagName: string): Node[];
-    showElement(options: IShowElementOptions): object;
+    showElement(options: IShowElementOptions): void;
     loadStyleSheet(url: string, callback: (res?: string) => void): void;
     clearElement(el: HTMLElement): void;
     getConfig(): object;
@@ -127,10 +128,11 @@ export declare abstract class Device extends BaseClass implements IDevice {
     };
     abstract preloadImage(url: string): void;
     abstract getCurrentRoute(): string[];
+    abstract prependChildElement(to: HTMLElement, el: HTMLElement): void;
     abstract appendChildElement(to: Node, el: Node): void;
     abstract setElementClasses(el: Node, classNames: string[]): void;
     abstract removeClassFromElement(el: Node, className: string, deep?: boolean): void;
-    abstract addClassToElement(el: Node, className: string): any;
+    abstract addClassToElement(el: Node, className: string): void;
     /**
      * Adds global key event listener(s) to the user-agent.
      * This must be added in a way that all key events within the user-agent
@@ -142,7 +144,7 @@ export declare abstract class Device extends BaseClass implements IDevice {
      *     self._application.bubbleEvent(new KeyEvent('keydown', keyMap[e.keyCode]));
      * };
      */
-    abstract addKeyEventListener(): any;
+    abstract addKeyEventListener(): void;
     abstract getChildElementsByTagName(el: Node, tagName: string): Node[];
     abstract getTopLevelElement(): Node;
     abstract getStylesheetElements(): Node[];
@@ -150,21 +152,15 @@ export declare abstract class Device extends BaseClass implements IDevice {
         top: number;
         left: number;
     };
-    abstract getElementSize(el: HTMLElement): {
-        width: number;
-        height: number;
-    };
-    abstract setElementSize(el: HTMLElement, size: {
-        width?: number;
-        height?: number;
-    }): void;
+    abstract getElementSize(el: HTMLElement): ISize;
+    abstract setElementSize(el: HTMLElement, size: ISize): void;
     abstract setElementContent(el: HTMLElement, content: string, enableHTML?: boolean): void;
-    abstract scrollElementTo(options: IAnimOptions): any;
-    abstract moveElementTo(options: IAnimOptions): any;
-    abstract hideElement(options: IAnimOptions): any;
-    abstract showElement(options: IAnimOptions): any;
-    abstract tweenElementStyle(options: IAnimOptions): any;
-    abstract stopAnimation(anim: object): any;
+    abstract scrollElementTo(options: IAnimOptions): void;
+    abstract moveElementTo(options: IAnimOptions): void;
+    abstract hideElement(options: IAnimOptions): void;
+    abstract showElement(options: IAnimOptions): void;
+    abstract tweenElementStyle(options: IAnimOptions): void;
+    abstract stopAnimation(anim: object): void;
     abstract loadStyleSheet(url: string, callback?: (res: string) => void): void;
     /**
      * Clears the content of an element.
@@ -180,9 +176,6 @@ export declare abstract class Device extends BaseClass implements IDevice {
     abstract createButton(id?: string, classNames?: string[]): HTMLElement;
     abstract createList(id?: string, classNames?: string[]): Node;
     abstract createListItem(id?: string, classNames?: string[]): Node;
-    abstract createImage(src: string, id?: string, classNames?: string[], size?: {
-        width?: number;
-        height?: number;
-    }, onLoad?: (...args: any[]) => void, onError?: (...args: any[]) => void): Node;
+    abstract createImage(src: string, id?: string, classNames?: string[], size?: ISize, onLoad?: (...args: any[]) => void, onError?: (...args: any[]) => void): HTMLImageElement;
     abstract removeElement(el: HTMLElement): void;
 }

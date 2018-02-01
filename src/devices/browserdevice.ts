@@ -1,5 +1,6 @@
 import { KeyEvent } from '../events/keyevent';
 import { Historian } from '../historian';
+import { ISize } from '../widgets/image';
 import { Device, IAnimOptions, IDevice } from './device';
 
 export class BrowserDevice extends Device {
@@ -11,6 +12,19 @@ export class BrowserDevice extends Device {
   public getCurrentRoute() {
     const unescaped = decodeURI(window.location.hash).split(Historian.HISTORY_TOKEN, 1)[0];
     return unescaped.replace(/^#/, '').split('/');
+  }
+
+  /**
+   * Prepends an element as a child of another.
+   * @param {Element} to Prepend as a child of this element.
+   * @param {Element} el The new child element.
+   */
+  public prependChildElement(to: HTMLElement, el: HTMLElement) {
+    if (to.childNodes.length > 0) {
+      to.insertBefore(el, to.childNodes[0]);
+    } else {
+      to.appendChild(el);
+    }
   }
 
   public appendChildElement(to: Element, el: Element) {
@@ -370,10 +384,10 @@ export class BrowserDevice extends Device {
     src: string,
     id?: string,
     classNames?: string[],
-    size?: { width?: number; height?: number },
+    size?: ISize,
     onLoad?: (...args: any[]) => void,
     onError?: (...args: any[]) => void
-  ): Node {
+  ): HTMLImageElement {
     const el = this.createElement('img', id, classNames);
     el.src = src;
     el.alt = '';

@@ -1,6 +1,7 @@
 import { Application, IConfigCss, ILayout } from '../application';
 import { BaseClass } from '../class';
 import { KeyEvent } from '../events/keyevent';
+import { ISize } from '../widgets/image';
 import { IShowOptions } from '../widgets/widget';
 
 // TODO: this needs more checks
@@ -109,7 +110,7 @@ export interface IDevice {
   addClassToElement(el: Node, className: string): void;
   addKeyEventListener(): void;
   getChildElementsByTagName(el: Node, tagName: string): Node[];
-  showElement(options: IShowElementOptions): object;
+  showElement(options: IShowElementOptions): void;
   loadStyleSheet(url: string, callback: (res?: string) => void): void;
   clearElement(el: HTMLElement): void;
   getConfig(): object;
@@ -340,13 +341,15 @@ export abstract class Device extends BaseClass implements IDevice {
 
   public abstract getCurrentRoute(): string[];
 
+  public abstract prependChildElement(to: HTMLElement, el: HTMLElement): void;
+
   public abstract appendChildElement(to: Node, el: Node): void;
 
   public abstract setElementClasses(el: Node, classNames: string[]): void;
 
   public abstract removeClassFromElement(el: Node, className: string, deep?: boolean): void;
 
-  public abstract addClassToElement(el: Node, className: string);
+  public abstract addClassToElement(el: Node, className: string): void;
 
   /**
    * Adds global key event listener(s) to the user-agent.
@@ -359,7 +362,7 @@ export abstract class Device extends BaseClass implements IDevice {
    *     self._application.bubbleEvent(new KeyEvent('keydown', keyMap[e.keyCode]));
    * };
    */
-  public abstract addKeyEventListener();
+  public abstract addKeyEventListener(): void;
 
   public abstract getChildElementsByTagName(el: Node, tagName: string): Node[];
 
@@ -369,23 +372,23 @@ export abstract class Device extends BaseClass implements IDevice {
 
   public abstract getElementOffset(el: HTMLElement): { top: number; left: number };
 
-  public abstract getElementSize(el: HTMLElement): { width: number; height: number };
+  public abstract getElementSize(el: HTMLElement): ISize;
 
-  public abstract setElementSize(el: HTMLElement, size: { width?: number; height?: number }): void;
+  public abstract setElementSize(el: HTMLElement, size: ISize): void;
 
   public abstract setElementContent(el: HTMLElement, content: string, enableHTML?: boolean): void;
 
-  public abstract scrollElementTo(options: IAnimOptions);
+  public abstract scrollElementTo(options: IAnimOptions): void;
 
-  public abstract moveElementTo(options: IAnimOptions);
+  public abstract moveElementTo(options: IAnimOptions): void;
 
-  public abstract hideElement(options: IAnimOptions);
+  public abstract hideElement(options: IAnimOptions): void;
 
-  public abstract showElement(options: IAnimOptions);
+  public abstract showElement(options: IAnimOptions): void;
 
-  public abstract tweenElementStyle(options: IAnimOptions); // TODO: check options
+  public abstract tweenElementStyle(options: IAnimOptions): void; // TODO: check options
 
-  public abstract stopAnimation(anim: object); // TODO: implement anim interface
+  public abstract stopAnimation(anim: object): void; // TODO: implement anim interface
 
   public abstract loadStyleSheet(url: string, callback?: (res: string) => void): void;
 
@@ -414,10 +417,10 @@ export abstract class Device extends BaseClass implements IDevice {
     src: string,
     id?: string,
     classNames?: string[],
-    size?: { width?: number; height?: number },
+    size?: ISize,
     onLoad?: (...args: any[]) => void,
     onError?: (...args: any[]) => void
-  ): Node;
+  ): HTMLImageElement;
 
   public abstract removeElement(el: HTMLElement): void;
 }

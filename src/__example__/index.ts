@@ -1,5 +1,7 @@
 import { Application } from '../application';
+import { Button } from '../widgets/button';
 import { Container } from '../widgets/container';
+import { Image } from '../widgets/image';
 import { Label } from '../widgets/label';
 
 class TestApp extends Application {
@@ -19,8 +21,14 @@ class TestApp extends Application {
     container.outputElement = this.appDiv;
     this.setRootWidget(container);
 
+    const button = new Button();
     const label = new Label('asdf', 'Hello World');
-    container.appendChildWidget(label);
+    button.appendChildWidget(label);
+    container.appendChildWidget(button);
+
+    const image = new Image('test', 'image/test.png');
+
+    container.appendChildWidget(image);
   }
 
   public route() {

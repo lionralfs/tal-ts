@@ -1,7 +1,14 @@
+import { ISize } from '../widgets/image';
 import { Device, IAnimOptions } from './device';
 export declare class BrowserDevice extends Device {
     preloadImage(url: string): void;
     getCurrentRoute(): string[];
+    /**
+     * Prepends an element as a child of another.
+     * @param {Element} to Prepend as a child of this element.
+     * @param {Element} el The new child element.
+     */
+    prependChildElement(to: HTMLElement, el: HTMLElement): void;
     appendChildElement(to: Element, el: Element): void;
     setElementClasses(el: Element, classNames: string[]): void;
     /**
@@ -134,10 +141,7 @@ export declare class BrowserDevice extends Device {
      * @param onLoad The image.onload callback
      * @param onError The image.onerror callback
      */
-    createImage(src: string, id?: string, classNames?: string[], size?: {
-        width?: number;
-        height?: number;
-    }, onLoad?: (...args: any[]) => void, onError?: (...args: any[]) => void): Node;
+    createImage(src: string, id?: string, classNames?: string[], size?: ISize, onLoad?: (...args: any[]) => void, onError?: (...args: any[]) => void): HTMLImageElement;
     /**
      * Removes an element from its parent.
      * @param el The element to remove.
