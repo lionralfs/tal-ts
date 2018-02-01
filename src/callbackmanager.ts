@@ -27,8 +27,8 @@ export class CallbackManager extends BaseClass {
 
   /**
    * Remove the specified callback.
-   * @param {Object} thisArg The object that was used as "this" when adding the callback.
-   * @param {Function} callback The callback function
+   * @param thisArg The object that was used as "this" when adding the callback.
+   * @param callback The callback function
    */
   public removeCallback(thisArg: object, callback: (...args: any[]) => void) {
     const foundIndex = this.getIndexOf(thisArg, callback);

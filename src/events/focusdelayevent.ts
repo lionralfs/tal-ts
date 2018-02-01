@@ -9,7 +9,7 @@ export class FocusDelayEvent extends BaseEvent {
   public target: Button;
 
   /**
-   * @param {antie.widgets.Button} target The button which gained focus.
+   * @param target The button which gained focus.
    */
   constructor(target: Button) {
     super('focusdelay');

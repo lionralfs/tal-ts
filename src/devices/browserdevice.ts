@@ -18,8 +18,8 @@ export class BrowserDevice extends Device {
 
   /**
    * Prepends an element as a child of another.
-   * @param {Element} to Prepend as a child of this element.
-   * @param {Element} el The new child element.
+   * @param to Prepend as a child of this element.
+   * @param el The new child element.
    */
   public prependChildElement(to: HTMLElement, el: HTMLElement) {
     if (to.childNodes.length > 0) {

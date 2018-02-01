@@ -198,7 +198,7 @@ export abstract class MediaPlayer extends BaseClass {
    * This function can only be called from the STOPPED state; calling it from any other state is an error.
    * Clamps the time to the seekable range of the media.
    * If trying to play at (or past) the very end of the media, this will actually begin playback before the end.
-   * @param {Number} seconds Time to play from in seconds from the start of the media
+   * @param seconds Time to play from in seconds from the start of the media
    */
   public abstract beginPlaybackFrom(seconds: number): void;
 
