@@ -1,6 +1,7 @@
 import { Application, IConfigCss, ILayout } from '../application';
 import { BaseClass } from '../class';
 import { KeyEvent } from '../events/keyevent';
+import { MediaPlayer } from '../mediaplayer/mediaplayer';
 import { ISize } from '../widgets/image';
 import { IShowOptions } from '../widgets/widget';
 
@@ -33,6 +34,9 @@ export interface IDeviceConfig {
     audio?: {
       mediaURIFormat: string;
       supported: ISupportedAudioStreaming[];
+    };
+    overrides?: {
+      clampOffsetFromEndOfRange: number;
     };
   };
   accessibility?: {
@@ -423,4 +427,23 @@ export abstract class Device extends BaseClass implements IDevice {
   ): HTMLImageElement;
 
   public abstract removeElement(el: HTMLElement): void;
+
+  /**
+   * Get the media player.
+   * This will return the correct implementation for the current device.
+   * Returns a MediaPlayer for the current device.
+   */
+  public abstract getMediaPlayer(): MediaPlayer;
+
+  /**
+   * Creates an element in the device's user-agent.
+   * @param tagName The tag name of the element to create.
+   * @param id The id of the element to create.
+   * @param classNames An array of class names to apply to the element.
+   */
+  public abstract createElement<K extends keyof HTMLElementTagNameMap>(
+    tagName?: K,
+    id?: string,
+    classNames?: string[]
+  ): HTMLElementTagNameMap[K];
 }

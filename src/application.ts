@@ -239,6 +239,15 @@ export abstract class Application extends BaseClass implements IApplication {
     }
   }
 
+  /**
+   * Get the root widget of the application.
+   *
+   * Returns the root widget of the application.
+   */
+  public getRootWidget(): Container {
+    return this.rootWidget;
+  }
+
   public getFocussedWidget() {
     return this.focussedWidget;
   }

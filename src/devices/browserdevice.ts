@@ -1,5 +1,7 @@
 import { KeyEvent } from '../events/keyevent';
 import { Historian } from '../historian';
+import { HTML5MediaPlayer } from '../mediaplayer/html5';
+import { MediaPlayer } from '../mediaplayer/mediaplayer';
 import { ISize } from '../widgets/image';
 import { Device, IAnimOptions, IDevice } from './device';
 
@@ -413,17 +415,13 @@ export class BrowserDevice extends Device {
     }
   }
 
-  private trim(str: string): string {
-    return str.replace(/^\s+/, '').replace(/\s+$/, '');
-  }
-
   /**
    * Creates an element in the device's user-agent.
    * @param tagName The tag name of the element to create.
    * @param id The id of the element to create.
    * @param classNames An array of class names to apply to the element.
    */
-  private createElement<K extends keyof HTMLElementTagNameMap>(
+  public createElement<K extends keyof HTMLElementTagNameMap>(
     tagName?: K,
     id?: string,
     classNames?: string[]
@@ -438,5 +436,13 @@ export class BrowserDevice extends Device {
       el.className = classNames.join(' ');
     }
     return el;
+  }
+
+  public getMediaPlayer(): MediaPlayer {
+    return new HTML5MediaPlayer();
+  }
+
+  private trim(str: string): string {
+    return str.replace(/^\s+/, '').replace(/\s+$/, '');
   }
 }
