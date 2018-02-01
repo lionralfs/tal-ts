@@ -1,5 +1,6 @@
 import { Application } from '../application';
 import { Container } from '../widgets/container';
+import { Label } from '../widgets/label';
 
 class TestApp extends Application {
   private appDiv: HTMLElement;
@@ -17,6 +18,9 @@ class TestApp extends Application {
 
     container.outputElement = this.appDiv;
     this.setRootWidget(container);
+
+    const label = new Label('asdf', 'Hello World');
+    container.appendChildWidget(label);
   }
 
   public route() {

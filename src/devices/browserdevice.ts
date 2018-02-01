@@ -262,13 +262,49 @@ export class BrowserDevice extends Device {
    * @param el The element of which to change the content.
    * @param content The new content for the element.
    */
-  public setElementContent(el: HTMLElement, content: string, enableHTML: boolean): void {
+  public setElementContent(el: HTMLElement, content: string, enableHTML?: boolean): void {
     if (content === '') {
       this.clearElement(el);
       return;
     }
 
     el[enableHTML ? 'innerHTML' : 'textContent'] = content;
+  }
+
+  /**
+   * Get the height (in pixels) of a given block of text (of a provided set of class names) when constrained to a fixed width.
+   *
+   * @deprecated This function does not always give accurate results. When measuring size, it only takes into account
+   * the classes on the text element being measured. It doesn't consider any CSS styles that may have been passed down
+   * through the DOM.
+   *
+   * Returns the height (in pixels) that is required to display this block of text.
+   *
+   * @param text The text to measure.
+   * @param maxWidth The width the text is constrained to.
+   * @param classNames An array of class names which define the style of the text.
+   */
+  public getTextHeight(text: string, maxWidth: number, classNames: string[]) {
+    // TODO: is there a more efficient way of doing this?
+    // const cacheKey = maxWidth + ':' + classNames.join(' ') + ':' + text;
+    // let height;
+    // if (!(height = this.textSizeCache[cacheKey])) {
+    //   if (!this.measureTextElement) {
+    //     this.measureTextElement = this.createLabel('measure', null, 'fW');
+    //     this.measureTextElement.style.display = 'block';
+    //     this.measureTextElement.style.position = 'absolute';
+    //     this.measureTextElement.style.top = '-10000px';
+    //     this.measureTextElement.style.left = '-10000px';
+    //     this.appendChildElement(document.body, this.measureTextElement);
+    //   }
+    //   this.measureTextElement.className = classNames.join(' ');
+    //   this.measureTextElement.style.width = typeof maxWidth === 'number' ? maxWidth + 'px' : maxWidth;
+    //   this.measureTextElement.innerHTML = text;
+
+    //   height = this.textSizeCache[cacheKey] = this.measureTextElement.clientHeight;
+    // }
+    // return height;
+    return 3;
   }
 
   /**
@@ -285,8 +321,9 @@ export class BrowserDevice extends Device {
    * @param id The id of the element to create.
    * @param classNames An array of class names to apply to the element.
    * @param text The text within the label.
+   * @param enableHTML Interpret text as html
    */
-  public createLabel(id?: string, classNames?: string[], text?: string, enableHTML?: boolean): Node {
+  public createLabel(id?: string, classNames?: string[], text?: string, enableHTML?: boolean): HTMLElement {
     const el = this.createElement('span', id, classNames);
     this.setElementContent(el, text, enableHTML);
     return el;

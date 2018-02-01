@@ -158,6 +158,7 @@ export declare abstract class Device extends BaseClass implements IDevice {
         width?: number;
         height?: number;
     }): void;
+    abstract setElementContent(el: HTMLElement, content: string, enableHTML?: boolean): void;
     abstract scrollElementTo(options: IAnimOptions): any;
     abstract moveElementTo(options: IAnimOptions): any;
     abstract hideElement(options: IAnimOptions): any;
@@ -171,7 +172,11 @@ export declare abstract class Device extends BaseClass implements IDevice {
      */
     abstract clearElement(el: HTMLElement): void;
     abstract createContainer(id?: string, classNames?: string[]): HTMLElement;
-    abstract createLabel(id?: string, classNames?: string[], text?: string): Node;
+    abstract createLabel(id?: string, classNames?: string[], text?: string, enableHTML?: boolean): HTMLElement;
+    /**
+     * @deprecated
+     */
+    abstract getTextHeight(text: string, maxWidth: number, classNames: string[]): number;
     abstract createButton(id?: string, classNames?: string[]): HTMLElement;
     abstract createList(id?: string, classNames?: string[]): Node;
     abstract createListItem(id?: string, classNames?: string[]): Node;
