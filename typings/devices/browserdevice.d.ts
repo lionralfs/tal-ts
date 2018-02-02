@@ -1,3 +1,4 @@
+import { MediaPlayer } from '../mediaplayer/mediaplayer';
 import { ISize } from '../widgets/image';
 import { Device, IAnimOptions } from './device';
 export declare class BrowserDevice extends Device {
@@ -5,8 +6,8 @@ export declare class BrowserDevice extends Device {
     getCurrentRoute(): string[];
     /**
      * Prepends an element as a child of another.
-     * @param {Element} to Prepend as a child of this element.
-     * @param {Element} el The new child element.
+     * @param to Prepend as a child of this element.
+     * @param el The new child element.
      */
     prependChildElement(to: HTMLElement, el: HTMLElement): void;
     appendChildElement(to: Element, el: Element): void;
@@ -147,12 +148,13 @@ export declare class BrowserDevice extends Device {
      * @param el The element to remove.
      */
     removeElement(el: HTMLElement): void;
-    private trim(str);
     /**
      * Creates an element in the device's user-agent.
      * @param tagName The tag name of the element to create.
      * @param id The id of the element to create.
      * @param classNames An array of class names to apply to the element.
      */
-    private createElement<K>(tagName?, id?, classNames?);
+    createElement<K extends keyof HTMLElementTagNameMap>(tagName?: K, id?: string, classNames?: string[]): HTMLElementTagNameMap[K];
+    getMediaPlayer(): MediaPlayer;
+    private trim(str);
 }

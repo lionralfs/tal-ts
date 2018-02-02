@@ -7,7 +7,7 @@ import { BaseEvent } from './event';
 export declare class FocusDelayEvent extends BaseEvent {
     target: Button;
     /**
-     * @param {antie.widgets.Button} target The button which gained focus.
+     * @param target The button which gained focus.
      */
     constructor(target: Button);
 }

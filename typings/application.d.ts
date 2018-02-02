@@ -55,5 +55,11 @@ export declare abstract class Application extends BaseClass implements IApplicat
      * @param widget The new root widget.
      */
     setRootWidget(widget: Container): void;
+    /**
+     * Get the root widget of the application.
+     *
+     * Returns the root widget of the application.
+     */
+    getRootWidget(): Container;
     getFocussedWidget(): Button;
 }

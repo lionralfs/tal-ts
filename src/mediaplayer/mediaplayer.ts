@@ -344,6 +344,10 @@ export abstract class MediaPlayer extends BaseClass {
     return Math.abs(currentTime - targetTime) <= this.CURRENT_TIME_TOLERANCE;
   }
 
+  protected isLiveMedia() {
+    return this.type === MediaPlayer.TYPE.LIVE_VIDEO || this.type === MediaPlayer.TYPE.LIVE_AUDIO;
+  }
+
   private getClampOffsetFromConfig() {
     let clampOffsetFromEndOfRange: number;
     const config = RuntimeContext.getDevice().getConfig();
@@ -356,9 +360,5 @@ export abstract class MediaPlayer extends BaseClass {
     } else {
       return this.CLAMP_OFFSET_FROM_END_OF_RANGE;
     }
-  }
-
-  private isLiveMedia() {
-    return this.type === MediaPlayer.TYPE.LIVE_VIDEO || this.type === MediaPlayer.TYPE.LIVE_AUDIO;
   }
 }
