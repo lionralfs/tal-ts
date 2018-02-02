@@ -10,7 +10,7 @@ export class Page extends Component {
     super();
 
     const button = new Button();
-    const label = new Label('testlabel', 'Launch custom video player (press enter)');
+    const label = new Label('Launch custom video player (press enter)');
     button.appendChildWidget(label);
 
     button.addEventListener('keydown', e => {
