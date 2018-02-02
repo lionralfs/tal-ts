@@ -9,7 +9,6 @@ export interface IRuntimeContext extends BaseClass {
 }
 export declare class RuntimeContextClass extends BaseClass implements IRuntimeContext {
     private static applicationObject;
-    constructor();
     clearCurrentApplication(): void;
     setCurrentApplication(app: Application): void;
     getCurrentApplication(): Application;

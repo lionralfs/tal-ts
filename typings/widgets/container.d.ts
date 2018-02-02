@@ -72,8 +72,18 @@ export declare class Container extends Widget implements IContainer {
      */
     setActiveChildWidget(widget: Widget): boolean;
     /**
+     * Checks to see if a widget is focussable, i.e. contains an enabled button.
+     */
+    isFocusable(): boolean;
+    /**
+     * Moves focus to a button within this container. Focused button will be that which follows
+     * the current 'active' path.
+     * Returns `true` if focus has been moved to a button. Otherwise returns `false`.
+     */
+    focus(): boolean;
+    /**
      * Flags the active child as focussed or blurred.
      * @param focus `true` if the active child is to be focussed, `false` if the active child is to be blurred.
      */
-    protected setActiveChildFocussed(focus: any): void;
+    protected setActiveChildFocussed(focus: boolean): void;
 }

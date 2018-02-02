@@ -59,7 +59,7 @@ export abstract class Widget extends BaseClass implements IWidget {
   }
 
   public pushComponent(...args: any[]) {
-    throw new Error(`pushComponent called on Widget. Args: ${args}`);
+    throw new TypeError(`pushComponent called on Widget. Args: ${args}`);
   }
 
   public addClass(className) {
@@ -95,6 +95,28 @@ export abstract class Widget extends BaseClass implements IWidget {
     }
     if (listeners.indexOf(func) === -1) {
       listeners.push(func);
+    }
+  }
+
+  /**
+   * Removes an event listener function to this widget.
+   * @param {String} ev The event type that the listener is to be removed from (e.g. <code>keydown</code>)
+   * @param {Function} func The handler to be removed.
+   * @see antie.events.Event
+   */
+  public removeEventListener(ev: string, func: (...args: any[]) => void) {
+    const listeners = this.eventListeners[ev];
+
+    if (!listeners) {
+      RuntimeContext.getDevice()
+        .getLogger()
+        .error('Attempting to remove non-existent event listener');
+      return false;
+    }
+
+    const listener = listeners.indexOf(func);
+    if (listener !== -1) {
+      listeners.splice(listener, 1);
     }
   }
 

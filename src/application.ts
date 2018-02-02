@@ -115,6 +115,18 @@ export abstract class Application extends BaseClass implements IApplication {
 
   public abstract route(route: string[]);
 
+  /**
+   * Must be called when the application startup is complete and application can accept user input.
+   */
+  public ready() {
+    if (this.onReadyHandler) {
+      // Run this after the current execution path is complete
+      window.setTimeout(() => {
+        this.onReadyHandler(this);
+      }, 0);
+    }
+  }
+
   public addComponentContainer(id: string, requireModule?: string, args?: object) {
     const container: Container = new ComponentContainer(id);
     this.rootWidget.appendChildWidget(container);
@@ -258,7 +270,64 @@ export abstract class Application extends BaseClass implements IApplication {
     return this.rootWidget;
   }
 
-  public getFocussedWidget() {
+  public getFocussedWidget(): Button {
     return this.focussedWidget;
+  }
+
+  /**
+   * Removes an event listener from the root widget.
+   * @param evt The event to handle.
+   * @param handler The handler function to remove.
+   */
+  public removeEventListener(evt: string, handler: (...args: any[]) => void): void {
+    this.rootWidget.removeEventListener(evt, handler);
+  }
+
+  /**
+   * Destroys the application, allowing you to run another. This is mainly for use when building
+   * unit or BDD tests.
+   */
+  public destroy(): void {
+    RuntimeContext.clearCurrentApplication();
+    ComponentContainer.destroy();
+  }
+
+  /**
+   * Navigates back to whatever launched the application (a parent TAL application, broadcast, or exit).
+   */
+  public back(): void {
+    const historian = this.getDevice().getHistorian();
+    if (historian.hasHistory()) {
+      this.getDevice().setWindowLocationUrl(historian.back());
+    } else {
+      this.exit();
+    }
+  }
+
+  /**
+   * Returns a Boolean value to indicate whether the application can go back to a parent TAL application.
+   * Returns `true` if the application can return to a parent TAL application.
+   */
+  public hasHistory(): boolean {
+    return this.getDevice()
+      .getHistorian()
+      .hasHistory();
+  }
+
+  /**
+   * Exits the application by using the configured exit strategy for the device, even if there is a parent TAL
+   * application in the history stack. Will exit to broadcast if the first TAL application was launched from
+   * broadcast and a broadcast exit modifier is loaded.
+   */
+  public exit() {
+    if (
+      this.getDevice()
+        .getHistorian()
+        .hasBroadcastOrigin()
+    ) {
+      this.getDevice().exitToBroadcast();
+    } else {
+      this.getDevice().exit();
+    }
   }
 }

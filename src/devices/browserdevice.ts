@@ -6,6 +6,9 @@ import { ISize } from '../widgets/image';
 import { Device, IAnimOptions, IDevice } from './device';
 
 export class BrowserDevice extends Device {
+  private mediaPlayer = new HTML5MediaPlayer();
+  private windowLocation: Location;
+
   public preloadImage(url: string) {
     const img = new Image();
     img.src = url;
@@ -14,6 +17,52 @@ export class BrowserDevice extends Device {
   public getCurrentRoute() {
     const unescaped = decodeURI(window.location.hash).split(Historian.HISTORY_TOKEN, 1)[0];
     return unescaped.replace(/^#/, '').split('/');
+  }
+
+  public getWindowLocation(): Location {
+    const windowLocation = this.windowLocation || window.location; // Allow stubbing for unit testing
+    let copyProps;
+    let prop;
+    let i;
+    let newLocation;
+
+    // Has the device missed the route off the href? Fix this.
+    if (
+      windowLocation.hash &&
+      windowLocation.hash.length > 1 &&
+      windowLocation.href &&
+      windowLocation.href.lastIndexOf('#') === -1
+    ) {
+      // Copy properties to new object, as modifying href on the original window.location triggers a navigation.
+      newLocation = {};
+      copyProps = ['assign', 'hash', 'host', 'href', 'pathname', 'protocol', 'search'];
+      for (i = 0; i < copyProps.length; i++) {
+        prop = copyProps[i];
+        if (windowLocation.hasOwnProperty(prop)) {
+          newLocation[prop] = windowLocation[prop];
+        }
+      }
+      newLocation.href = newLocation.href + newLocation.hash;
+    }
+
+    // Use copy of window.location if it was created, otherwise the original.
+    return newLocation || windowLocation;
+  }
+
+  /**
+   * Browse to the specified location. Use launchAppFromURL() and setCurrentRoute() under Application
+   * to manipulate the current location more easily.
+   * @param url Full URL to navigate to, including search and hash if applicable.
+   */
+  public setWindowLocationUrl(url: string) {
+    const windowLocation: Location = this.windowLocation || window.location; // Allow stubbing for unit testing
+
+    // Prefer assign(), but some devices don't have this function.
+    if (typeof windowLocation.assign === 'function') {
+      windowLocation.assign(url);
+    } else {
+      windowLocation.href = url;
+    }
   }
 
   /**
@@ -415,6 +464,10 @@ export class BrowserDevice extends Device {
     }
   }
 
+  public getMediaPlayer(): MediaPlayer {
+    return this.mediaPlayer;
+  }
+
   /**
    * Creates an element in the device's user-agent.
    * @param tagName The tag name of the element to create.
@@ -438,8 +491,22 @@ export class BrowserDevice extends Device {
     return el;
   }
 
-  public getMediaPlayer(): MediaPlayer {
-    return new HTML5MediaPlayer();
+  public getHistorian() {
+    return new Historian(decodeURI(this.getWindowLocation().href));
+  }
+
+  /**
+   * Exits to broadcast if this function has been overloaded by a modifier. Otherwise, calls exit().
+   */
+  public exitToBroadcast() {
+    this.exit();
+  }
+
+  /**
+   * Exits the application by invoking the window.close method
+   */
+  public exit(): void {
+    window.close();
   }
 
   private trim(str: string): string {

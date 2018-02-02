@@ -12,11 +12,6 @@ export interface IRuntimeContext extends BaseClass {
 export class RuntimeContextClass extends BaseClass implements IRuntimeContext {
   private static applicationObject: Application;
 
-  constructor() {
-    super();
-    console.log('created RuntimeContext');
-  }
-
   public clearCurrentApplication() {
     RuntimeContextClass.applicationObject = null;
   }

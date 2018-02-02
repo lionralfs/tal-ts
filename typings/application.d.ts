@@ -39,6 +39,10 @@ export declare abstract class Application extends BaseClass implements IApplicat
     constructor(rootElement: Element, styleBaseUrl: string, imageBaseUrl: string, onReadyHandler?: (...args: any[]) => void, configOverride?: IDeviceConfig);
     abstract run(): any;
     abstract route(route: string[]): any;
+    /**
+     * Must be called when the application startup is complete and application can accept user input.
+     */
+    ready(): void;
     addComponentContainer(id: string, requireModule?: string, args?: object): Container;
     showComponent(id: string, requireModule: string, args?: object): void;
     /**
@@ -69,4 +73,30 @@ export declare abstract class Application extends BaseClass implements IApplicat
      */
     getRootWidget(): Container;
     getFocussedWidget(): Button;
+    /**
+     * Removes an event listener from the root widget.
+     * @param evt The event to handle.
+     * @param handler The handler function to remove.
+     */
+    removeEventListener(evt: string, handler: (...args: any[]) => void): void;
+    /**
+     * Destroys the application, allowing you to run another. This is mainly for use when building
+     * unit or BDD tests.
+     */
+    destroy(): void;
+    /**
+     * Navigates back to whatever launched the application (a parent TAL application, broadcast, or exit).
+     */
+    back(): void;
+    /**
+     * Returns a Boolean value to indicate whether the application can go back to a parent TAL application.
+     * Returns `true` if the application can return to a parent TAL application.
+     */
+    hasHistory(): boolean;
+    /**
+     * Exits the application by using the configured exit strategy for the device, even if there is a parent TAL
+     * application in the history stack. Will exit to broadcast if the first TAL application was launched from
+     * broadcast and a broadcast exit modifier is loaded.
+     */
+    exit(): void;
 }

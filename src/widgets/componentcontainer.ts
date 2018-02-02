@@ -125,8 +125,8 @@ export class ComponentContainer extends Container implements IComponentContainer
       const evt = new ComponentEvent('beforeshow', this, this.currentComponent, args, state, fromBack);
       this.currentComponent.bubbleEvent(evt);
 
-      if (focussedButton) {
-        focussedButton.focus();
+      if (focus) {
+        focus.focus();
       }
 
       if (!evt.isDefaultPrevented()) {
@@ -250,7 +250,7 @@ export class ComponentContainer extends Container implements IComponentContainer
       }
     }
     if (this.focussed && focusToComponent) {
-      this.parentWidget.setActiveChildWidget(this.parentWidget.childWidgets[focusToComponent]);
+      this.parentWidget.setActiveChildWidget(this.parentWidget.childWidgets[focusToComponent] as Container);
     }
   }
 

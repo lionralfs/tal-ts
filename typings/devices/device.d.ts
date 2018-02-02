@@ -3,6 +3,7 @@ import { BaseClass } from '../class';
 import { MediaPlayer } from '../mediaplayer/mediaplayer';
 import { ISize } from '../widgets/image';
 import { IShowOptions } from '../widgets/widget';
+import { IHistorian } from '../historian';
 export interface IDeviceConfig {
     pageStrategy?: string;
     css?: IConfigCss[];
@@ -132,6 +133,22 @@ export declare abstract class Device extends BaseClass implements IDevice {
     };
     abstract preloadImage(url: string): void;
     abstract getCurrentRoute(): string[];
+    /**
+     * Get an object giving access to the current URL, query string, hash etc.
+     *
+     * Returns an Object containing, at a minimum, the properties:
+     * hash, host, href, pathname, protocol, search. These correspond to the properties
+     * in the window.location DOM API.
+     * Use getCurrentAppURL(), getCurrentAppURLParams() and getCurrentRoute() to get
+     * this information in a more generic way.
+     */
+    abstract getWindowLocation(): Location;
+    /**
+     * Browse to the specified location. Use launchAppFromURL() and setCurrentRoute() under Application
+     * to manipulate the current location more easily.
+     * @param url Full URL to navigate to, including search and hash if applicable.
+     */
+    abstract setWindowLocationUrl(url: string): void;
     abstract prependChildElement(to: HTMLElement, el: HTMLElement): void;
     abstract appendChildElement(to: Node, el: Node): void;
     abstract setElementClasses(el: Node, classNames: string[]): void;
@@ -195,4 +212,17 @@ export declare abstract class Device extends BaseClass implements IDevice {
      * @param classNames An array of class names to apply to the element.
      */
     abstract createElement<K extends keyof HTMLElementTagNameMap>(tagName?: K, id?: string, classNames?: string[]): HTMLElementTagNameMap[K];
+    /**
+     * Gets historian for current location
+     * Returns an object that can be used to get a back or forward url between applications while preserving history
+     */
+    abstract getHistorian(): IHistorian;
+    /**
+     * Exits to broadcast if this function has been overloaded by a modifier. Otherwise, calls exit().
+     */
+    abstract exitToBroadcast(): void;
+    /**
+     * Exits the application directly - no history.
+     */
+    abstract exit(): void;
 }

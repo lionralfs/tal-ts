@@ -42,6 +42,13 @@ export declare abstract class Widget extends BaseClass implements IWidget {
      * @param func The handler to be called when the event is fired.
      */
     addEventListener(ev: string, func: (...args: any[]) => void): void;
+    /**
+     * Removes an event listener function to this widget.
+     * @param {String} ev The event type that the listener is to be removed from (e.g. <code>keydown</code>)
+     * @param {Function} func The handler to be removed.
+     * @see antie.events.Event
+     */
+    removeEventListener(ev: string, func: (...args: any[]) => void): boolean;
     fireEvent(ev: any): void;
     bubbleEvent(ev: BaseEvent): void;
     /**

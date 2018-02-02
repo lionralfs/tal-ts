@@ -161,17 +161,19 @@ export class Container extends Widget implements IContainer {
     if (!widget) {
       return false;
     }
-    if (this.hasChildWidget(widget.id) && widget.isFocusable() && widget instanceof Button) {
+    if (this.hasChildWidget(widget.id) && widget.isFocusable() && widget instanceof Container) {
       if (this.activeChildWidget && this.activeChildWidget !== widget) {
         this.activeChildWidget.removeClass('active');
         this.setActiveChildFocussed(false);
       }
+
       widget.addClass('active');
       this.activeChildWidget = widget;
 
+      // when no focussed widget exists
       if (!this.getCurrentApplication().getFocussedWidget()) {
         // tslint:disable-next-line
-        let widgetIterator: Container = this;
+        let widgetIterator: any = this;
         while (widgetIterator.parentWidget) {
           widgetIterator.parentWidget.activeChildWidget = widgetIterator;
           widgetIterator.focussed = true;
@@ -179,10 +181,39 @@ export class Container extends Widget implements IContainer {
           widgetIterator = widgetIterator.parentWidget;
         }
       }
+
       if (this.focussed) {
         this.setActiveChildFocussed(true);
       }
+
       return true;
+    }
+    return false;
+  }
+
+  /**
+   * Checks to see if a widget is focussable, i.e. contains an enabled button.
+   */
+  public isFocusable(): boolean {
+    for (const childWidget of this.childWidgetOrder) {
+      if (childWidget.isFocusable()) {
+        if (!this.activeChildWidget) {
+          this.setActiveChildWidget(childWidget);
+        }
+        return true;
+      }
+    }
+    return false;
+  }
+
+  /**
+   * Moves focus to a button within this container. Focused button will be that which follows
+   * the current 'active' path.
+   * Returns `true` if focus has been moved to a button. Otherwise returns `false`.
+   */
+  public focus(): boolean {
+    if (this.activeChildWidget) {
+      return this.activeChildWidget.focus();
     }
     return false;
   }
@@ -191,21 +222,17 @@ export class Container extends Widget implements IContainer {
    * Flags the active child as focussed or blurred.
    * @param focus `true` if the active child is to be focussed, `false` if the active child is to be blurred.
    */
-  protected setActiveChildFocussed(focus) {
-    if (
-      this.activeChildWidget &&
-      this.activeChildWidget.focussed !== focus &&
-      this.activeChildWidget instanceof Button // TODO: check if this breaks stuff
-    ) {
+  protected setActiveChildFocussed(focus: boolean) {
+    if (this.activeChildWidget && this.activeChildWidget.focussed !== focus) {
       this.activeChildWidget.focussed = focus;
       if (focus) {
         this.activeChildWidget.addClass('focus');
-        this.activeChildWidget.bubbleEvent(new FocusEvent(this.activeChildWidget));
+        this.activeChildWidget.bubbleEvent(new FocusEvent(this.activeChildWidget as Button));
         // TODO: force focus to change in the application (rather than relying on the above
         // TODO: even to propagate to the application level
       } else {
         this.activeChildWidget.removeClass('focus');
-        this.activeChildWidget.bubbleEvent(new BlurEvent(this.activeChildWidget));
+        this.activeChildWidget.bubbleEvent(new BlurEvent(this.activeChildWidget as Button));
       }
       if (this.activeChildWidget instanceof Container) {
         this.activeChildWidget.setActiveChildFocussed(focus);

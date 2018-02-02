@@ -1,9 +1,19 @@
+import { Historian } from '../historian';
 import { MediaPlayer } from '../mediaplayer/mediaplayer';
 import { ISize } from '../widgets/image';
 import { Device, IAnimOptions } from './device';
 export declare class BrowserDevice extends Device {
+    private mediaPlayer;
+    private windowLocation;
     preloadImage(url: string): void;
     getCurrentRoute(): string[];
+    getWindowLocation(): Location;
+    /**
+     * Browse to the specified location. Use launchAppFromURL() and setCurrentRoute() under Application
+     * to manipulate the current location more easily.
+     * @param url Full URL to navigate to, including search and hash if applicable.
+     */
+    setWindowLocationUrl(url: string): void;
     /**
      * Prepends an element as a child of another.
      * @param to Prepend as a child of this element.
@@ -148,6 +158,7 @@ export declare class BrowserDevice extends Device {
      * @param el The element to remove.
      */
     removeElement(el: HTMLElement): void;
+    getMediaPlayer(): MediaPlayer;
     /**
      * Creates an element in the device's user-agent.
      * @param tagName The tag name of the element to create.
@@ -155,6 +166,14 @@ export declare class BrowserDevice extends Device {
      * @param classNames An array of class names to apply to the element.
      */
     createElement<K extends keyof HTMLElementTagNameMap>(tagName?: K, id?: string, classNames?: string[]): HTMLElementTagNameMap[K];
-    getMediaPlayer(): MediaPlayer;
+    getHistorian(): Historian;
+    /**
+     * Exits to broadcast if this function has been overloaded by a modifier. Otherwise, calls exit().
+     */
+    exitToBroadcast(): void;
+    /**
+     * Exits the application by invoking the window.close method
+     */
+    exit(): void;
     private trim(str);
 }
