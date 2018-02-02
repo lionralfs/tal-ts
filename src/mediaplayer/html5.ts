@@ -45,6 +45,16 @@ export class HTML5MediaPlayer extends MediaPlayer {
 
     this.setSentinelLimits();
     this.state = MediaPlayer.STATE.EMPTY;
+
+    // fixes `this` reference in event listener callbacks
+    this.wrapOnFinishedBuffering = this.wrapOnFinishedBuffering.bind(this);
+    this.wrapOnError = this.wrapOnError.bind(this);
+    this.wrapOnEndOfMedia = this.wrapOnEndOfMedia.bind(this);
+    this.wrapOnDeviceBuffering = this.wrapOnDeviceBuffering.bind(this);
+    this.wrapOnStatus = this.wrapOnStatus.bind(this);
+    this.wrapOnMetadata = this.wrapOnMetadata.bind(this);
+    this.wrapOnPause = this.wrapOnPause.bind(this);
+    this.wrapOnSourceError = this.wrapOnSourceError.bind(this);
   }
 
   public setSource(mediaType: MediaPlayerType, url: string, mimeType: string) {
