@@ -25,7 +25,6 @@ export declare class ComponentContainer extends Container implements IComponentC
     private historyStack;
     private previousFocus;
     /**
-     *
      * @param id
      */
     constructor(id?: string);

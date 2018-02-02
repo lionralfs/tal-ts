@@ -16,13 +16,13 @@ export interface IContainer {
 }
 
 export class Container extends Widget implements IContainer {
-  public activeChildWidget: Widget;
+  public activeChildWidget: Container;
   public childWidgets: { [key: string]: Widget };
   protected childWidgetOrder: Widget[];
   private autoRenderChildren: boolean;
 
   constructor(id?: string) {
-    super();
+    super(id);
 
     this.childWidgets = {};
     this.childWidgetOrder = [];

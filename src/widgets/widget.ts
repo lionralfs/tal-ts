@@ -58,6 +58,10 @@ export abstract class Widget extends BaseClass implements IWidget {
     this.id = id ? id : Widget.createUniqueID();
   }
 
+  public pushComponent(...args: any[]) {
+    throw new Error(`pushComponent called on Widget. Args: ${args}`);
+  }
+
   public addClass(className) {
     if (!this.classNames[className]) {
       this.classNames[className] = true;

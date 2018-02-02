@@ -9,7 +9,7 @@ export interface IContainer {
     setActiveChildWidget(widget: Widget): boolean;
 }
 export declare class Container extends Widget implements IContainer {
-    activeChildWidget: Widget;
+    activeChildWidget: Container;
     childWidgets: {
         [key: string]: Widget;
     };

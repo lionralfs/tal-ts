@@ -19,7 +19,7 @@ export interface IConfigCss {
 export interface IApplication {
     run(): void;
     getBestFitLayout(): ILayout;
-    addComponentContainer(id: any, module: any, args: any): any;
+    addComponentContainer(id: any, module?: string, args?: object): any;
     showComponent(id: string, requireModule: string, args?: object): void;
     setLayout(layout: ILayout, styleBaseUrl: string, imageBaseUrl: string, additionalCSS: IConfigCss[], additionalClasses: string[], additionalPreloadImages: string[], callback: () => void): void;
     route(route: string[]): void;
@@ -36,11 +36,18 @@ export declare abstract class Application extends BaseClass implements IApplicat
     private onReadyHandler;
     private device;
     private layout;
-    constructor(rootElement: Element, styleBaseUrl: string, imageBaseUrl: string, onReadyHandler: (...args: any[]) => void, configOverride?: IDeviceConfig);
+    constructor(rootElement: Element, styleBaseUrl: string, imageBaseUrl: string, onReadyHandler?: (...args: any[]) => void, configOverride?: IDeviceConfig);
     abstract run(): any;
     abstract route(route: string[]): any;
-    addComponentContainer(id: any, requireModule: any, args: any): Container;
+    addComponentContainer(id: string, requireModule?: string, args?: object): Container;
     showComponent(id: string, requireModule: string, args?: object): void;
+    /**
+     * Pushes a component into the history stack of a container (and shows it).
+     * @param id The ID of the container into which to show the component.
+     * @param modules The requirejs module name of the component to show.
+     * @param args An optional object to pass arguments to the component.
+     */
+    pushComponent(id: string, module: string, args?: object): void;
     getDevice(): Device;
     bubbleEvent(evt: BaseEvent): void;
     /**

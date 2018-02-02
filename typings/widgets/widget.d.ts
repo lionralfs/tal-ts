@@ -33,6 +33,7 @@ export declare abstract class Widget extends BaseClass implements IWidget {
     private eventListeners;
     private dataItem;
     constructor(id?: string);
+    pushComponent(...args: any[]): void;
     addClass(className: any): void;
     getClasses(): string[];
     /**

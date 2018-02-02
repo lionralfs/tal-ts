@@ -41,7 +41,6 @@ export class ComponentContainer extends Container implements IComponentContainer
   private previousFocus: Button;
 
   /**
-   *
    * @param id
    */
   constructor(id?: string) {
@@ -100,9 +99,7 @@ export class ComponentContainer extends Container implements IComponentContainer
         let p: Container = this.currentComponent;
         while (p) {
           p.removeFocus();
-          if (p.activeChildWidget instanceof Container) {
-            p = p.activeChildWidget;
-          }
+          p = p.activeChildWidget;
         }
       }
 
@@ -156,10 +153,17 @@ export class ComponentContainer extends Container implements IComponentContainer
       }
     } else {
       // hook into requirejs to load the component from the module and call us again
-      requirejs([module], (componentClass: new () => Widget) => {
+      requirejs([module], object => {
         // Check we've not navigated elsewhere whilst requirejs has been loading the module
         if (this.loadingModule === module && this.loadingIndex === loadingIndex) {
-          this.loadComponentCallback(module, componentClass, args, keepHistory, state /*, fromBack, focussedButton*/);
+          const componentClassConstructor: new (...args: any[]) => Widget = object[Object.keys(object)[0]];
+          this.loadComponentCallback(
+            module,
+            componentClassConstructor,
+            args,
+            keepHistory,
+            state /*, fromBack, focussedButton*/
+          );
         }
       });
     }

@@ -26,7 +26,7 @@ export interface IConfigCss {
 export interface IApplication {
   run(): void;
   getBestFitLayout(): ILayout;
-  addComponentContainer(id: any, module: any, args: any): any;
+  addComponentContainer(id: any, module?: string, args?: object): any;
   showComponent(id: string, requireModule: string, args?: object): void;
   setLayout(
     layout: ILayout,
@@ -62,7 +62,7 @@ export abstract class Application extends BaseClass implements IApplication {
     rootElement: Element,
     styleBaseUrl: string,
     imageBaseUrl: string,
-    onReadyHandler: (...args: any[]) => void,
+    onReadyHandler?: (...args: any[]) => void,
     configOverride?: IDeviceConfig
   ) {
     super();
@@ -115,7 +115,7 @@ export abstract class Application extends BaseClass implements IApplication {
 
   public abstract route(route: string[]);
 
-  public addComponentContainer(id: any, requireModule: any, args: any) {
+  public addComponentContainer(id: string, requireModule?: string, args?: object) {
     const container: Container = new ComponentContainer(id);
     this.rootWidget.appendChildWidget(container);
 
@@ -131,6 +131,16 @@ export abstract class Application extends BaseClass implements IApplication {
     if (widget instanceof ComponentContainer) {
       widget.showComponent(requireModule, args);
     }
+  }
+
+  /**
+   * Pushes a component into the history stack of a container (and shows it).
+   * @param id The ID of the container into which to show the component.
+   * @param modules The requirejs module name of the component to show.
+   * @param args An optional object to pass arguments to the component.
+   */
+  public pushComponent(id: string, module: string, args?: object) {
+    this.rootWidget.getChildWidget(id).pushComponent(module, args);
   }
 
   public getDevice() {
