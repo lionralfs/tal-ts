@@ -66,107 +66,108 @@ export class ComponentContainer extends Container implements IComponentContainer
    * @param focus
    */
   public showComponent(
-    module: string,
+    component: Component,
     args?: object,
     keepHistory?: boolean,
     state?: object,
     fromBack?: boolean,
     focus?: Button
   ) {
-    this.loadingModule = module;
+    // this.loadingModule = module;
 
-    this.loadingIndex++;
-    const loadingIndex = this.loadingIndex;
+    // this.loadingIndex++;
+    // const loadingIndex = this.loadingIndex;
 
-    if (ComponentContainer.knownComponents[module]) {
-      const device = this.getCurrentApplication().getDevice();
+    // if (ComponentContainer.knownComponents[module]) {
+    const device = this.getCurrentApplication().getDevice();
 
-      const focussedButton = this.getCurrentApplication().getFocussedWidget();
-      if (this.currentComponent) {
-        this.hideComponent(null, args, keepHistory, state, fromBack);
+    const focussedButton = this.getCurrentApplication().getFocussedWidget();
+    if (this.currentComponent) {
+      this.hideComponent(null, args, keepHistory, state, fromBack);
+    }
+
+    // this.currentModule = module;
+    // this.currentComponent = ComponentContainer.knownComponents[module];
+    this.currentComponent = component;
+    this.currentArgs = args;
+    if (!fromBack) {
+      this.previousFocus = focus;
+    }
+
+    if (!this.focussed) {
+      // We don't have focus, so any of our children shouldn't
+      // (focussed state can be set to true if focussed widget is in a unloaded component)
+      let p: Container = this.currentComponent;
+      while (p) {
+        p.removeFocus();
+        p = p.activeChildWidget;
       }
+    }
 
-      this.currentModule = module;
-      this.currentComponent = ComponentContainer.knownComponents[module];
-      this.currentArgs = args;
-      if (!fromBack) {
-        this.previousFocus = focus;
-      }
+    // set the parent widget so the next event bubbles correctly through the tree
+    this.currentComponent.parentWidget = this;
 
-      if (!this.focussed) {
-        // We don't have focus, so any of our children shouldn't
-        // (focussed state can be set to true if focussed widget is in a unloaded component)
-        let p: Container = this.currentComponent;
-        while (p) {
-          p.removeFocus();
-          p = p.activeChildWidget;
-        }
-      }
+    this.currentComponent.bubbleEvent(
+      new ComponentEvent('beforerender', this, this.currentComponent, args, state, fromBack)
+    );
 
-      // set the parent widget so the next event bubbles correctly through the tree
-      this.currentComponent.parentWidget = this;
+    this.currentComponent.render(device);
 
-      this.currentComponent.bubbleEvent(
-        new ComponentEvent('beforerender', this, this.currentComponent, args, state, fromBack)
-      );
+    // and clear it again
+    this.currentComponent.parentWidget = null;
 
-      this.currentComponent.render(device);
+    device.hideElement({
+      el: this.currentComponent.outputElement,
+      skipAnim: true
+    });
 
-      // and clear it again
-      this.currentComponent.parentWidget = null;
+    this.appendChildWidget(this.currentComponent);
 
-      device.hideElement({
+    const evt = new ComponentEvent('beforeshow', this, this.currentComponent, args, state, fromBack);
+    this.currentComponent.bubbleEvent(evt);
+
+    if (focus) {
+      focus.focus();
+    }
+
+    if (!evt.isDefaultPrevented()) {
+      const config = device.getConfig();
+      const animate =
+        !config.widgets || !config.widgets.componentcontainer || config.widgets.componentcontainer.fade !== false;
+      device.showElement({
         el: this.currentComponent.outputElement,
-        skipAnim: true
-      });
-
-      this.appendChildWidget(this.currentComponent);
-
-      const evt = new ComponentEvent('beforeshow', this, this.currentComponent, args, state, fromBack);
-      this.currentComponent.bubbleEvent(evt);
-
-      if (focus) {
-        focus.focus();
-      }
-
-      if (!evt.isDefaultPrevented()) {
-        const config = device.getConfig();
-        const animate =
-          !config.widgets || !config.widgets.componentcontainer || config.widgets.componentcontainer.fade !== false;
-        device.showElement({
-          el: this.currentComponent.outputElement,
-          skipAnim: !animate
-        });
-      }
-
-      this.currentComponent.bubbleEvent(
-        new ComponentEvent('aftershow', this, this.currentComponent, args, state, fromBack)
-      );
-
-      const focusRemoved = this.setActiveChildWidget(this.currentComponent);
-      if (!focusRemoved) {
-        this.activeChildWidget = this.currentComponent;
-        this.getCurrentApplication()
-          .getDevice()
-          .getLogger()
-          .warn('active component is not currently focusable', this.activeChildWidget);
-      }
-    } else {
-      // hook into requirejs to load the component from the module and call us again
-      requirejs([module], object => {
-        // Check we've not navigated elsewhere whilst requirejs has been loading the module
-        if (this.loadingModule === module && this.loadingIndex === loadingIndex) {
-          const componentClassConstructor: new (...args: any[]) => Widget = object[Object.keys(object)[0]];
-          this.loadComponentCallback(
-            module,
-            componentClassConstructor,
-            args,
-            keepHistory,
-            state /*, fromBack, focussedButton*/
-          );
-        }
+        skipAnim: !animate
       });
     }
+
+    this.currentComponent.bubbleEvent(
+      new ComponentEvent('aftershow', this, this.currentComponent, args, state, fromBack)
+    );
+
+    const focusRemoved = this.setActiveChildWidget(this.currentComponent);
+    if (!focusRemoved) {
+      this.activeChildWidget = this.currentComponent;
+      this.getCurrentApplication()
+        .getDevice()
+        .getLogger()
+        .warn('active component is not currently focusable', this.activeChildWidget);
+    }
+    // } else {
+    // hook into requirejs to load the component from the module and call us again
+    // requirejs([module], object => {
+    //   // Check we've not navigated elsewhere whilst requirejs has been loading the module
+    //   if (this.loadingModule === module && this.loadingIndex === loadingIndex) {
+    //     const componentClassConstructor: new (...args: any[]) => Widget = object[Object.keys(object)[0]];
+    //     this.loadComponentCallback(
+    //       module,
+    //       componentClassConstructor,
+    //       args,
+    //       keepHistory,
+    //       state /*, fromBack, focussedButton*/
+    //     );
+    //   }
+    // });
+    // }
   }
 
   /**
@@ -175,7 +176,7 @@ export class ComponentContainer extends Container implements IComponentContainer
    * @param args An optional object to pass arguments to the component.
    */
   public pushComponent(module: string, args?: object) {
-    this.showComponent(module, args, true);
+    // this.showComponent(module, args, true);
   }
 
   /**
@@ -194,7 +195,7 @@ export class ComponentContainer extends Container implements IComponentContainer
     const lastComponent = this.historyStack.pop();
     if (lastComponent) {
       this.previousFocus = lastComponent.previousFocus;
-      this.showComponent(lastComponent.module, lastComponent.args, true, lastComponent.state, true, focus);
+      // this.showComponent(lastComponent.module, lastComponent.args, true, lastComponent.state, true, focus);
     } else {
       this.hideComponent(null, null, false, null, false);
     }
@@ -302,6 +303,6 @@ export class ComponentContainer extends Container implements IComponentContainer
     newComponent.parentWidget = null;
 
     // Show the component.
-    this.showComponent(module, args, keepHistory, state);
+    // this.showComponent(module, args, keepHistory, state);
   }
 }

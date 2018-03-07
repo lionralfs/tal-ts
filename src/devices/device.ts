@@ -1,10 +1,11 @@
 import { Application, IConfigCss, ILayout } from '../application';
 import { BaseClass } from '../class';
 import { KeyEvent } from '../events/keyevent';
+import { IHistorian } from '../historian';
 import { MediaPlayer } from '../mediaplayer/mediaplayer';
 import { ISize } from '../widgets/image';
 import { IShowOptions } from '../widgets/widget';
-import { IHistorian } from '../historian';
+import { BrowserDevice } from './browserdevice';
 
 // TODO: this needs more checks
 export interface IDeviceConfig {
@@ -125,17 +126,20 @@ export interface IDevice {
 
 export abstract class Device extends BaseClass implements IDevice {
   public static load(config: IDeviceConfig, callbacks: IDeviceCallbacks) {
+    console.log(config);
+    callbacks.onSuccess(new BrowserDevice(config));
+    // callbacks.onSuccess(new BrowserDevice(window.antie.framework.deviceConfiguration));
     try {
-      requirejs([config.modules.base].concat(config.modules.modifiers), object => {
-        const deviceClassConstructor: new (config: IDeviceConfig) => Device = object[Object.keys(object)[0]];
-        try {
-          callbacks.onSuccess(new deviceClassConstructor(config));
-        } catch (ex) {
-          if (callbacks.onError) {
-            callbacks.onError(ex);
-          }
-        }
-      });
+      // requirejs([config.modules.base].concat(config.modules.modifiers), object => {
+      //   const deviceClassConstructor: new (config: IDeviceConfig) => Device = object[Object.keys(object)[0]];
+      //   try {
+      //     callbacks.onSuccess(new deviceClassConstructor(config));
+      //   } catch (ex) {
+      //     if (callbacks.onError) {
+      //       callbacks.onError(ex);
+      //     }
+      //   }
+      // });
     } catch (ex) {
       if (callbacks.onError) {
         callbacks.onError(ex);

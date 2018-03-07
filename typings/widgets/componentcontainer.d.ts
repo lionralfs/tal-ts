@@ -1,4 +1,5 @@
 import { Button } from './button';
+import { Component } from './component';
 import { Container } from './container';
 export interface IComponentContainer {
     pushComponent(module: string, args?: object): void;
@@ -37,7 +38,7 @@ export declare class ComponentContainer extends Container implements IComponentC
      * @param fromBack
      * @param focus
      */
-    showComponent(module: string, args?: object, keepHistory?: boolean, state?: object, fromBack?: boolean, focus?: Button): void;
+    showComponent(component: Component, args?: object, keepHistory?: boolean, state?: object, fromBack?: boolean, focus?: Button): void;
     /**
      * Pushes a component into the history stack of the container (and shows it).
      * @param module The requirejs module name of the component to show.

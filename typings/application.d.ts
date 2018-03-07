@@ -2,6 +2,7 @@ import { BaseClass } from './class';
 import { Device, IDeviceConfig } from './devices/device';
 import { BaseEvent } from './events/event';
 import { Button } from './widgets/button';
+import { Component } from './widgets/component';
 import { Container } from './widgets/container';
 export interface ILayout {
     classes: string[];
@@ -20,7 +21,7 @@ export interface IApplication {
     run(): void;
     getBestFitLayout(): ILayout;
     addComponentContainer(id: any, module?: string, args?: object): any;
-    showComponent(id: string, requireModule: string, args?: object): void;
+    showComponent(id: string, component: Component, args?: object): void;
     setLayout(layout: ILayout, styleBaseUrl: string, imageBaseUrl: string, additionalCSS: IConfigCss[], additionalClasses: string[], additionalPreloadImages: string[], callback: () => void): void;
     route(route: string[]): void;
     getDevice(): Device;
@@ -44,7 +45,8 @@ export declare abstract class Application extends BaseClass implements IApplicat
      */
     ready(): void;
     addComponentContainer(id: string, requireModule?: string, args?: object): Container;
-    showComponent(id: string, requireModule: string, args?: object): void;
+    addComponentContainer2(id: string, component?: Component, args?: object): Container;
+    showComponent(id: string, component: Component, args?: object): void;
     /**
      * Pushes a component into the history stack of a container (and shows it).
      * @param id The ID of the container into which to show the component.

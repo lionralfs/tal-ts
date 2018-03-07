@@ -250,17 +250,29 @@ export class BrowserDevice extends Device {
     }
   }
 
-  public scrollElementTo(options: IAnimOptions) {}
+  public scrollElementTo(options: IAnimOptions) {
+    //
+  }
 
-  public moveElementTo(options: IAnimOptions) {}
+  public moveElementTo(options: IAnimOptions) {
+    //
+  }
 
-  public hideElement(options: IAnimOptions) {}
+  public hideElement(options: IAnimOptions) {
+    //
+  }
 
-  public showElement(options: IAnimOptions) {}
+  public showElement(options: IAnimOptions) {
+    //
+  }
 
-  public tweenElementStyle(options: IAnimOptions) {} // TODO: check options
+  public tweenElementStyle(options: IAnimOptions) {
+    // TODO: check options
+  }
 
-  public stopAnimation(anim: object) {} // TODO: implement anim interface
+  public stopAnimation(anim: object) {
+    // TODO: implement anim interface
+  }
 
   public loadStyleSheet(url: string, callback?: (res: string) => void) {
     const supportsCssRules = (): boolean => {

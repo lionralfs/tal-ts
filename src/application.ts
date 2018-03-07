@@ -1,8 +1,10 @@
 import { BaseClass } from './class';
+import { BrowserDevice } from './devices/browserdevice';
 import { Device, IDeviceConfig } from './devices/device';
 import { BaseEvent } from './events/event';
 import { IRuntimeContext, RuntimeContext } from './runtimecontext';
 import { Button } from './widgets/button';
+import { Component } from './widgets/component';
 import { ComponentContainer } from './widgets/componentcontainer';
 import { Container } from './widgets/container';
 import { Widget } from './widgets/widget';
@@ -27,7 +29,7 @@ export interface IApplication {
   run(): void;
   getBestFitLayout(): ILayout;
   addComponentContainer(id: any, module?: string, args?: object): any;
-  showComponent(id: string, requireModule: string, args?: object): void;
+  showComponent(id: string, component: Component, args?: object): void;
   setLayout(
     layout: ILayout,
     styleBaseUrl: string,
@@ -91,21 +93,42 @@ export abstract class Application extends BaseClass implements IApplication {
         }
       }
 
-      requirejs([layout.module], (loadedLayout: ILayout) => {
-        this.setLayout(loadedLayout, styleBaseUrl, imageBaseUrl, loadedLayout.css, loadedLayout.classes, [], () => {
-          this.run();
-          this.route(device.getCurrentRoute());
-        });
-      });
+      setTimeout(() => {
+        this.setLayout(
+          {
+            classes: [],
+            css: [],
+            width: 1280,
+            height: 720,
+            module: ''
+          },
+          styleBaseUrl,
+          imageBaseUrl,
+          [],
+          [],
+          [],
+          () => {
+            this.run();
+            this.route(device.getCurrentRoute());
+          }
+        );
+      }, 1000);
+      // requirejs([layout.module], (loadedLayout: ILayout) => {
+      //   this.setLayout(loadedLayout, styleBaseUrl, imageBaseUrl, loadedLayout.css, loadedLayout.classes, [], () => {
+      //     this.run();
+      //     this.route(device.getCurrentRoute());
+      //   });
+      // });
     };
 
     if (!this.device) {
-      Device.load(config, {
-        onSuccess: deviceLoaded,
-        onError: function onError(err) {
-          console.error('Unable to load device', err);
-        }
-      });
+      deviceLoaded(new BrowserDevice(config));
+      // Device.load(config, {
+      //   onSuccess: deviceLoaded,
+      //   onError: function onError(err) {
+      //     console.error('Unable to load device', err);
+      //   }
+      // });
     } else {
       deviceLoaded(this.device);
     }
@@ -131,17 +154,29 @@ export abstract class Application extends BaseClass implements IApplication {
     const container: Container = new ComponentContainer(id);
     this.rootWidget.appendChildWidget(container);
 
-    if (requireModule) {
-      this.showComponent(id, requireModule, args);
+    // if (requireModule) {
+    //   this.showComponent(id, requireModule, args);
+    // }
+
+    return container;
+  }
+
+  public addComponentContainer2(id: string, component?: Component, args?: object) {
+    const container: Container = new ComponentContainer(id);
+    this.rootWidget.appendChildWidget(container);
+
+    if (component) {
+      this.showComponent(id, component, args);
     }
 
     return container;
   }
 
-  public showComponent(id: string, requireModule: string, args?: object) {
+  public showComponent(id: string, component: Component, args?: object) {
     const widget = this.rootWidget.getChildWidget(id);
     if (widget instanceof ComponentContainer) {
-      widget.showComponent(requireModule, args);
+      console.log('should be shown now: ', component);
+      widget.showComponent(component, args);
     }
   }
 

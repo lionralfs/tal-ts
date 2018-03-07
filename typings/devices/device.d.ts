@@ -1,9 +1,9 @@
 import { Application, IConfigCss, ILayout } from '../application';
 import { BaseClass } from '../class';
+import { IHistorian } from '../historian';
 import { MediaPlayer } from '../mediaplayer/mediaplayer';
 import { ISize } from '../widgets/image';
 import { IShowOptions } from '../widgets/widget';
-import { IHistorian } from '../historian';
 export interface IDeviceConfig {
     pageStrategy?: string;
     css?: IConfigCss[];
