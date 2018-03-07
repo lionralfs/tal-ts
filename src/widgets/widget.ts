@@ -8,8 +8,8 @@ import { Container } from './container';
 
 export interface IWidget {
   addClass(className: string): void;
-  fireEvent(ev: BaseEvent);
-  bubbleEvent(ev: BaseEvent);
+  fireEvent(ev: BaseEvent): void;
+  bubbleEvent(ev: BaseEvent): void;
   isFocusable(): boolean;
   getCurrentApplication(): Application;
   getClasses(): string[];
@@ -40,7 +40,7 @@ export abstract class Widget extends BaseClass implements IWidget {
   public outputElement: HTMLElement;
   public focussed: boolean;
 
-  private classNames: object;
+  private classNames: { [key: string]: boolean };
   private eventListeners: { [key: string]: Array<(...args: any[]) => void> };
   private dataItem: object;
 
@@ -62,7 +62,7 @@ export abstract class Widget extends BaseClass implements IWidget {
     throw new TypeError(`pushComponent called on Widget. Args: ${args}`);
   }
 
-  public addClass(className) {
+  public addClass(className: string) {
     if (!this.classNames[className]) {
       this.classNames[className] = true;
       if (this.outputElement) {
@@ -120,7 +120,7 @@ export abstract class Widget extends BaseClass implements IWidget {
     }
   }
 
-  public fireEvent(ev) {
+  public fireEvent(ev: BaseEvent) {
     const listeners = this.eventListeners[ev.type];
     if (listeners) {
       for (const func in listeners) {

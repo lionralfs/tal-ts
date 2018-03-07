@@ -134,9 +134,9 @@ export abstract class Application extends BaseClass implements IApplication {
     }
   }
 
-  public abstract run();
+  public abstract run(): void;
 
-  public abstract route(route: string[]);
+  public abstract route(route: string[]): void;
 
   /**
    * Must be called when the application startup is complete and application can accept user input.

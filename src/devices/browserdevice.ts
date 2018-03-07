@@ -21,10 +21,7 @@ export class BrowserDevice extends Device {
 
   public getWindowLocation(): Location {
     const windowLocation = this.windowLocation || window.location; // Allow stubbing for unit testing
-    let copyProps;
-    let prop;
-    let i;
-    let newLocation;
+    let newLocation: Location;
 
     // Has the device missed the route off the href? Fix this.
     if (
@@ -35,9 +32,8 @@ export class BrowserDevice extends Device {
     ) {
       // Copy properties to new object, as modifying href on the original window.location triggers a navigation.
       newLocation = {};
-      copyProps = ['assign', 'hash', 'host', 'href', 'pathname', 'protocol', 'search'];
-      for (i = 0; i < copyProps.length; i++) {
-        prop = copyProps[i];
+      const copyProps = ['assign', 'hash', 'host', 'href', 'pathname', 'protocol', 'search'];
+      for (const prop of copyProps) {
         if (windowLocation.hasOwnProperty(prop)) {
           newLocation[prop] = windowLocation[prop];
         }
@@ -123,7 +119,7 @@ export class BrowserDevice extends Device {
    */
   public addKeyEventListener() {
     const keyMap = this.getKeyMap();
-    const pressed = {};
+    const pressed: { [key: string]: boolean } = {};
 
     // We need to normalise these events on so that for every key pressed there's
     // one keydown event, followed by multiple keypress events whilst the key is

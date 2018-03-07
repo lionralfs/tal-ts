@@ -294,8 +294,8 @@ export abstract class MediaPlayer extends BaseClass {
    * @param eventType The type of the event to be emitted.
    * @param eventLabels Optional additional event labels.
    */
-  protected emitEvent(eventType: string, eventLabels?: object): void {
-    const event = {
+  protected emitEvent(eventType: string, eventLabels?: { [key: string]: string }): void {
+    const event: { [key: string]: string | number | MediaPlayerType | { start?: number; end?: number } } = {
       type: eventType,
       currentTime: this.getCurrentTime(),
       seekableRange: this.getSeekableRange(),

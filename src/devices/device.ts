@@ -81,6 +81,7 @@ export interface IAnimOptions {
     left?: number;
     right?: number;
   };
+  from?: {};
   skipAnim?: boolean;
   onComplete?: () => void;
   fps?: number;
@@ -174,7 +175,7 @@ export abstract class Device extends BaseClass implements IDevice {
     // Manipulate the input map into a mapping between key event keycodes and
     // our virtual key codes
     if (config.input && config.input.map) {
-      const symbolMap = {
+      const symbolMap: { [key: string]: number } = {
         UP: KeyEvent.VK_UP,
         DOWN: KeyEvent.VK_DOWN,
         LEFT: KeyEvent.VK_LEFT,

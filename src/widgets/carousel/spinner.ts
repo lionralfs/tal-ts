@@ -53,22 +53,22 @@ export class Spinner extends BaseClass {
     }
   }
 
-  private getOptions(options, relativePixels) {
-    let destination;
-    let clonedOptions;
-
+  private getOptions(options: IAnimOptions, relativePixels: number) {
     options = options || {};
-    destination = {};
+    const destination: { [key: string]: number } = {};
     destination[this.getEdge()] = relativePixels;
-    clonedOptions = {};
+
+    const clonedOptions: IAnimOptions = {
+      to: destination,
+      from: options.from,
+      duration: options.duration || 150,
+      easing: options.easing || 'linear',
+      fps: options.fps || 25,
+      skipAnim: options.skipAnim === undefined ? true : options.skipAnim,
+      onComplete: this.getWrappedOnComplete(options)
+    };
     // clonedOptions.el = this.mask.getWidgetStrip().outputElement;
-    clonedOptions.to = destination;
-    clonedOptions.from = options.from;
-    clonedOptions.duration = options.duration || 150;
-    clonedOptions.easing = options.easing || 'linear';
-    clonedOptions.fps = options.fps || '25';
-    clonedOptions.skipAnim = options.skipAnim === undefined ? true : options.skipAnim;
-    clonedOptions.onComplete = this.getWrappedOnComplete(options);
+
     return clonedOptions;
   }
 

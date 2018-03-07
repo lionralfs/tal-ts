@@ -4,6 +4,7 @@ import { Container } from './container';
 export interface ISize {
   width?: number;
   height?: number;
+  [key: string]: number;
 }
 /**
  * The Image widget displays an image. It supports lazy loading/unloading of images to conserve memory.

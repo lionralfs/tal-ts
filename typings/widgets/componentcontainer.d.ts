@@ -5,7 +5,6 @@ export interface IComponentContainer {
     pushComponent(component: Component, args?: object): void;
     getContent(): Container;
     back(): void;
-    hide(focusToComponent: any, args: any, keepHistory: any, state: any, fromBack: any): void;
     getCurrentArguments(): object;
 }
 export interface IHistoryItem {

@@ -243,7 +243,9 @@ export declare abstract class MediaPlayer extends BaseClass {
      * @param eventType The type of the event to be emitted.
      * @param eventLabels Optional additional event labels.
      */
-    protected emitEvent(eventType: string, eventLabels?: object): void;
+    protected emitEvent(eventType: string, eventLabels?: {
+        [key: string]: string;
+    }): void;
     /**
      * Clamp a time value so it does not exceed the current range.
      * Clamps to near the end instead of the end itself to allow for devices that cannot seek to the very end of the media.

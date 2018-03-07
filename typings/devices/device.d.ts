@@ -71,11 +71,12 @@ export interface ISupportedAudioStreaming {
     maximumBitRate: number;
 }
 export interface IAnimOptions {
-    el: Node;
+    el?: Node;
     to?: {
         left?: number;
         right?: number;
     };
+    from?: {};
     skipAnim?: boolean;
     onComplete?: () => void;
     fps?: number;

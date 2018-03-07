@@ -12,7 +12,7 @@ export declare class Component extends Container implements IComponent {
     private isModal;
     constructor(id?: string);
     hide(): void;
-    getCurrentState(): any;
+    getCurrentState(): IHistoryItem;
     getIsModal(): boolean;
     getConfig(): IDeviceConfig;
     isComponent(): boolean;

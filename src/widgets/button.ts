@@ -117,7 +117,7 @@ export class Button extends Container {
    * Flags the active child as focussed or blurred.
    * @param focus True if the active child is to be focussed, False if the active child is to be blurred.
    */
-  public setActiveChildFocussed(focus): void {
+  public setActiveChildFocussed(focus: boolean): void {
     if (this.focusDelayHandle) {
       clearTimeout(this.focusDelayHandle);
     }

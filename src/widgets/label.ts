@@ -17,7 +17,7 @@ export class Label extends Widget {
   public static TRUNCATION_MODE_RIGHT_ELLIPSIS: boolean = true;
 
   private text: string;
-  private truncationMode;
+  private truncationMode: boolean;
   private maxLines: number;
   private enableHTML: boolean;
   private width: number;

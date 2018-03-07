@@ -75,7 +75,7 @@ export class Mask extends Container {
    * with 0 being the top or left of the widget and 1 being the bottom or right.
    * @param fractionOfWidgetLength Value between 0 and 1, will be clamped to 0 or 1 if outside this range.
    */
-  public setNormalisedWidgetAlignPoint(fractionOfWidgetLength) {
+  public setNormalisedWidgetAlignPoint(fractionOfWidgetLength: number) {
     this.normalisedWidgetAlignPoint = this.clampBetweenZeroAndOne(fractionOfWidgetLength);
   }
 
@@ -107,13 +107,11 @@ export class Mask extends Container {
    * (Width for horizontal, height for vertical)
    */
   public getLength(): number {
-    let device: Device;
-    let size: ISize;
     if (this.length) {
       return this.length;
     } else {
-      device = this.getCurrentApplication().getDevice();
-      size = device.getElementSize(this.outputElement || this.render(device));
+      const device: Device = this.getCurrentApplication().getDevice();
+      const size: ISize = device.getElementSize(this.outputElement || this.render(device));
       return size[this.getDimension()];
     }
   }
@@ -245,7 +243,7 @@ export class Mask extends Container {
     this.spinner.moveContentsTo(relativePixels, options);
   }
 
-  private getDimension(): number {
+  private getDimension(): string {
     return this.orientation.dimension();
   }
 

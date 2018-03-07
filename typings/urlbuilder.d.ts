@@ -16,5 +16,7 @@ export declare class URLBuilder extends BaseClass {
      *
      * Returns a URL built from the template and the passed values.
      */
-    getURL(href: string, tags: object): string;
+    getURL(href: string, tags: {
+        [key: string]: string;
+    }): string;
 }

@@ -38,8 +38,8 @@ export declare abstract class Application extends BaseClass implements IApplicat
     private device;
     private layout;
     constructor(rootElement: Element, styleBaseUrl: string, imageBaseUrl: string, onReadyHandler?: (...args: any[]) => void, configOverride?: IDeviceConfig);
-    abstract run(): any;
-    abstract route(route: string[]): any;
+    abstract run(): void;
+    abstract route(route: string[]): void;
     /**
      * Must be called when the application startup is complete and application can accept user input.
      */

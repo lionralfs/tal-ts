@@ -9,7 +9,7 @@ export interface IComponentContainer {
   pushComponent(component: Component, args?: object): void;
   getContent(): Container;
   back(): void;
-  hide(focusToComponent, args, keepHistory, state, fromBack): void;
+  // hide(focusToComponent, args, keepHistory, state, fromBack): void;
   // getCurrentModule(): string;
   getCurrentArguments(): object;
 }
