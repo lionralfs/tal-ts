@@ -186,8 +186,8 @@ export abstract class Application extends BaseClass implements IApplication {
    * @param modules The requirejs module name of the component to show.
    * @param args An optional object to pass arguments to the component.
    */
-  public pushComponent(id: string, module: string, args?: object) {
-    this.rootWidget.getChildWidget(id).pushComponent(module, args);
+  public pushComponent(id: string, component: Component, args?: object) {
+    this.rootWidget.getChildWidget(id).pushComponent(component, args);
   }
 
   public getDevice() {

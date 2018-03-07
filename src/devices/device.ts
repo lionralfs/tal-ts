@@ -105,6 +105,10 @@ export interface IShowElementOptions extends IShowOptions {
   el: Node;
 }
 
+export interface ILoggingStrategies {
+  [key: string]: ILoggingMethods;
+}
+
 export interface IDevice {
   setApplication(app: Application): void;
   getTopLevelElement(): Node;
@@ -147,11 +151,12 @@ export abstract class Device extends BaseClass implements IDevice {
     }
   }
 
-  public static addLoggingMethod(moduleId: string, loggingMethods: object) {
+  public static addLoggingStrategy(moduleId: string, loggingMethods: ILoggingMethods) {
+    console.log(moduleId, loggingMethods);
     this.loggingStrategies[moduleId] = loggingMethods;
   }
 
-  private static loggingStrategies: { [key: string]: object } = {};
+  private static loggingStrategies: ILoggingStrategies = {};
   private static filteredLoggingMethods: ILoggingMethods = null;
 
   protected application: Application;
@@ -271,17 +276,17 @@ export abstract class Device extends BaseClass implements IDevice {
       };
 
       const ignoreLoggingMethods: ILoggingMethods = {
-        log: ignore,
-        debug: ignore,
-        info: ignore,
-        warn: ignore,
-        error: ignore
+        log: console.log,
+        debug: console.log,
+        info: console.info,
+        warn: console.warn,
+        error: console.error
       };
 
       // support functions for the above
-      const selectLoggingStrategy = (deviceConfig: IDeviceConfig, loggingStrategies) => {
-        if (deviceConfig.logging && deviceConfig.logging.strategy) {
-          const configuredLoggingStrategy = `antie/devices/logging/${deviceConfig.logging.strategy}`;
+      const selectLoggingStrategy = (conf: IDeviceConfig, loggingStrategies: ILoggingStrategies): ILoggingMethods => {
+        if (conf.logging && conf.logging.strategy) {
+          const configuredLoggingStrategy = `antie/devices/logging/${conf.logging.strategy}`;
 
           if (loggingStrategies[configuredLoggingStrategy]) {
             return loggingStrategies[configuredLoggingStrategy];

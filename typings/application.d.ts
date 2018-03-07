@@ -53,7 +53,7 @@ export declare abstract class Application extends BaseClass implements IApplicat
      * @param modules The requirejs module name of the component to show.
      * @param args An optional object to pass arguments to the component.
      */
-    pushComponent(id: string, module: string, args?: object): void;
+    pushComponent(id: string, component: Component, args?: object): void;
     getDevice(): Device;
     bubbleEvent(evt: BaseEvent): void;
     /**

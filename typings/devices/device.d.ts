@@ -96,6 +96,9 @@ export interface IDeviceCallbacks {
 export interface IShowElementOptions extends IShowOptions {
     el: Node;
 }
+export interface ILoggingStrategies {
+    [key: string]: ILoggingMethods;
+}
 export interface IDevice {
     setApplication(app: Application): void;
     getTopLevelElement(): Node;
@@ -118,7 +121,7 @@ export interface IDevice {
 }
 export declare abstract class Device extends BaseClass implements IDevice {
     static load(config: IDeviceConfig, callbacks: IDeviceCallbacks): void;
-    static addLoggingMethod(moduleId: string, loggingMethods: object): void;
+    static addLoggingStrategy(moduleId: string, loggingMethods: ILoggingMethods): void;
     private static loggingStrategies;
     private static filteredLoggingMethods;
     protected application: Application;

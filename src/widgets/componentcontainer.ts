@@ -6,16 +6,16 @@ import { Widget } from './widget';
 
 export interface IComponentContainer {
   // show(module: string, args?: object, keepHistory?: boolean, state?: object, fromBack?: boolean, focus?: Button): void;
-  pushComponent(module: string, args?: object): void;
+  pushComponent(component: Component, args?: object): void;
   getContent(): Container;
   back(): void;
   hide(focusToComponent, args, keepHistory, state, fromBack): void;
-  getCurrentModule(): string;
+  // getCurrentModule(): string;
   getCurrentArguments(): object;
 }
 
 export interface IHistoryItem {
-  module: string;
+  module: Component;
   args: object;
   state: object;
   previousFocus: Button;
@@ -23,18 +23,18 @@ export interface IHistoryItem {
 
 export class ComponentContainer extends Container implements IComponentContainer {
   public static destroy() {
-    for (const module in this.knownComponents) {
-      if (this.knownComponents.hasOwnProperty(module)) {
-        delete this.knownComponents[module];
-      }
-    }
+    // for (const module in this.knownComponents) {
+    //   if (this.knownComponents.hasOwnProperty(module)) {
+    //     delete this.knownComponents[module];
+    //   }
+    // }
   }
 
-  private static knownComponents: object = {};
+  // private static knownComponents: object = {};
 
-  private loadingIndex: number;
-  private loadingModule: string;
-  private currentModule: string;
+  // private loadingIndex: number;
+  // private loadingModule: string;
+  // private currentModule: string;
   private currentComponent: Component;
   private currentArgs: object;
   private historyStack: IHistoryItem[];
@@ -46,9 +46,9 @@ export class ComponentContainer extends Container implements IComponentContainer
   constructor(id?: string) {
     super(id);
 
-    this.loadingIndex = 0;
-    this.loadingModule = null;
-    this.currentModule = null;
+    // this.loadingIndex = 0;
+    // this.loadingModule = null;
+    // this.currentModule = null;
     this.currentComponent = null;
     this.currentArgs = null;
     this.historyStack = [];
@@ -175,8 +175,8 @@ export class ComponentContainer extends Container implements IComponentContainer
    * @param module The requirejs module name of the component to show.
    * @param args An optional object to pass arguments to the component.
    */
-  public pushComponent(module: string, args?: object) {
-    // this.showComponent(module, args, true);
+  public pushComponent(component: Component, args?: object) {
+    this.showComponent(component, args, true);
   }
 
   /**
@@ -195,7 +195,7 @@ export class ComponentContainer extends Container implements IComponentContainer
     const lastComponent = this.historyStack.pop();
     if (lastComponent) {
       this.previousFocus = lastComponent.previousFocus;
-      // this.showComponent(lastComponent.module, lastComponent.args, true, lastComponent.state, true, focus);
+      this.showComponent(lastComponent.module, lastComponent.args, true, lastComponent.state, true, focus);
     } else {
       this.hideComponent(null, null, false, null, false);
     }
@@ -231,7 +231,7 @@ export class ComponentContainer extends Container implements IComponentContainer
       if (keepHistory) {
         if (!fromBack) {
           this.historyStack.push({
-            module: this.currentModule,
+            module: currentComponent,
             args: this.currentArgs,
             state: newState,
             previousFocus: this.previousFocus
@@ -258,9 +258,9 @@ export class ComponentContainer extends Container implements IComponentContainer
   /**
    *
    */
-  public getCurrentModule(): string {
-    return this.currentModule;
-  }
+  // public getCurrentModule(): string {
+  //   return this.currentModule;
+  // }
 
   /**
    *
@@ -277,32 +277,32 @@ export class ComponentContainer extends Container implements IComponentContainer
    * @param keepHistory
    * @param state
    */
-  private loadComponentCallback(
-    module: string,
-    componentClass: new () => Widget,
-    args?: object,
-    keepHistory?: boolean,
-    state?: object
-  ) {
-    if (!this.getCurrentApplication()) {
-      // Application has been destroyed, abort
-      return;
-    }
+  // private loadComponentCallback(
+  //   module: string,
+  //   componentClass: new () => Widget,
+  //   args?: object,
+  //   keepHistory?: boolean,
+  //   state?: object
+  // ) {
+  //   if (!this.getCurrentApplication()) {
+  //     // Application has been destroyed, abort
+  //     return;
+  //   }
 
-    const newComponent = new componentClass();
+  //   const newComponent = new componentClass();
 
-    // Add the component to our table of known components.
-    ComponentContainer.knownComponents[module] = newComponent;
+  //   // Add the component to our table of known components.
+  //   ComponentContainer.knownComponents[module] = newComponent;
 
-    // set the parent widget so the next event bubbles correctly through the tree
-    newComponent.parentWidget = this;
-    newComponent.bubbleEvent(
-      new ComponentEvent('load', this, ComponentContainer.knownComponents[module], args, null, null)
-    );
-    // clear the parent widget again
-    newComponent.parentWidget = null;
+  //   // set the parent widget so the next event bubbles correctly through the tree
+  //   newComponent.parentWidget = this;
+  //   newComponent.bubbleEvent(
+  //     new ComponentEvent('load', this, ComponentContainer.knownComponents[module], args, null, null)
+  //   );
+  //   // clear the parent widget again
+  //   newComponent.parentWidget = null;
 
-    // Show the component.
-    // this.showComponent(module, args, keepHistory, state);
-  }
+  //   // Show the component.
+  //   // this.showComponent(module, args, keepHistory, state);
+  // }
 }
