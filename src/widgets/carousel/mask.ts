@@ -1,4 +1,5 @@
 import { Device } from '../..';
+import { IAnimOptions } from '../../devices/device';
 import { Container } from '../container';
 import { ISize } from '../image';
 import { Orientation } from './orientations/orientation';
@@ -8,7 +9,7 @@ import { Spinner } from './spinner';
  * The masking container of a carousel that the widget strip moves within.
  */
 export class Mask extends Container {
-  private orientation: { dimension: () => number };
+  private orientation: Orientation;
   private alignmentPoint: number;
   private normalisedWidgetAlignPoint: number;
   private normalisedAlignmentPoint: number;
@@ -236,11 +237,11 @@ export class Mask extends Container {
     return deDuped;
   }
 
-  private numericalSort(a, b) {
+  private numericalSort(a: number, b: number) {
     return a - b;
   }
 
-  private moveContentsTo(relativePixels, options) {
+  private moveContentsTo(relativePixels: number, options: IAnimOptions) {
     this.spinner.moveContentsTo(relativePixels, options);
   }
 
@@ -248,7 +249,7 @@ export class Mask extends Container {
     return this.orientation.dimension();
   }
 
-  private doAlign(index: number, options: { skipAnim: boolean }, alignPoint: number) {
+  private doAlign(index: number, options: IAnimOptions, alignPoint: number) {
     let distanceContentsMustMoveBack;
     distanceContentsMustMoveBack = this.widgetStrip.getLengthToIndex(index);
     distanceContentsMustMoveBack -= this.getAlignmentPoint();

@@ -1,7 +1,7 @@
 import { BaseClass } from '../../../class';
 
 export abstract class Orientation extends BaseClass {
-  public abstract dimension(): string;
+  public abstract dimension(): number;
 
   public abstract edge(): string;
 

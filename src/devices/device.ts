@@ -76,7 +76,7 @@ export interface ISupportedAudioStreaming {
 }
 
 export interface IAnimOptions {
-  el: Node;
+  el?: Node;
   to?: {
     left?: number;
     right?: number;
