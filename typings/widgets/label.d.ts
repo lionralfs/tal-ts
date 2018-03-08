@@ -38,7 +38,7 @@ export declare class Label extends Widget {
      * Returns a string that will be displayed in the label after truncation, etc...
      * @param device The device to render to.
      */
-    getTextAsRendered(device: Device): string;
+    getTextAsRendered(device: Device): any;
     /**
      * Sets the text displayed by this label.
      * @param text The new text to be displayed.

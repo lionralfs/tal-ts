@@ -72,6 +72,15 @@ export abstract class Widget extends BaseClass implements IWidget {
     }
   }
 
+  /**
+   * Checks to see if the widget has a given CSS class.
+   * @param className The class name to check.
+   * @returns Boolean true if the device has the className. Otherwise boolean false.
+   */
+  public hasClass(className: string): boolean {
+    return this.classNames[className] ? true : false;
+  }
+
   public getClasses(): string[] {
     const names = [];
     for (const i in this.classNames) {

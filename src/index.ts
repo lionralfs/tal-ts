@@ -4,6 +4,7 @@ import { KeyEvent } from './events/keyevent';
 import { HTML5MediaPlayer } from './mediaplayer/html5';
 import { RuntimeContext } from './runtimecontext';
 import { Button } from './widgets/button';
+import { Carousel } from './widgets/carousel';
 import { Component } from './widgets/component';
 import { ComponentContainer } from './widgets/componentcontainer';
 import { Container } from './widgets/container';
@@ -19,5 +20,6 @@ export {
   ComponentContainer,
   RuntimeContext,
   Device,
-  HTML5MediaPlayer
+  HTML5MediaPlayer,
+  Carousel
 };

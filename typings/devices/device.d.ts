@@ -154,6 +154,7 @@ export declare abstract class Device extends BaseClass implements IDevice {
      */
     abstract setWindowLocationUrl(url: string): void;
     abstract prependChildElement(to: HTMLElement, el: HTMLElement): void;
+    abstract insertChildElementBefore(to: HTMLElement, el: HTMLElement, ref: HTMLElement): void;
     abstract appendChildElement(to: Node, el: Node): void;
     abstract setElementClasses(el: Node, classNames: string[]): void;
     abstract removeClassFromElement(el: Node, className: string, deep?: boolean): void;
@@ -176,6 +177,7 @@ export declare abstract class Device extends BaseClass implements IDevice {
     abstract getElementOffset(el: HTMLElement): {
         top: number;
         left: number;
+        [key: string]: number;
     };
     abstract getElementSize(el: HTMLElement): ISize;
     abstract setElementSize(el: HTMLElement, size: ISize): void;

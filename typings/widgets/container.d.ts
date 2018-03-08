@@ -17,6 +17,16 @@ export declare class Container extends Widget implements IContainer {
     private autoRenderChildren;
     constructor(id?: string);
     /**
+     * Inserts a child widget at the specified index.
+     * @param index The index where to insert the child widget.
+     * @param widget The child widget to add.
+     */
+    insertChildWidget(index: number, widget: Widget): Widget;
+    /**
+     * Remove all child widgets from this widget.
+     */
+    removeChildWidgets(): void;
+    /**
      * Removes a specific child widget from this widget.
      * @param widget The child widget to remove.
      * @param retainElement Pass `true` to retain the child output element of the given widget
@@ -71,6 +81,23 @@ export declare class Container extends Widget implements IContainer {
      * @param widget The child widget to set focus to.
      */
     setActiveChildWidget(widget: Widget): boolean;
+    /**
+     * Attempts to set focus to the child widget at the given index.
+     * @see #setActiveChildWidget
+     * @param index Index of the child widget to set focus to.
+     * @return true if the child widget was focusable, otherwise boolean false.
+     */
+    setActiveChildIndex(index: number): boolean;
+    /**
+     * Get the current active widget.
+     * @return The current active widget
+     */
+    getActiveChildWidget(): Container;
+    /**
+     * Gets the number of direct child widgets.
+     * @return The number of direct child widgets.
+     */
+    getChildWidgetCount(): number;
     /**
      * Checks to see if a widget is focussable, i.e. contains an enabled button.
      */

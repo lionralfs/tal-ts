@@ -35,6 +35,12 @@ export declare abstract class Widget extends BaseClass implements IWidget {
     constructor(id?: string);
     pushComponent(...args: any[]): void;
     addClass(className: string): void;
+    /**
+     * Checks to see if the widget has a given CSS class.
+     * @param className The class name to check.
+     * @returns Boolean true if the device has the className. Otherwise boolean false.
+     */
+    hasClass(className: string): boolean;
     getClasses(): string[];
     /**
      * Add an event listener function to this widget.

@@ -376,6 +376,8 @@ export abstract class Device extends BaseClass implements IDevice {
 
   public abstract prependChildElement(to: HTMLElement, el: HTMLElement): void;
 
+  public abstract insertChildElementBefore(to: HTMLElement, el: HTMLElement, ref: HTMLElement): void;
+
   public abstract appendChildElement(to: Node, el: Node): void;
 
   public abstract setElementClasses(el: Node, classNames: string[]): void;
@@ -403,7 +405,7 @@ export abstract class Device extends BaseClass implements IDevice {
 
   public abstract getStylesheetElements(): Node[];
 
-  public abstract getElementOffset(el: HTMLElement): { top: number; left: number };
+  public abstract getElementOffset(el: HTMLElement): { top: number; left: number; [key: string]: number };
 
   public abstract getElementSize(el: HTMLElement): ISize;
 

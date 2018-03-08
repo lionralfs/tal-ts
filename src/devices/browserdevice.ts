@@ -21,7 +21,6 @@ export class BrowserDevice extends Device {
 
   public getWindowLocation(): Location {
     const windowLocation = this.windowLocation || window.location; // Allow stubbing for unit testing
-    let newLocation: Location;
 
     // Has the device missed the route off the href? Fix this.
     if (
@@ -31,18 +30,19 @@ export class BrowserDevice extends Device {
       windowLocation.href.lastIndexOf('#') === -1
     ) {
       // Copy properties to new object, as modifying href on the original window.location triggers a navigation.
-      newLocation = {};
+      const newLocation = {};
       const copyProps = ['assign', 'hash', 'host', 'href', 'pathname', 'protocol', 'search'];
       for (const prop of copyProps) {
         if (windowLocation.hasOwnProperty(prop)) {
-          newLocation[prop] = windowLocation[prop];
+          // newLocation[prop] = windowLocation[prop];
         }
       }
-      newLocation.href = newLocation.href + newLocation.hash;
+      // newLocation.href = newLocation.href + newLocation.hash;
     }
 
     // Use copy of window.location if it was created, otherwise the original.
-    return newLocation || windowLocation;
+    // return newLocation || windowLocation;
+    return windowLocation;
   }
 
   /**
@@ -72,6 +72,16 @@ export class BrowserDevice extends Device {
     } else {
       to.appendChild(el);
     }
+  }
+
+  /**
+   * Inserts an element as a child of another before a reference element.
+   * @param to Append as a child of this element.
+   * @param el The new child element.
+   * @param ref The reference element which will appear after the inserted element.
+   */
+  public insertChildElementBefore(to: HTMLElement, el: HTMLElement, ref: HTMLElement) {
+    to.insertBefore(el, ref);
   }
 
   public appendChildElement(to: Element, el: Element) {

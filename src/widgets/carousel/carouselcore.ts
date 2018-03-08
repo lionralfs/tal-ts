@@ -1,16 +1,35 @@
+import { Device, IAnimOptions } from '../../devices/device';
+import { AfterAlignEvent } from '../../events/afteralignevent';
+import { BeforeAlignEvent } from '../../events/beforealignevent';
+import { BaseEvent } from '../../events/event';
 import { Container } from '../container';
+import { Widget } from '../widget';
+import { Aligner } from './aligners/aligner';
 import { Mask } from './mask';
+import { BookendedNavigator } from './navigators/bookendednavigator';
+import { Navigator } from './navigators/navigator';
+import { Horizontal, HorizontalOrientation } from './orientations/horizontal';
 import { Orientation } from './orientations/orientation';
+import { Vertical, VerticalOrientation } from './orientations/vertical';
+import { WidgetStrip } from './strips/widgetstrip';
 
 /**
  * Ordered list of widgets that can be navigated by moving the list or the selection point
  * Use Carousel instead if you need old container methods.
  */
 export class CarouselCore extends Container {
-  private mask: Mask;
-  private widgetStrip: number; // TODO
+  public static orientations = {
+    VERTICAL: Vertical,
+    HORIZONTAL: Horizontal
+  };
+
+  protected mask: Mask;
+  protected widgetStrip: WidgetStrip;
   private orientation: Orientation;
   private autoCalculate: boolean;
+  private navigator: Navigator;
+  private aligner: Aligner;
+  private remapEvent: (evt: BaseEvent) => void;
 
   /**
    * @param id The id of the carousel, id_CarouselMask will be used as the id for the mask element
@@ -18,357 +37,302 @@ export class CarouselCore extends Container {
    * @param orientation the orientation object of
    * the carousel. Vertical by default, for horizontal pass in antie.widgets.carousel.CarouselCore.orientations.HORIZONTAL
    */
-  constructor(id: string, orientation: number) {
+  constructor(id: string, orientation: Orientation) {
     super(id);
 
     this.id = id;
 
-    // this.setOrientation(orientation || Carousel.orientations.VERTICAL);
-    // this.setWidgetStrip(WidgetStrip);
-    // this.mask = new Mask(this.id + '_CarouselMask', this.widgetStrip, this.orientation);
-    // this._directAppend(this.mask);
-    // this.setNavigator(BookendedNavigator);
-    // this._aligner = new Aligner(this.mask);
-    // this._setAlignEventsFromStripToHaveCarouselAsTarget();
-    // this.autoCalculate = true;
+    // this.setOrientation(orientation || CarouselCore.orientations.VERTICAL);
+    this.setOrientation(orientation);
+    this.setWidgetStrip(WidgetStrip);
+    this.mask = new Mask(this.id + '_CarouselMask', this.widgetStrip, this.orientation);
+    this.directAppend(this.mask);
+    this.setNavigator(BookendedNavigator);
+    this.aligner = new Aligner(this.mask);
+    this.setAlignEventsFromStripToHaveCarouselAsTarget();
+    this.autoCalculate = true;
+  }
+
+  /**
+   * Renders the widget and any child widgets to device-specific output.
+   * @param device The device to render to.
+   * @return A device-specific object that represents the Carousel as displayed on the device
+   * (in a browser, two nested DIVs with the inner containing child widgets and the outer acting as a mask);
+   */
+  public render(device: Device) {
+    this.outputElement = this.mask.render(device);
+    return this.outputElement;
+  }
+
+  /**
+   * Adds a widget to the end of the carousel
+   * @param widget The widget to append to the carousel
+   * @param length the length of the widget in pixels, measured along the primary axis.
+   * (Height for a vertical carousel or width for horizontal.) If providied, this value will be used in
+   * positioning calculations rather then a calculated value (can be useful when widgets change size)
+   * Note length only currently working with non-wrapping strips.
+   */
+  public append(widget: Widget, length?: number) {
+    widget.addClass('carouselItem');
+    return this.widgetStrip.append(widget, length);
+  }
+
+  /**
+   * Adds a widget to the end of the carousel
+   * @param index A zero based index to begin insertion at, i.e. 0 prepends.
+   * @param widget The widget to append to the carousel
+   * @param length the length of the widget in pixels, measured along the primary axis.
+   * (Height for a vertical carousel or width for horizontal.) If provided, this value will be used in
+   * positioning calculations rather then a calculated value (can be useful when widgets change size)
+   * Note length only currently working with non-wrapping strips.
+   */
+  public insert(index: number, widget: Widget, length?: number) {
+    widget.addClass('carouselItem');
+    return this.widgetStrip.insert(index, widget, length);
+  }
+
+  /**
+   * Manually sets lengths of elements for movement calculations - useful for elements which change size while moving.
+   * @param lengths If provided with a number all lengths will be set equal to this number
+   * If provided with an array, the lengths will be set with the corresponding widgets (so the first number will be used
+   * for the first widget's length, etc..)
+   * Note only currently working with non-wrapping strips.
+   */
+  public setWidgetLengths(lengths: number | number[]) {
+    this.widgetStrip.setLengths(lengths);
+  }
+
+  /**
+   * Manually sets length of te Mask. Normally this is measured from the DOM, but if the first alignment happens before
+   * the DOM is ready, then culling strips may not get populated. In this case, call this first with the size in pixels of
+   * the mask.
+   * @param length The length in pixels to use in Mask calculations.
+   */
+  public setMaskLength(length: number) {
+    this.mask.setLength(length);
+  }
+
+  /**
+   * Removes a widget from the carousel
+   * @param widget Widget to remove from the DOM
+   * @param retainElement Whether to keep the widget's output element in the DOM after removing widget
+   */
+  public remove(widget: Widget, retainElement = false) {
+    if (this.hasChildWidget(widget.id)) {
+      widget.removeClass('carouselItem');
+      return this.widgetStrip.remove(widget, retainElement);
+    }
+  }
+
+  /**
+   * Removes all widgets from the carousel
+   */
+  public removeAll() {
+    this.widgetStrip.removeAll();
+  }
+
+  /**
+   * Aligns the carousel to the next enabled widget after that currently aligned.
+   * If no alignment has been performed previously it will align to the next enabled widget after that at index 0
+   * If a wrapping strip and navigator are used the alignment will wrap to the start after the last widget is reached.
+   * If an alignment is in progress, the new alignment will be queued to start after the current alignment completes.
+   * @param {Object} [options] An animation options object
+   * @param {Number} [options.fps] The frames per second of the alignment, if using styletopleft animation
+   * @param {Number} [options.duration] The duration of the alignment in ms
+   * @param {String} [options.easing] The alignment easing function
+   * @param {Boolean} [options.skipAnim] If set true, the alignment will complete instantly then fire any provided callback
+   * @param {Function} [options.onComplete] A function which will be executed on completion of the alignment animation.
+   */
+  public alignNext(options?: IAnimOptions) {
+    this.aligner.alignNext(this.navigator, options);
+  }
+
+  /**
+   * Aligns the carousel to the enabled widget before that currently aligned.
+   * If no alignment has been performed previously it will align to the first enabled widget before that at index 0
+   * If a wrapping strip and navigator are used the alignment will wrap to the end after the first widget is reached.
+   * If an alignment is in progress, the new alignment will be queued to start after the current alignment completes.
+   * @param {Object} [options] An animation options object
+   * @param {Number} [options.fps] The frames per second of the alignment, if using styletopleft animation
+   * @param {Number} [options.duration] The duration of the alignment in ms
+   * @param {String} [options.easing] The alignment easing function
+   * @param {Boolean} [options.skipAnim] If set true, the alignment will complete instantly then fire any provided callback
+   * @param {Function} [options.onComplete] A function which will be executed on completion of the alignment animation.
+   */
+  public alignPrevious(options?: IAnimOptions) {
+    this.aligner.alignPrevious(this.navigator, options);
+  }
+
+  /**
+   * Aligns the carousel to the widget at the specified index
+   * Will always move forward if the index is after that currently aligned and backwards if index is before
+   * that currently aligned.
+   * If an alignment is in progress, the new alignment will be queued to start after the current alignment completes.
+   * @param {Number} index The index of the widget to align on.
+   * @param {Object} [options] An animation options object
+   * @param {Number} [options.fps] The frames per second of the alignment, if using styletopleft animation
+   * @param {Number} [options.duration] The duration of the alignment in ms
+   * @param {String} [options.easing] The alignment easing function
+   * @param {Boolean} [options.skipAnim] If set true, the alignment will complete instantly then fire any provided callback
+   * @param {Function} [options.onComplete] A function which will be executed on completion of the alignment animation.
+   */
+  public alignToIndex(index: number, options?: IAnimOptions) {
+    this.aligner.alignToIndex(index, options);
+  }
+
+  /**
+   * Instantly completes any in-flight alignment animations, firing any callbacks that were provided.
+   * If several alignments have been queued, all will complete in order.
+   */
+  public completeAlignment() {
+    this.aligner.complete();
+  }
+
+  /**
+   * Sets the point along the Mask at which alignments are made
+   * @param pixelsFromEdgeToWidgetEdge A value in pixels from the primary edge (top or left for Vertical/Horizontal)
+   * at which widgets are aligned.
+   */
+  public setAlignPoint(pixelsFromEdgeToWidgetEdge: number) {
+    this.mask.setAlignPoint(pixelsFromEdgeToWidgetEdge);
+  }
+
+  /**
+   * Sets the point along the Mask at which alignments are made
+   * @param fractionOfMaskLength a value between 0 and 1 specifying how far along the mask a widget should
+   * be aligned. i.e. 0.5 is the centre of the mask.
+   */
+  public setNormalisedAlignPoint(fractionOfMaskLength: number) {
+    this.mask.setNormalisedAlignPoint(fractionOfMaskLength);
+  }
+
+  /**
+   * Sets the point along the aligned widget at which alignments are made
+   * @param fractionOfWidgetLength a value between 0 and 1 specifying the point along the widget which will be
+   * aligned with the mask alignment point. i.e. in a horizontal Carousel, 0.5 is the centre of the widget,
+   * 0 is the left edge, 1 is the right edge
+   */
+  public setNormalisedWidgetAlignPoint(fractionOfWidgetLength: number) {
+    this.mask.setNormalisedWidgetAlignPoint(fractionOfWidgetLength);
+  }
+
+  /**
+   * Some widget strips peform calculations which require elements to be present in the document.
+   * This method manually performs those recalculations.
+   */
+  public recalculate() {
+    this.widgetStrip.recalculate();
+  }
+
+  /**
+   * Some widget strips peform calculations which require elements to be present in the document.
+   * By default these calculations are performed whenever their values might be invalidated (after appending elements
+   * for instance) This method can be used to be disable/enable this behaviour for performance optimisation.
+   */
+  public setAutoCalculate(on: boolean) {
+    this.widgetStrip.autoCalculate(on);
+  }
+
+  /**
+   * @returns the index of the currently active widget
+   */
+  public getActiveIndex() {
+    return this.navigator.currentIndex();
+  }
+
+  /**
+   * Sets the currently active index
+   * @param index the index of the widget to be made active.
+   * If this is invalid or corresponds to a disabled widget the active index will not change
+   */
+  public setActiveIndex(index: number) {
+    this.navigator.setIndex(index);
+  }
+
+  /**
+   * @return the index first focussable index after the index of the active widget
+   */
+  public nextIndex() {
+    return this.navigator.nextIndex();
+  }
+
+  /**
+   * @return the index first focussable index before the index of the active widget
+   */
+  public previousIndex() {
+    return this.navigator.previousIndex();
+  }
+
+  /**
+   * Sets the currently active widget
+   * @param widget the widget to be made active.
+   * If the widget is not in the Carousel or corresponds to a disabled widget the active widget will not change
+   */
+  public setActiveWidget(widget: Widget) {
+    const index = this.widgetStrip.getIndexOfChildWidget(widget);
+    this.navigator.setIndex(index);
+  }
+
+  /**
+   * Sets the navigator class used to determine focus position
+   * @param navigator the constructor function of the type of navigator the carousel should use, e.g.
+   * antie.widgets.carousel.navigators.BookendedNavigator or antie.widgets.carousel.navigators.WrappingNavigator
+   * On construction, the carousel uses antie.widgets.carousel.navigators.BookendedNavigator by default
+   */
+  public setNavigator(navigator: new (container: Container) => Navigator) {
+    this.navigator = new navigator(this.widgetStrip);
+  }
+
+  /**
+   * Sets the widget strip class used to manage widgets and elements within the carousel
+   * @param widgetStrip the constructor function of the type of Widget strip the carousel should use, e.g.
+   * antie.widgets.carousel.navigators.WidgetStrip, antie.widgets.carousel.navigators.WrappingStrip
+   * On construction, the carousel uses antie.widgets.carousel.navigators.WidgetStrip by default
+   */
+  public setWidgetStrip(widgetStrip: new (id: string, orientation: Orientation) => WidgetStrip) {
+    this.widgetStrip = new widgetStrip(this.id + '_WidgetStrip', this.orientation);
+    if (this.navigator) {
+      this.navigator.setContainer(this.widgetStrip);
+    }
+    if (this.mask) {
+      this.mask.setWidgetStrip(this.widgetStrip);
+    }
+  }
+
+  /**
+   * @return The widgets currently in the carousel
+   */
+  public items(): Widget[] {
+    return this.widgetStrip.widgets();
+  }
+
+  /**
+   * @return The orientation object associated with the carousel
+   */
+  public getOrientation() {
+    return this.orientation;
+  }
+
+  protected directAppend(widget: Widget) {
+    this.appendChildWidget(widget);
+  }
+
+  private setOrientation(orientation: Orientation) {
+    this.orientation = orientation;
+  }
+
+  private setAlignEventsFromStripToHaveCarouselAsTarget() {
+    this.remapWidgetStripEventToCarousel('beforealign');
+    this.remapWidgetStripEventToCarousel('afteralign');
+  }
+
+  private remapWidgetStripEventToCarousel(eventName: string) {
+    const fallbackFunction = (evt: AfterAlignEvent) => {
+      if (evt.target === this.widgetStrip) {
+        evt.target = this;
+      }
+    };
+    this.remapEvent = this.remapEvent || fallbackFunction;
+    this.addEventListener(eventName, this.remapEvent);
   }
 }
-
-// define(
-//   'antie/widgets/carousel/carouselcore',
-//   [
-//     'antie/widgets/container',
-//     'antie/widgets/carousel/navigators/bookendednavigator',
-//     'antie/widgets/carousel/mask',
-//     'antie/widgets/carousel/strips/widgetstrip',
-//     'antie/widgets/carousel/aligners/aligner',
-//     'antie/widgets/carousel/orientations/vertical',
-//     'antie/widgets/carousel/orientations/horizontal'
-//   ],
-//   function(Container, BookendedNavigator, Mask, WidgetStrip, Aligner, verticalOrientation, horizontalOrientation) {
-//     'use strict';
-//     /**
-//      * Ordered list of widgets that can be navigated by moving the list or the selection point
-//      * Use antie.widgets.Carousel instead if you need old container methods.
-//      * @name antie.widgets.carousel.CarouselCore
-//      * @class
-//      * @extends antie.widgets.Widget
-//      * @param {string} id The id of the carousel, id_CarouselMask will be used as the id for the mask element
-//      * and id_WidgetStrip will be used as the id of the widget strip element
-//      * @param {Object} [orientation=antie.widgets.carousel.CarouselCore.orientations.VERTICAL] the orientation object of
-//      * the carousel. Vertical by default, for horizontal pass in antie.widgets.carousel.CarouselCore.orientations.HORIZONTAL
-//      */
-//     var Carousel = Container.extend(
-//       /** @lends antie.widgets.carousel.CarouselCore.prototype */ {
-//         /**
-//          * @constructor
-//          * @ignore
-//          */
-//         init: function init(id, orientation) {
-//           this.id = id;
-//           init.base.call(this, id);
-//           this._setOrientation(orientation || Carousel.orientations.VERTICAL);
-//           this.setWidgetStrip(WidgetStrip);
-//           this._mask = new Mask(this.id + '_CarouselMask', this._widgetStrip, this._orientation);
-//           this._directAppend(this._mask);
-//           this.setNavigator(BookendedNavigator);
-//           this._aligner = new Aligner(this._mask);
-//           this._setAlignEventsFromStripToHaveCarouselAsTarget();
-//           this._autoCalculate = true;
-//         },
-
-//         /**
-//          * Renders the widget and any child widgets to device-specific output.
-//          * @param {antie.devices.Device} device The device to render to.
-//          * @returns A device-specific object that represents the Carousel as displayed on the device
-//          * (in a browser, two nested DIVs with the inner containing child widgets and the outer acting as a mask);
-//          */
-//         render: function render(device) {
-//           this.outputElement = this._mask.render(device);
-//           return this.outputElement;
-//         },
-
-//         /**
-//          * Adds a widget to the end of the carousel
-//          * @param {antie.widgets.Widget} widget The widget to append to the carousel
-//          * @param {Number} [length] the length of the widget in pixels, measured along the primary axis.
-//          * (Height for a vertical carousel or width for horizontal.) If providied, this value will be used in
-//          * positioning calculations rather then a calculated value (can be useful when widgets change size)
-//          * Note length only currently working with non-wrapping strips.
-//          */
-//         append: function append(widget, length) {
-//           widget.addClass('carouselItem');
-//           return this._widgetStrip.append(widget, length);
-//         },
-
-//         /**
-//          * Adds a widget to the end of the carousel
-//          * @param {Number} index A zero based index to begin insertion at, i.e. 0 prepends.
-//          * @param {antie.widgets.Widget} widget The widget to append to the carousel
-//          * @param {Number} [length] the length of the widget in pixels, measured along the primary axis.
-//          * (Height for a vertical carousel or width for horizontal.) If provided, this value will be used in
-//          * positioning calculations rather then a calculated value (can be useful when widgets change size)
-//          * Note length only currently working with non-wrapping strips.
-//          */
-//         insert: function insert(index, widget, length) {
-//           widget.addClass('carouselItem');
-//           return this._widgetStrip.insert(index, widget, length);
-//         },
-
-//         /**
-//          * Manually sets lengths of elements for movement calculations - useful for elements which change size while moving.
-//          * @param {(Number|Number[])} lengths If provided with a number all lengths will be set equal to this number
-//          * If provided with an array, the lengths will be set with the corresponding widgets (so the first number will be used
-//          * for the first widget's length, etc..)
-//          * Note only currently working with non-wrapping strips.
-//          */
-//         setWidgetLengths: function setWidgetLengths(lengths) {
-//           this._widgetStrip.setLengths(lengths);
-//         },
-
-//         /**
-//          * Manually sets length of te Mask. Normally this is measured from the DOM, but if the first alignment happens before
-//          * the DOM is ready, then culling strips may not get populated. In this case, call this first with the size in pixels of
-//          * the mask.
-//          * @param {Number} length The length in pixels to use in Mask calculations.
-//          */
-//         setMaskLength: function setMaskLength(length) {
-//           this._mask.setLength(length);
-//         },
-
-//         /**
-//          * Removes a widget from the carousel
-//          * @param {antie.widgets.Widget} widget Widget to remove from the DOM
-//          * @param {Boolean} [retainElement=false] Whether to keep the widget's output element in the DOM after removing widget
-//          */
-//         remove: function remove(widget, retainElement) {
-//           if (this.hasChildWidget(widget.id)) {
-//             widget.removeClass('carouselItem');
-//             return this._widgetStrip.remove(widget, retainElement);
-//           }
-//         },
-
-//         /**
-//          * Removes all widgets from the carousel
-//          */
-//         removeAll: function removeAll() {
-//           this._widgetStrip.removeAll();
-//         },
-
-//         /**
-//          * Aligns the carousel to the next enabled widget after that currently aligned.
-//          * If no alignment has been performed previously it will align to the next enabled widget after that at index 0
-//          * If a wrapping strip and navigator are used the alignment will wrap to the start after the last widget is reached.
-//          * If an alignment is in progress, the new alignment will be queued to start after the current alignment completes.
-//          * @param {Object} [options] An animation options object
-//          * @param {Number} [options.fps] The frames per second of the alignment, if using styletopleft animation
-//          * @param {Number} [options.duration] The duration of the alignment in ms
-//          * @param {String} [options.easing] The alignment easing function
-//          * @param {Boolean} [options.skipAnim] If set true, the alignment will complete instantly then fire any provided callback
-//          * @param {Function} [options.onComplete] A function which will be executed on completion of the alignment animation.
-//          */
-//         alignNext: function alignNext(options) {
-//           this._aligner.alignNext(this._navigator, options);
-//         },
-
-//         /**
-//          * Aligns the carousel to the enabled widget before that currently aligned.
-//          * If no alignment has been performed previously it will align to the first enabled widget before that at index 0
-//          * If a wrapping strip and navigator are used the alignment will wrap to the end after the first widget is reached.
-//          * If an alignment is in progress, the new alignment will be queued to start after the current alignment completes.
-//          * @param {Object} [options] An animation options object
-//          * @param {Number} [options.fps] The frames per second of the alignment, if using styletopleft animation
-//          * @param {Number} [options.duration] The duration of the alignment in ms
-//          * @param {String} [options.easing] The alignment easing function
-//          * @param {Boolean} [options.skipAnim] If set true, the alignment will complete instantly then fire any provided callback
-//          * @param {Function} [options.onComplete] A function which will be executed on completion of the alignment animation.
-//          */
-//         alignPrevious: function alignPrevious(options) {
-//           this._aligner.alignPrevious(this._navigator, options);
-//         },
-
-//         /**
-//          * Aligns the carousel to the widget at the specified index
-//          * Will always move forward if the index is after that currently aligned and backwards if index is before
-//          * that currently aligned.
-//          * If an alignment is in progress, the new alignment will be queued to start after the current alignment completes.
-//          * @param {Number} index The index of the widget to align on.
-//          * @param {Object} [options] An animation options object
-//          * @param {Number} [options.fps] The frames per second of the alignment, if using styletopleft animation
-//          * @param {Number} [options.duration] The duration of the alignment in ms
-//          * @param {String} [options.easing] The alignment easing function
-//          * @param {Boolean} [options.skipAnim] If set true, the alignment will complete instantly then fire any provided callback
-//          * @param {Function} [options.onComplete] A function which will be executed on completion of the alignment animation.
-//          */
-//         alignToIndex: function alignToIndex(index, options) {
-//           this._aligner.alignToIndex(index, options);
-//         },
-
-//         /**
-//          * Instantly completes any in-flight alignment animations, firing any callbacks that were provided.
-//          * If several alignments have been queued, all will complete in order.
-//          */
-//         completeAlignment: function completeAlignment() {
-//           this._aligner.complete();
-//         },
-
-//         /**
-//          * Sets the point along the Mask at which alignments are made
-//          * @param pixelsFromEdgeToWidgetEdge A value in pixels from the primary edge (top or left for Vertical/Horizontal)
-//          * at which widgets are aligned.
-//          */
-//         setAlignPoint: function setAlignPoint(pixelsFromEdgeToWidgetEdge) {
-//           this._mask.setAlignPoint(pixelsFromEdgeToWidgetEdge);
-//         },
-
-//         /**
-//          * Sets the point along the Mask at which alignments are made
-//          * @param fractionOfMaskLength a value between 0 and 1 specifying how far along the mask a widget should
-//          * be aligned. i.e. 0.5 is the centre of the mask.
-//          */
-//         setNormalisedAlignPoint: function setNormalisedAlignPoint(fractionOfMaskLength) {
-//           this._mask.setNormalisedAlignPoint(fractionOfMaskLength);
-//         },
-
-//         /**
-//          * Sets the point along the aligned widget at which alignments are made
-//          * @param fractionOfWidgetLength a value between 0 and 1 specifying the point along the widget which will be
-//          * aligned with the mask alignment point. i.e. in a horizontal Carousel, 0.5 is the centre of the widget,
-//          * 0 is the left edge, 1 is the right edge
-//          */
-//         setNormalisedWidgetAlignPoint: function setNormalisedWidgetAlignPoint(fractionOfWidgetLength) {
-//           this._mask.setNormalisedWidgetAlignPoint(fractionOfWidgetLength);
-//         },
-
-//         /**
-//          * Some widget strips peform calculations which require elements to be present in the document.
-//          * This method manually performs those recalculations.
-//          */
-//         recalculate: function recalculate() {
-//           this._widgetStrip.recalculate();
-//         },
-
-//         /**
-//          * Some widget strips peform calculations which require elements to be present in the document.
-//          * By default these calculations are performed whenever their values might be invalidated (after appending elements
-//          * for instance) This method can be used to be disable/enable this behaviour for performance optimisation.
-//          */
-//         autoCalculate: function autoCalculate(on) {
-//           this._widgetStrip.autoCalculate(on);
-//         },
-
-//         /**
-//          * @returns the index of the currently active widget
-//          */
-//         getActiveIndex: function getActiveIndex() {
-//           return this._navigator.currentIndex();
-//         },
-
-//         /**
-//          * Sets the currently active index
-//          * @param {Number} index the index of the widget to be made active.
-//          * If this is invalid or corresponds to a disabled widget the active index will not change
-//          */
-//         setActiveIndex: function setActiveIndex(index) {
-//           this._navigator.setIndex(index);
-//         },
-
-//         /**
-//          * @returns the index first focussable index after the index of the active widget
-//          */
-//         nextIndex: function nextIndex() {
-//           return this._navigator.nextIndex();
-//         },
-
-//         /**
-//          * @returns the index first focussable index before the index of the active widget
-//          */
-//         previousIndex: function previousIndex() {
-//           return this._navigator.previousIndex();
-//         },
-
-//         /**
-//          * Sets the currently active widget
-//          * @param {antie.widgets.Widget} widget the widget to be made active.
-//          * If the widget is not in the Carousel or corresponds to a disabled widget the active widget will not change
-//          */
-//         setActiveWidget: function setActiveWidget(widget) {
-//           var index;
-//           index = this._widgetStrip.getIndexOfChildWidget(widget);
-//           this._navigator.setIndex(index);
-//         },
-
-//         /**
-//          * Sets the navigator class used to determine focus position
-//          * @param {Function} Navigator the constructor function of the type of navigator the carousel should use, e.g.
-//          * antie.widgets.carousel.navigators.BookendedNavigator or antie.widgets.carousel.navigators.WrappingNavigator
-//          * On construction, the carousel uses antie.widgets.carousel.navigators.BookendedNavigator by default
-//          */
-//         setNavigator: function setNavigator(Navigator) {
-//           this._navigator = new Navigator(this._widgetStrip);
-//         },
-
-//         /**
-//          * Sets the widget strip class used to manage widgets and elements within the carousel
-//          * @param {Function} WidgetStrip the constructor function of the type of Widget strip the carousel should use, e.g.
-//          * antie.widgets.carousel.navigators.WidgetStrip, antie.widgets.carousel.navigators.WrappingStrip
-//          * On construction, the carousel uses antie.widgets.carousel.navigators.WidgetStrip by default
-//          */
-//         setWidgetStrip: function setWidgetStrip(WidgetStrip) {
-//           this._widgetStrip = new WidgetStrip(this.id + '_WidgetStrip', this._orientation);
-//           if (this._navigator) {
-//             this._navigator.setContainer(this._widgetStrip);
-//           }
-//           if (this._mask) {
-//             this._mask.setWidgetStrip(this._widgetStrip);
-//           }
-//         },
-
-//         /**
-//          * @returns {Array} The widgets currently in the carousel
-//          */
-//         items: function items() {
-//           return this._widgetStrip.widgets();
-//         },
-
-//         /**
-//          * @returns {Object} The orientation object associated with the carousel
-//          */
-//         orientation: function orientation() {
-//           return this._orientation;
-//         },
-
-//         _setOrientation: function _setOrientation(orientation) {
-//           this._orientation = orientation;
-//         },
-
-//         _setAlignEventsFromStripToHaveCarouselAsTarget: function _setAlignEventsFromStripToHaveCarouselAsTarget() {
-//           this._remapWidgetStripEventToCarousel('beforealign');
-//           this._remapWidgetStripEventToCarousel('afteralign');
-//         },
-
-//         _remapWidgetStripEventToCarousel: function _remapWidgetStripEventToCarousel(eventName) {
-//           var self = this;
-//           this._remapEvent =
-//             this._remapEvent ||
-//             function(evt) {
-//               if (evt.target === self._widgetStrip) {
-//                 evt.target = self;
-//               }
-//             };
-//           this.addEventListener(eventName, this._remapEvent);
-//         },
-
-//         _directAppend: function _directAppend(widget) {
-//           return this.appendChildWidget(widget);
-//         }
-//       }
-//     );
-
-//     Carousel.orientations = {
-//       VERTICAL: verticalOrientation,
-//       HORIZONTAL: horizontalOrientation
-//     };
-//     return Carousel;
-//   }
-// );

@@ -1,9 +1,12 @@
 import { Device } from '../..';
 import { IAnimOptions } from '../../devices/device';
+import { AfterAlignEvent } from '../../events/afteralignevent';
+import { BeforeAlignEvent } from '../../events/beforealignevent';
 import { Container } from '../container';
 import { ISize } from '../image';
 import { Orientation } from './orientations/orientation';
 import { Spinner } from './spinner';
+import { WidgetStrip } from './strips/widgetstrip';
 
 /**
  * The masking container of a carousel that the widget strip moves within.

@@ -1,5 +1,6 @@
 import { Container } from '../container';
 import { Orientation } from './orientations/orientation';
+import { WidgetStrip } from './strips/widgetstrip';
 /**
  * The masking container of a carousel that the widget strip moves within.
  */
@@ -46,16 +47,45 @@ export declare class Mask extends Container {
      * with 0 being the top or left of the widget and 1 being the bottom or right.
      * @param fractionOfWidgetLength Value between 0 and 1, will be clamped to 0 or 1 if outside this range.
      */
-    setNormalisedWidgetAlignPoint(fractionOfWidgetLength: any): void;
+    setNormalisedWidgetAlignPoint(fractionOfWidgetLength: number): void;
     /**
      * @return the widget strip currently being masked
      */
-    getWidgetStrip(): any;
+    getWidgetStrip(): WidgetStrip;
     /**
      * Sets the widget strip to mask and align
      * @param widgetStrip an instance of antie.widgets.carousel.strips.WidgetStrip
      */
-    setWidgetStrip(widgetStrip: any): void;
+    setWidgetStrip(widgetStrip: WidgetStrip): void;
+    setLength(length: number): void;
+    /**
+     * @return The length in pixels of the primary dimension of the mask
+     * (Width for horizontal, height for vertical)
+     */
+    getLength(): number;
+    /**
+     * @param index
+     * @return  An array of indices corresponding to the widgets visible
+     * when the specified index is aligned to the current alignment point.
+     */
+    indicesVisibleWhenAlignedToIndex(index: number): number[];
+    /**
+     * Completes any current alignment operation instantly, firing any associated
+     * onComplete callback
+     */
+    stopAnimation(): void;
+    beforeAlignTo(currentIndex: number, newIndex: number): void;
+    afterAlignTo(index: number): void;
+    private clampBetweenZeroAndOne(value);
+    private getWidgetAlignmentPoint(index);
+    private getAlignmentPoint();
+    private visibleIndixesBefore(index, maskLength);
+    private visibleIndicesFrom(index, maskLength);
+    private visibleIndicesBetween(start, end);
+    private deDuplicateAndSortArray(arr);
+    private numericalSort(a, b);
+    private moveContentsTo(relativePixels, options);
+    private getDimension();
     private doAlign(index, options, alignPoint);
     private resetAlignment();
 }

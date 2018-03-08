@@ -20,6 +20,13 @@ export declare class BrowserDevice extends Device {
      * @param el The new child element.
      */
     prependChildElement(to: HTMLElement, el: HTMLElement): void;
+    /**
+     * Inserts an element as a child of another before a reference element.
+     * @param to Append as a child of this element.
+     * @param el The new child element.
+     * @param ref The reference element which will appear after the inserted element.
+     */
+    insertChildElementBefore(to: HTMLElement, el: HTMLElement, ref: HTMLElement): void;
     appendChildElement(to: Element, el: Element): void;
     setElementClasses(el: Element, classNames: string[]): void;
     /**
