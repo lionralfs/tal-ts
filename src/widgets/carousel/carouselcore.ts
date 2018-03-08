@@ -42,8 +42,8 @@ export class CarouselCore extends Container {
 
     this.id = id;
 
-    // this.setOrientation(orientation || CarouselCore.orientations.VERTICAL);
-    this.setOrientation(orientation);
+    this.setOrientation(orientation || CarouselCore.orientations.VERTICAL);
+    // this.setOrientation(orientation);
     this.setWidgetStrip(WidgetStrip);
     this.mask = new Mask(this.id + '_CarouselMask', this.widgetStrip, this.orientation);
     this.directAppend(this.mask);
