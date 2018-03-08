@@ -58,6 +58,9 @@ export interface IDeviceConfig {
     componentcontainer?: {
       fade?: boolean;
     };
+    horizontalprogress?: {
+      animate?: boolean;
+    };
   };
 }
 
@@ -423,7 +426,7 @@ export abstract class Device extends BaseClass implements IDevice {
 
   public abstract tweenElementStyle(options: IAnimOptions): void; // TODO: check options
 
-  public abstract stopAnimation(anim: object): void; // TODO: implement anim interface
+  public abstract stopAnimation(anim: boolean): void; // TODO: implement anim interface
 
   public abstract loadStyleSheet(url: string, callback?: (res: string) => void): void;
 
@@ -444,9 +447,9 @@ export abstract class Device extends BaseClass implements IDevice {
 
   public abstract createButton(id?: string, classNames?: string[]): HTMLElement;
 
-  public abstract createList(id?: string, classNames?: string[]): Node;
+  public abstract createList(id?: string, classNames?: string[]): HTMLElement;
 
-  public abstract createListItem(id?: string, classNames?: string[]): Node;
+  public abstract createListItem(id?: string, classNames?: string[]): HTMLElement;
 
   public abstract createImage(
     src: string,

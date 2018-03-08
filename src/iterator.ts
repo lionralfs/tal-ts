@@ -1,8 +1,8 @@
 import { BaseClass } from './class';
 
 export class Iterator extends BaseClass {
+  public currentIndex: number;
   private array: any[];
-  private currentIndex: number;
 
   constructor(array?: any[]) {
     super();

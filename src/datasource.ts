@@ -39,7 +39,7 @@ export class DataSource extends BaseClass {
    * Performs the request for data.
    * @param callbacks Object containing onSuccess and onError callback functions.
    */
-  public load(callbacks: { onSuccess: (data: Iterator | any[]) => void; onError: () => void }) {
+  public load(callbacks: { onSuccess: (data: Iterator | any[]) => void; onError: (response?: object) => void }) {
     this.request = this.obj[this.func].apply(this.obj, [callbacks].concat(this.args || []));
   }
 

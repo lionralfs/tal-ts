@@ -39,6 +39,7 @@ export abstract class Widget extends BaseClass implements IWidget {
   public parentWidget: Container;
   public outputElement: HTMLElement;
   public focussed: boolean;
+  public listIndex: number;
 
   private classNames: { [key: string]: boolean };
   private eventListeners: { [key: string]: Array<(...args: any[]) => void> };
@@ -173,6 +174,21 @@ export abstract class Widget extends BaseClass implements IWidget {
 
   public getCurrentApplication(): Application {
     return RuntimeContext.getCurrentApplication();
+  }
+
+  /**
+   * Get any data item associated with this widget.
+   */
+  public getDataItem() {
+    return this.dataItem;
+  }
+
+  /**
+   * Associate a data item with this widget.
+   * @param dataItem Object to associate with this widget.
+   */
+  public setDataItem(dataItem: object) {
+    this.dataItem = dataItem;
   }
 
   public show(options: IShowOptions) {
