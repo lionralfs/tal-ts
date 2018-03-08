@@ -1,4 +1,4 @@
-import { Container } from '../../..';
+import { Container } from '../../container';
 import { Widget } from '../../widget';
 import { Orientation } from '../orientations/orientation';
 
