@@ -1,9 +1,9 @@
 import { Application, IConfigCss, ILayout } from '../application';
 import { BaseClass } from '../class';
+import { IHistorian } from '../historian';
 import { MediaPlayer } from '../mediaplayer/mediaplayer';
 import { ISize } from '../widgets/image';
 import { IShowOptions } from '../widgets/widget';
-import { IHistorian } from '../historian';
 export interface IDeviceConfig {
     pageStrategy?: string;
     css?: IConfigCss[];
@@ -71,11 +71,12 @@ export interface ISupportedAudioStreaming {
     maximumBitRate: number;
 }
 export interface IAnimOptions {
-    el: Node;
+    el?: Node;
     to?: {
         left?: number;
         right?: number;
     };
+    from?: {};
     skipAnim?: boolean;
     onComplete?: () => void;
     fps?: number;
@@ -95,6 +96,9 @@ export interface IDeviceCallbacks {
 }
 export interface IShowElementOptions extends IShowOptions {
     el: Node;
+}
+export interface ILoggingStrategies {
+    [key: string]: ILoggingMethods;
 }
 export interface IDevice {
     setApplication(app: Application): void;
@@ -118,7 +122,7 @@ export interface IDevice {
 }
 export declare abstract class Device extends BaseClass implements IDevice {
     static load(config: IDeviceConfig, callbacks: IDeviceCallbacks): void;
-    static addLoggingMethod(moduleId: string, loggingMethods: object): void;
+    static addLoggingStrategy(moduleId: string, loggingMethods: ILoggingMethods): void;
     private static loggingStrategies;
     private static filteredLoggingMethods;
     protected application: Application;
@@ -150,6 +154,7 @@ export declare abstract class Device extends BaseClass implements IDevice {
      */
     abstract setWindowLocationUrl(url: string): void;
     abstract prependChildElement(to: HTMLElement, el: HTMLElement): void;
+    abstract insertChildElementBefore(to: HTMLElement, el: HTMLElement, ref: HTMLElement): void;
     abstract appendChildElement(to: Node, el: Node): void;
     abstract setElementClasses(el: Node, classNames: string[]): void;
     abstract removeClassFromElement(el: Node, className: string, deep?: boolean): void;
@@ -172,6 +177,7 @@ export declare abstract class Device extends BaseClass implements IDevice {
     abstract getElementOffset(el: HTMLElement): {
         top: number;
         left: number;
+        [key: string]: number;
     };
     abstract getElementSize(el: HTMLElement): ISize;
     abstract setElementSize(el: HTMLElement, size: ISize): void;

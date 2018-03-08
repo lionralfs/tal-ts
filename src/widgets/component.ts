@@ -27,7 +27,7 @@ export class Component extends Container implements IComponent {
     }
   }
 
-  public getCurrentState() {
+  public getCurrentState(): IHistoryItem {
     return null;
   }
 

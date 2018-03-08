@@ -21,10 +21,6 @@ export class BrowserDevice extends Device {
 
   public getWindowLocation(): Location {
     const windowLocation = this.windowLocation || window.location; // Allow stubbing for unit testing
-    let copyProps;
-    let prop;
-    let i;
-    let newLocation;
 
     // Has the device missed the route off the href? Fix this.
     if (
@@ -34,19 +30,19 @@ export class BrowserDevice extends Device {
       windowLocation.href.lastIndexOf('#') === -1
     ) {
       // Copy properties to new object, as modifying href on the original window.location triggers a navigation.
-      newLocation = {};
-      copyProps = ['assign', 'hash', 'host', 'href', 'pathname', 'protocol', 'search'];
-      for (i = 0; i < copyProps.length; i++) {
-        prop = copyProps[i];
+      const newLocation = {};
+      const copyProps = ['assign', 'hash', 'host', 'href', 'pathname', 'protocol', 'search'];
+      for (const prop of copyProps) {
         if (windowLocation.hasOwnProperty(prop)) {
-          newLocation[prop] = windowLocation[prop];
+          // newLocation[prop] = windowLocation[prop];
         }
       }
-      newLocation.href = newLocation.href + newLocation.hash;
+      // newLocation.href = newLocation.href + newLocation.hash;
     }
 
     // Use copy of window.location if it was created, otherwise the original.
-    return newLocation || windowLocation;
+    // return newLocation || windowLocation;
+    return windowLocation;
   }
 
   /**
@@ -76,6 +72,16 @@ export class BrowserDevice extends Device {
     } else {
       to.appendChild(el);
     }
+  }
+
+  /**
+   * Inserts an element as a child of another before a reference element.
+   * @param to Append as a child of this element.
+   * @param el The new child element.
+   * @param ref The reference element which will appear after the inserted element.
+   */
+  public insertChildElementBefore(to: HTMLElement, el: HTMLElement, ref: HTMLElement) {
+    to.insertBefore(el, ref);
   }
 
   public appendChildElement(to: Element, el: Element) {
@@ -123,7 +129,7 @@ export class BrowserDevice extends Device {
    */
   public addKeyEventListener() {
     const keyMap = this.getKeyMap();
-    const pressed = {};
+    const pressed: { [key: string]: boolean } = {};
 
     // We need to normalise these events on so that for every key pressed there's
     // one keydown event, followed by multiple keypress events whilst the key is
@@ -250,17 +256,29 @@ export class BrowserDevice extends Device {
     }
   }
 
-  public scrollElementTo(options: IAnimOptions) {}
+  public scrollElementTo(options: IAnimOptions) {
+    //
+  }
 
-  public moveElementTo(options: IAnimOptions) {}
+  public moveElementTo(options: IAnimOptions) {
+    //
+  }
 
-  public hideElement(options: IAnimOptions) {}
+  public hideElement(options: IAnimOptions) {
+    //
+  }
 
-  public showElement(options: IAnimOptions) {}
+  public showElement(options: IAnimOptions) {
+    //
+  }
 
-  public tweenElementStyle(options: IAnimOptions) {} // TODO: check options
+  public tweenElementStyle(options: IAnimOptions) {
+    // TODO: check options
+  }
 
-  public stopAnimation(anim: object) {} // TODO: implement anim interface
+  public stopAnimation(anim: object) {
+    // TODO: implement anim interface
+  }
 
   public loadStyleSheet(url: string, callback?: (res: string) => void) {
     const supportsCssRules = (): boolean => {

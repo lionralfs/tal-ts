@@ -16,7 +16,7 @@ export class Page extends Component {
     button.addEventListener('keydown', e => {
       if (e.keyCode === KeyEvent.VK_ENTER) {
         // launch the videoplayer
-        this.getCurrentApplication().pushComponent('maincontainer', 'videoplayer');
+        // this.getCurrentApplication().pushComponent('maincontainer', 'videoplayer');
       }
     });
     this.appendChildWidget(button);

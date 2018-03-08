@@ -22,7 +22,7 @@ export class URLBuilder extends BaseClass {
    *
    * Returns a URL built from the template and the passed values.
    */
-  public getURL(href: string, tags: object): string {
+  public getURL(href: string, tags: { [key: string]: string }): string {
     let url = this.urlTemplate.replace(/^%href%/, href);
 
     url = url.replace(/%[a-z]+%/g, match => {

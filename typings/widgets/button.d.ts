@@ -43,5 +43,5 @@ export declare class Button extends Container {
      * Flags the active child as focussed or blurred.
      * @param focus True if the active child is to be focussed, False if the active child is to be blurred.
      */
-    setActiveChildFocussed(focus: any): void;
+    setActiveChildFocussed(focus: boolean): void;
 }

@@ -1,10 +1,11 @@
 import { Application, IConfigCss, ILayout } from '../application';
 import { BaseClass } from '../class';
 import { KeyEvent } from '../events/keyevent';
+import { IHistorian } from '../historian';
 import { MediaPlayer } from '../mediaplayer/mediaplayer';
 import { ISize } from '../widgets/image';
 import { IShowOptions } from '../widgets/widget';
-import { IHistorian } from '../historian';
+import { BrowserDevice } from './browserdevice';
 
 // TODO: this needs more checks
 export interface IDeviceConfig {
@@ -75,11 +76,12 @@ export interface ISupportedAudioStreaming {
 }
 
 export interface IAnimOptions {
-  el: Node;
+  el?: Node;
   to?: {
     left?: number;
     right?: number;
   };
+  from?: {};
   skipAnim?: boolean;
   onComplete?: () => void;
   fps?: number;
@@ -104,6 +106,10 @@ export interface IShowElementOptions extends IShowOptions {
   el: Node;
 }
 
+export interface ILoggingStrategies {
+  [key: string]: ILoggingMethods;
+}
+
 export interface IDevice {
   setApplication(app: Application): void;
   getTopLevelElement(): Node;
@@ -125,17 +131,20 @@ export interface IDevice {
 
 export abstract class Device extends BaseClass implements IDevice {
   public static load(config: IDeviceConfig, callbacks: IDeviceCallbacks) {
+    console.log(config);
+    callbacks.onSuccess(new BrowserDevice(config));
+    // callbacks.onSuccess(new BrowserDevice(window.antie.framework.deviceConfiguration));
     try {
-      requirejs([config.modules.base].concat(config.modules.modifiers), object => {
-        const deviceClassConstructor: new (config: IDeviceConfig) => Device = object[Object.keys(object)[0]];
-        try {
-          callbacks.onSuccess(new deviceClassConstructor(config));
-        } catch (ex) {
-          if (callbacks.onError) {
-            callbacks.onError(ex);
-          }
-        }
-      });
+      // requirejs([config.modules.base].concat(config.modules.modifiers), object => {
+      //   const deviceClassConstructor: new (config: IDeviceConfig) => Device = object[Object.keys(object)[0]];
+      //   try {
+      //     callbacks.onSuccess(new deviceClassConstructor(config));
+      //   } catch (ex) {
+      //     if (callbacks.onError) {
+      //       callbacks.onError(ex);
+      //     }
+      //   }
+      // });
     } catch (ex) {
       if (callbacks.onError) {
         callbacks.onError(ex);
@@ -143,11 +152,12 @@ export abstract class Device extends BaseClass implements IDevice {
     }
   }
 
-  public static addLoggingMethod(moduleId: string, loggingMethods: object) {
+  public static addLoggingStrategy(moduleId: string, loggingMethods: ILoggingMethods) {
+    console.log(moduleId, loggingMethods);
     this.loggingStrategies[moduleId] = loggingMethods;
   }
 
-  private static loggingStrategies: { [key: string]: object } = {};
+  private static loggingStrategies: ILoggingStrategies = {};
   private static filteredLoggingMethods: ILoggingMethods = null;
 
   protected application: Application;
@@ -165,7 +175,7 @@ export abstract class Device extends BaseClass implements IDevice {
     // Manipulate the input map into a mapping between key event keycodes and
     // our virtual key codes
     if (config.input && config.input.map) {
-      const symbolMap = {
+      const symbolMap: { [key: string]: number } = {
         UP: KeyEvent.VK_UP,
         DOWN: KeyEvent.VK_DOWN,
         LEFT: KeyEvent.VK_LEFT,
@@ -267,17 +277,17 @@ export abstract class Device extends BaseClass implements IDevice {
       };
 
       const ignoreLoggingMethods: ILoggingMethods = {
-        log: ignore,
-        debug: ignore,
-        info: ignore,
-        warn: ignore,
-        error: ignore
+        log: console.log,
+        debug: console.log,
+        info: console.info,
+        warn: console.warn,
+        error: console.error
       };
 
       // support functions for the above
-      const selectLoggingStrategy = (deviceConfig: IDeviceConfig, loggingStrategies) => {
-        if (deviceConfig.logging && deviceConfig.logging.strategy) {
-          const configuredLoggingStrategy = `antie/devices/logging/${deviceConfig.logging.strategy}`;
+      const selectLoggingStrategy = (conf: IDeviceConfig, loggingStrategies: ILoggingStrategies): ILoggingMethods => {
+        if (conf.logging && conf.logging.strategy) {
+          const configuredLoggingStrategy = `antie/devices/logging/${conf.logging.strategy}`;
 
           if (loggingStrategies[configuredLoggingStrategy]) {
             return loggingStrategies[configuredLoggingStrategy];
@@ -366,6 +376,8 @@ export abstract class Device extends BaseClass implements IDevice {
 
   public abstract prependChildElement(to: HTMLElement, el: HTMLElement): void;
 
+  public abstract insertChildElementBefore(to: HTMLElement, el: HTMLElement, ref: HTMLElement): void;
+
   public abstract appendChildElement(to: Node, el: Node): void;
 
   public abstract setElementClasses(el: Node, classNames: string[]): void;
@@ -393,7 +405,7 @@ export abstract class Device extends BaseClass implements IDevice {
 
   public abstract getStylesheetElements(): Node[];
 
-  public abstract getElementOffset(el: HTMLElement): { top: number; left: number };
+  public abstract getElementOffset(el: HTMLElement): { top: number; left: number; [key: string]: number };
 
   public abstract getElementSize(el: HTMLElement): ISize;
 

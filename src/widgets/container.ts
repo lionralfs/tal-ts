@@ -33,6 +33,69 @@ export class Container extends Widget implements IContainer {
   }
 
   /**
+   * Inserts a child widget at the specified index.
+   * @param index The index where to insert the child widget.
+   * @param widget The child widget to add.
+   */
+  public insertChildWidget(index: number, widget: Widget) {
+    if (!this.hasChildWidget(widget.id)) {
+      if (index >= this.childWidgetOrder.length) {
+        return this.appendChildWidget(widget);
+      }
+
+      this.childWidgets[widget.id] = widget;
+      this.childWidgetOrder.splice(index, 0, widget);
+      widget.parentWidget = this;
+
+      // If there's no active child widget set, try and set it to this
+      // (Will only have an affect if it's focusable (i.e. contains a button))
+      if (!this.activeChildWidget) {
+        this.setActiveChildWidget(widget);
+      }
+
+      if (this.outputElement && this.autoRenderChildren) {
+        const device = this.getCurrentApplication().getDevice();
+
+        if (!widget.outputElement) {
+          widget.render(device);
+        }
+
+        device.insertChildElementBefore(
+          this.outputElement,
+          widget.outputElement,
+          this.childWidgetOrder[index + 1].outputElement
+        );
+      }
+
+      return widget;
+    }
+  }
+
+  /**
+   * Remove all child widgets from this widget.
+   */
+  public removeChildWidgets() {
+    if (this.isFocussed && this.activeChildWidget) {
+      const logger = this.getCurrentApplication()
+        .getDevice()
+        .getLogger();
+      logger.warn('Removing widget that currently has focus: ' + this.activeChildWidget.id);
+    }
+
+    if (this.outputElement) {
+      const device = this.getCurrentApplication().getDevice();
+      device.clearElement(this.outputElement);
+    }
+    for (const childWidget of this.childWidgetOrder) {
+      childWidget.parentWidget = null;
+    }
+
+    this.childWidgets = {};
+    this.childWidgetOrder = [];
+    this.activeChildWidget = null;
+  }
+
+  /**
    * Removes a specific child widget from this widget.
    * @param widget The child widget to remove.
    * @param retainElement Pass `true` to retain the child output element of the given widget
@@ -189,6 +252,43 @@ export class Container extends Widget implements IContainer {
       return true;
     }
     return false;
+  }
+
+  /**
+   * Attempts to set focus to the child widget at the given index.
+   * @see #setActiveChildWidget
+   * @param index Index of the child widget to set focus to.
+   * @return true if the child widget was focusable, otherwise boolean false.
+   */
+  public setActiveChildIndex(index: number): boolean {
+    if (index < 0 || index >= this.childWidgetOrder.length) {
+      throw new Error(
+        'Widget::setActiveChildIndex Index out of bounds. ' +
+          this.id +
+          ' contains ' +
+          this.childWidgetOrder.length +
+          ' children, but an index of ' +
+          index +
+          ' was specified.'
+      );
+    }
+    return this.setActiveChildWidget(this.childWidgetOrder[index]);
+  }
+
+  /**
+   * Get the current active widget.
+   * @return The current active widget
+   */
+  public getActiveChildWidget() {
+    return this.activeChildWidget;
+  }
+
+  /**
+   * Gets the number of direct child widgets.
+   * @return The number of direct child widgets.
+   */
+  public getChildWidgetCount(): number {
+    return this.childWidgetOrder.length;
   }
 
   /**

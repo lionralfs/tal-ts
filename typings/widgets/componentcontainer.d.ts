@@ -1,25 +1,20 @@
 import { Button } from './button';
+import { Component } from './component';
 import { Container } from './container';
 export interface IComponentContainer {
-    pushComponent(module: string, args?: object): void;
+    pushComponent(component: Component, args?: object): void;
     getContent(): Container;
     back(): void;
-    hide(focusToComponent: any, args: any, keepHistory: any, state: any, fromBack: any): void;
-    getCurrentModule(): string;
     getCurrentArguments(): object;
 }
 export interface IHistoryItem {
-    module: string;
+    module: Component;
     args: object;
     state: object;
     previousFocus: Button;
 }
 export declare class ComponentContainer extends Container implements IComponentContainer {
     static destroy(): void;
-    private static knownComponents;
-    private loadingIndex;
-    private loadingModule;
-    private currentModule;
     private currentComponent;
     private currentArgs;
     private historyStack;
@@ -37,13 +32,13 @@ export declare class ComponentContainer extends Container implements IComponentC
      * @param fromBack
      * @param focus
      */
-    showComponent(module: string, args?: object, keepHistory?: boolean, state?: object, fromBack?: boolean, focus?: Button): void;
+    showComponent(component: Component, args?: object, keepHistory?: boolean, state?: object, fromBack?: boolean, focus?: Button): void;
     /**
      * Pushes a component into the history stack of the container (and shows it).
      * @param module The requirejs module name of the component to show.
      * @param args An optional object to pass arguments to the component.
      */
-    pushComponent(module: string, args?: object): void;
+    pushComponent(component: Component, args?: object): void;
     /**
      * Returns the widget added to this container.
      */
@@ -64,18 +59,8 @@ export declare class ComponentContainer extends Container implements IComponentC
     /**
      *
      */
-    getCurrentModule(): string;
     /**
      *
      */
     getCurrentArguments(): object;
-    /**
-     *
-     * @param module
-     * @param componentClass
-     * @param args
-     * @param keepHistory
-     * @param state
-     */
-    private loadComponentCallback(module, componentClass, args?, keepHistory?, state?);
 }

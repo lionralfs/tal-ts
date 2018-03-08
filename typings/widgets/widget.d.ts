@@ -5,8 +5,8 @@ import { BaseEvent } from '../events/event';
 import { Container } from './container';
 export interface IWidget {
     addClass(className: string): void;
-    fireEvent(ev: BaseEvent): any;
-    bubbleEvent(ev: BaseEvent): any;
+    fireEvent(ev: BaseEvent): void;
+    bubbleEvent(ev: BaseEvent): void;
     isFocusable(): boolean;
     getCurrentApplication(): Application;
     getClasses(): string[];
@@ -34,7 +34,13 @@ export declare abstract class Widget extends BaseClass implements IWidget {
     private dataItem;
     constructor(id?: string);
     pushComponent(...args: any[]): void;
-    addClass(className: any): void;
+    addClass(className: string): void;
+    /**
+     * Checks to see if the widget has a given CSS class.
+     * @param className The class name to check.
+     * @returns Boolean true if the device has the className. Otherwise boolean false.
+     */
+    hasClass(className: string): boolean;
     getClasses(): string[];
     /**
      * Add an event listener function to this widget.
@@ -49,7 +55,7 @@ export declare abstract class Widget extends BaseClass implements IWidget {
      * @see antie.events.Event
      */
     removeEventListener(ev: string, func: (...args: any[]) => void): boolean;
-    fireEvent(ev: any): void;
+    fireEvent(ev: BaseEvent): void;
     bubbleEvent(ev: BaseEvent): void;
     /**
      * Checks to see if a widget is focussable, i.e. contains an enabled button.

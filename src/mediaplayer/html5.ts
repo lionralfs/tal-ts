@@ -422,7 +422,7 @@ export class HTML5MediaPlayer extends MediaPlayer {
     this.targetSeekTime = undefined;
   }
 
-  private seekTo(seconds) {
+  private seekTo(seconds: number) {
     const clampedTime = this.getClampedTimeForPlayFrom(seconds);
     this.mediaElement.currentTime = clampedTime;
     this.sentinelSeekTime = clampedTime;
@@ -523,7 +523,7 @@ export class HTML5MediaPlayer extends MediaPlayer {
     this.mediaElement.load();
   }
 
-  private generateSourceElement(url, mimeType) {
+  private generateSourceElement(url: string, mimeType: string) {
     const device = RuntimeContext.getDevice();
     const sourceElement = device.createElement('source');
     sourceElement.src = url;
@@ -584,7 +584,7 @@ export class HTML5MediaPlayer extends MediaPlayer {
     clearInterval(this.sentinelInterval);
   }
 
-  private setSentinels(sentinels: Array<(object) => boolean>) {
+  private setSentinels(sentinels: Array<() => boolean>) {
     this.clearSentinels();
     this.sentinelIntervalNumber = 0;
     this.lastSentinelTime = this.getCurrentTime();
@@ -597,6 +597,7 @@ export class HTML5MediaPlayer extends MediaPlayer {
       this.lastSentinelTime = newTime;
 
       for (const sentinel of sentinels) {
+        console.log(sentinel);
         const sentinelActivated: boolean = sentinel.call(this);
 
         if (this.getCurrentTime() > 0) {

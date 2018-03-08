@@ -2,7 +2,8 @@
   "name": "tal-ts",
   "version": "0.2.0",
   "description": "TAL in TypeScript",
-  "main": "index.js",
+  "main": "dist/index.js",
+  "typings": "typings",
   "scripts": {
     "build": "tsc",
     "dev": "tsc -w",
