@@ -197,9 +197,9 @@ export class Aligner extends BaseClass {
   }
 
   private queueFinalAlign(toIndex: number, options: IAnimOptions) {
-    const OptionsClone = () => {
+    function OptionsClone() {
       //
-    };
+    }
 
     const unwrappedComplete = () => {
       this.informMaskAfterAlign(toIndex);
@@ -210,13 +210,10 @@ export class Aligner extends BaseClass {
       this.informMaskAfterAlign(toIndex);
     };
 
-    const optionsWithCallback = {
-      ...options,
-      onComplete: options && options.onComplete ? wrappedComplete : unwrappedComplete
-    };
-    // OptionsClone.prototype = options;
-    // const optionsWithCallback = new OptionsClone();
-    // optionsWithCallback.onComplete = options && options.onComplete ? wrappedComplete : unwrappedComplete;
+    OptionsClone.prototype = options;
+    const optionsWithCallback = new OptionsClone();
+
+    optionsWithCallback.onComplete = options && options.onComplete ? wrappedComplete : unwrappedComplete;
 
     this.queue.add(toIndex, optionsWithCallback);
   }

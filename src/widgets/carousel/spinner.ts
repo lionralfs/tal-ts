@@ -40,7 +40,7 @@ export class Spinner extends BaseClass {
     moveElementOptions = this.getOptions(animOptions, relativePixels);
     this.stopAnimation();
     this.animating = true;
-    // this.currentAnimation = this.device.moveElementTo(moveElementOptions);
+    this.currentAnimation = this.device.moveElementTo(moveElementOptions);
   }
 
   /**
@@ -53,7 +53,7 @@ export class Spinner extends BaseClass {
     }
   }
 
-  private getOptions(options: IAnimOptions, relativePixels: number) {
+  private getOptions(options: IAnimOptions, relativePixels: number): IAnimOptions {
     options = options || {};
     const destination: { [key: string]: number } = {};
     destination[this.getEdge()] = relativePixels;
@@ -67,7 +67,7 @@ export class Spinner extends BaseClass {
       skipAnim: options.skipAnim === undefined ? true : options.skipAnim,
       onComplete: this.getWrappedOnComplete(options)
     };
-    // clonedOptions.el = this.mask.getWidgetStrip().outputElement;
+    clonedOptions.el = this.mask.getWidgetStrip().outputElement;
 
     return clonedOptions;
   }

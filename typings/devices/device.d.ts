@@ -198,7 +198,7 @@ export declare abstract class Device extends BaseClass implements IDevice {
     abstract setElementSize(el: HTMLElement, size: ISize): void;
     abstract setElementContent(el: HTMLElement, content: string, enableHTML?: boolean): void;
     abstract scrollElementTo(options: IAnimOptions): void;
-    abstract moveElementTo(options: IAnimOptions): void;
+    abstract moveElementTo(options: IAnimOptions): IAnimator;
     abstract hideElement(options: IAnimOptions): void;
     abstract showElement(options: IAnimOptions): void;
     abstract tweenElementStyle(options: IAnimOptions): void;

@@ -429,7 +429,7 @@ export abstract class Device extends BaseClass implements IDevice {
 
   public abstract scrollElementTo(options: IAnimOptions): void;
 
-  public abstract moveElementTo(options: IAnimOptions): void;
+  public abstract moveElementTo(options: IAnimOptions): IAnimator;
 
   public abstract hideElement(options: IAnimOptions): void;
 
