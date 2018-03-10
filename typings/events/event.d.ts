@@ -1,4 +1,5 @@
 import { BaseClass } from '../class';
+import { Widget } from '../widgets/widget';
 export declare abstract class BaseEvent extends BaseClass {
     static addEventListener(ev: string, func: () => void): void;
     static removeEventListener(ev: string, func: () => void): boolean;
@@ -6,6 +7,7 @@ export declare abstract class BaseEvent extends BaseClass {
     private static eventCount;
     private static eventListeners;
     type: string;
+    target: Widget;
     private propagationStopped;
     private defaultPrevented;
     constructor(type: string);

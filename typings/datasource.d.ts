@@ -1,6 +1,5 @@
 import { Component } from '.';
 import { BaseClass } from './class';
-import { Iterator } from './iterator';
 /**
  * Utility class to wrap disparate functions into a common interface for binding to lists.
  */
@@ -16,16 +15,13 @@ export declare class DataSource extends BaseClass {
      * @param func Name of function to call.
      * @param args Arguments to pass the function.
      */
-    constructor(component: Component, obj: {
-        onSuccess: () => void;
-        onError: () => void;
-    }, func: string, args: any[]);
+    constructor(component: Component, obj: any, func: string, args?: any[]);
     /**
      * Performs the request for data.
      * @param callbacks Object containing onSuccess and onError callback functions.
      */
     load(callbacks: {
-        onSuccess: (data: Iterator | any[]) => void;
+        onSuccess: (data: DataSource | any[]) => void;
         onError: (response?: object) => void;
     }): void;
     /**

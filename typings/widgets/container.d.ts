@@ -16,6 +16,7 @@ export declare class Container extends Widget implements IContainer {
     protected childWidgetOrder: Widget[];
     private autoRenderChildren;
     constructor(id?: string);
+    back(): void;
     /**
      * Inserts a child widget at the specified index.
      * @param index The index where to insert the child widget.

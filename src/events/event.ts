@@ -1,7 +1,6 @@
 import { BaseClass } from '../class';
 import { RuntimeContext } from '../runtimecontext';
-
-// TODO: write interface
+import { Widget } from '../widgets/widget';
 
 export abstract class BaseEvent extends BaseClass {
   public static addEventListener(ev: string, func: () => void) {
@@ -47,6 +46,7 @@ export abstract class BaseEvent extends BaseClass {
   private static eventListeners: { [key: string]: Array<(...args: any[]) => void> } = {};
 
   public type: string;
+  public target: Widget;
 
   private propagationStopped: boolean;
   private defaultPrevented: boolean;

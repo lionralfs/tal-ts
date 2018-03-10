@@ -6,7 +6,7 @@ import { Widget } from './widgets/widget';
  */
 export declare abstract class Formatter extends BaseClass {
     private opts;
-    constructor(opts: any);
+    constructor(opts?: any);
     /**
      * Formats data from the iterator.
      * @param iterator An iterator pointing to the data to be formatted.

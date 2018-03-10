@@ -27,9 +27,9 @@ export declare class CarouselCore extends Container {
      * @param id The id of the carousel, id_CarouselMask will be used as the id for the mask element
      * and id_WidgetStrip will be used as the id of the widget strip element
      * @param orientation the orientation object of
-     * the carousel. Vertical by default, for horizontal pass in antie.widgets.carousel.CarouselCore.orientations.HORIZONTAL
+     * the carousel. Vertical by default, for horizontal pass in `CarouselCore.orientations.HORIZONTAL`
      */
-    constructor(id: string, orientation: Orientation);
+    constructor(id: string, orientation?: Orientation);
     /**
      * Renders the widget and any child widgets to device-specific output.
      * @param device The device to render to.

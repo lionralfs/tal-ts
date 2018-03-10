@@ -597,7 +597,6 @@ export class HTML5MediaPlayer extends MediaPlayer {
       this.lastSentinelTime = newTime;
 
       for (const sentinel of sentinels) {
-        console.log(sentinel);
         const sentinelActivated: boolean = sentinel.call(this);
 
         if (this.getCurrentTime() > 0) {

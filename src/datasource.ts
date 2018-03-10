@@ -18,7 +18,7 @@ export class DataSource extends BaseClass {
    * @param func Name of function to call.
    * @param args Arguments to pass the function.
    */
-  constructor(component: Component, obj: { onSuccess: () => void; onError: () => void }, func: string, args: any[]) {
+  constructor(component: Component, obj: any, func: string, args?: any[]) {
     super();
     this.request = null;
     this.component = component;
@@ -39,7 +39,7 @@ export class DataSource extends BaseClass {
    * Performs the request for data.
    * @param callbacks Object containing onSuccess and onError callback functions.
    */
-  public load(callbacks: { onSuccess: (data: Iterator | any[]) => void; onError: (response?: object) => void }) {
+  public load(callbacks: { onSuccess: (data: DataSource | any[]) => void; onError: (response?: object) => void }) {
     this.request = this.obj[this.func].apply(this.obj, [callbacks].concat(this.args || []));
   }
 

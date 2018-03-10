@@ -32,6 +32,10 @@ export class Container extends Widget implements IContainer {
     this.addClass('container');
   }
 
+  public back() {
+    console.warn('back called on container');
+  }
+
   /**
    * Inserts a child widget at the specified index.
    * @param index The index where to insert the child widget.

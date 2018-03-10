@@ -28,7 +28,7 @@ export interface IConfigCss {
 export interface IApplication {
   run(): void;
   getBestFitLayout(): ILayout;
-  addComponentContainer(id: any, module?: string, args?: object): any;
+  addComponentContainer(id: string, component?: Component, args?: object): void;
   showComponent(id: string, component: Component, args?: object): void;
   setLayout(
     layout: ILayout,
@@ -150,18 +150,18 @@ export abstract class Application extends BaseClass implements IApplication {
     }
   }
 
-  public addComponentContainer(id: string, requireModule?: string, args?: object) {
-    const container: Container = new ComponentContainer(id);
-    this.rootWidget.appendChildWidget(container);
+  // public addComponentContainer(id: string, requireModule?: string, args?: object) {
+  //   const container: Container = new ComponentContainer(id);
+  //   this.rootWidget.appendChildWidget(container);
 
-    // if (requireModule) {
-    //   this.showComponent(id, requireModule, args);
-    // }
+  //   // if (requireModule) {
+  //   //   this.showComponent(id, requireModule, args);
+  //   // }
 
-    return container;
-  }
+  //   return container;
+  // }
 
-  public addComponentContainer2(id: string, component?: Component, args?: object) {
+  public addComponentContainer(id: string, component?: Component, args?: object) {
     const container: Container = new ComponentContainer(id);
     this.rootWidget.appendChildWidget(container);
 

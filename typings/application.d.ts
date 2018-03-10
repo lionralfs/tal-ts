@@ -20,7 +20,7 @@ export interface IConfigCss {
 export interface IApplication {
     run(): void;
     getBestFitLayout(): ILayout;
-    addComponentContainer(id: any, module?: string, args?: object): any;
+    addComponentContainer(id: string, component?: Component, args?: object): void;
     showComponent(id: string, component: Component, args?: object): void;
     setLayout(layout: ILayout, styleBaseUrl: string, imageBaseUrl: string, additionalCSS: IConfigCss[], additionalClasses: string[], additionalPreloadImages: string[], callback: () => void): void;
     route(route: string[]): void;
@@ -44,8 +44,7 @@ export declare abstract class Application extends BaseClass implements IApplicat
      * Must be called when the application startup is complete and application can accept user input.
      */
     ready(): void;
-    addComponentContainer(id: string, requireModule?: string, args?: object): Container;
-    addComponentContainer2(id: string, component?: Component, args?: object): Container;
+    addComponentContainer(id: string, component?: Component, args?: object): Container;
     showComponent(id: string, component: Component, args?: object): void;
     /**
      * Pushes a component into the history stack of a container (and shows it).

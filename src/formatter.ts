@@ -7,7 +7,7 @@ import { Widget } from './widgets/widget';
 export abstract class Formatter extends BaseClass {
   private opts;
 
-  constructor(opts) {
+  constructor(opts?) {
     super();
     if (opts) {
       this.opts = opts;
