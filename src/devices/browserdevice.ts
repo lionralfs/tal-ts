@@ -3,7 +3,8 @@ import { Historian } from '../historian';
 import { HTML5MediaPlayer } from '../mediaplayer/html5';
 import { MediaPlayer } from '../mediaplayer/mediaplayer';
 import { ISize } from '../widgets/image';
-import { Device, IAnimOptions, IDevice } from './device';
+import { getAnimator } from './anim/css3transform/animationfactory';
+import { Device, IAnimator, IAnimOptions, IDevice } from './device';
 
 export class BrowserDevice extends Device {
   private mediaPlayer = new HTML5MediaPlayer();
@@ -257,27 +258,90 @@ export class BrowserDevice extends Device {
   }
 
   public scrollElementTo(options: IAnimOptions) {
-    //
+    if (!(/_mask$/.test(options.el.id) && options.el.childNodes.length > 0)) {
+      return null;
+    }
+
+    options.el = options.el.childNodes[0] as HTMLElement;
+
+    if (options.to.top) {
+      // options.to.top = parseInt(options.to.top, 10) * -1;
+      options.to.top *= -1;
+    }
+    if (options.to.left) {
+      // options.to.left = parseInt(options.to.left, 10) * -1;
+      options.to.left *= -1;
+    }
+
+    const animator = getAnimator(options);
+    animator.start();
+    return options.skipAnim ? null : animator;
   }
 
   public moveElementTo(options: IAnimOptions) {
-    //
+    const animator = getAnimator(options);
+    animator.start();
+    return options.skipAnim ? null : animator;
   }
 
   public hideElement(options: IAnimOptions) {
-    //
+    const onComplete = () => {
+      options.el.style.visibility = 'hidden';
+      if (options.onComplete) {
+        options.onComplete();
+      }
+    };
+
+    const fadeOptions: IAnimOptions = {
+      el: options.el,
+      to: {
+        opacity: 0
+      },
+      duration: options.duration,
+      easing: options.easing || 'linear',
+      onComplete,
+      skipAnim: options.skipAnim
+    };
+
+    return this.tweenElementStyle(fadeOptions);
   }
 
   public showElement(options: IAnimOptions) {
-    //
+    const fadeOptions: IAnimOptions = {
+      el: options.el,
+      to: {
+        opacity: 1
+      },
+      from: {
+        opacity: 0
+      },
+      duration: options.duration,
+      easing: options.easing || 'linear',
+      onComplete: options.onComplete,
+      skipAnim: options.skipAnim
+    };
+
+    options.el.style.visibility = 'visible';
+    return this.tweenElementStyle(fadeOptions);
   }
 
   public tweenElementStyle(options: IAnimOptions) {
-    // TODO: check options
+    const animator = getAnimator(options);
+    if (!animator) {
+      return;
+    }
+    animator.start();
+    return options.skipAnim ? null : animator;
   }
 
-  public stopAnimation(anim: object) {
-    // TODO: implement anim interface
+  public stopAnimation(animator?: IAnimator) {
+    if (animator) {
+      animator.stop();
+    }
+  }
+
+  public isAnimationDisabled() {
+    return false;
   }
 
   public loadStyleSheet(url: string, callback?: (res: string) => void) {
@@ -427,7 +491,7 @@ export class BrowserDevice extends Device {
    * @param classNames An array of class names to apply to the element.
    * @returns A list within the device's user-agent.
    */
-  public createList(id?: string, classNames?: string[]): Node {
+  public createList(id?: string, classNames?: string[]): HTMLElement {
     return this.createElement('ul', id, classNames);
   }
 
@@ -436,7 +500,7 @@ export class BrowserDevice extends Device {
    * @param id The id of the element to create.
    * @param classNames An array of class names to apply to the element.
    */
-  public createListItem(id?: string, classNames?: string[]): Node {
+  public createListItem(id?: string, classNames?: string[]): HTMLElement {
     return this.createElement('li', id, classNames);
   }
 

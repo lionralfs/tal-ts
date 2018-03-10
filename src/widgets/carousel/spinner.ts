@@ -1,5 +1,5 @@
 import { BaseClass } from '../../class';
-import { Device, IAnimOptions } from '../../devices/device';
+import { Device, IAnimator, IAnimOptions } from '../../devices/device';
 import { Mask } from './mask';
 import { Orientation } from './orientations/orientation';
 
@@ -11,7 +11,7 @@ export class Spinner extends BaseClass {
   private mask: Mask;
   private orientation: Orientation;
   private animating: boolean;
-  private currentAnimation: object;
+  private currentAnimation: IAnimator;
 
   /**
    * @param device The device abstraction object

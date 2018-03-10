@@ -56,7 +56,11 @@ export interface IDeviceConfig {
         componentcontainer?: {
             fade?: boolean;
         };
+        horizontalprogress?: {
+            animate?: boolean;
+        };
     };
+    animationDisabled: boolean;
 }
 export interface ISupportedVideoStreaming {
     protocols: string[];
@@ -71,17 +75,24 @@ export interface ISupportedAudioStreaming {
     maximumBitRate: number;
 }
 export interface IAnimOptions {
-    el?: Node;
+    el?: HTMLElement;
     to?: {
         left?: number;
         right?: number;
+        opacity?: number;
+        top?: number;
     };
-    from?: {};
+    from?: {
+        opacity?: number;
+    };
     skipAnim?: boolean;
     onComplete?: () => void;
     fps?: number;
     duration?: number;
     easing?: string;
+    units?: {
+        [key: string]: string;
+    };
 }
 export interface ILoggingMethods {
     log: (message?: any, ...optionalParams: any[]) => void;
@@ -95,10 +106,14 @@ export interface IDeviceCallbacks {
     onError(ex: any): void;
 }
 export interface IShowElementOptions extends IShowOptions {
-    el: Node;
+    el: HTMLElement;
 }
 export interface ILoggingStrategies {
     [key: string]: ILoggingMethods;
+}
+export interface IAnimator {
+    start: () => void;
+    stop: () => void;
 }
 export interface IDevice {
     setApplication(app: Application): void;
@@ -155,9 +170,9 @@ export declare abstract class Device extends BaseClass implements IDevice {
     abstract setWindowLocationUrl(url: string): void;
     abstract prependChildElement(to: HTMLElement, el: HTMLElement): void;
     abstract insertChildElementBefore(to: HTMLElement, el: HTMLElement, ref: HTMLElement): void;
-    abstract appendChildElement(to: Node, el: Node): void;
-    abstract setElementClasses(el: Node, classNames: string[]): void;
-    abstract removeClassFromElement(el: Node, className: string, deep?: boolean): void;
+    abstract appendChildElement(to: HTMLElement, el: Node): void;
+    abstract setElementClasses(el: HTMLElement, classNames: string[]): void;
+    abstract removeClassFromElement(el: HTMLElement, className: string, deep?: boolean): void;
     abstract addClassToElement(el: Node, className: string): void;
     /**
      * Adds global key event listener(s) to the user-agent.
@@ -187,7 +202,7 @@ export declare abstract class Device extends BaseClass implements IDevice {
     abstract hideElement(options: IAnimOptions): void;
     abstract showElement(options: IAnimOptions): void;
     abstract tweenElementStyle(options: IAnimOptions): void;
-    abstract stopAnimation(anim: object): void;
+    abstract stopAnimation(animator?: IAnimator): void;
     abstract loadStyleSheet(url: string, callback?: (res: string) => void): void;
     /**
      * Clears the content of an element.
@@ -201,8 +216,9 @@ export declare abstract class Device extends BaseClass implements IDevice {
      */
     abstract getTextHeight(text: string, maxWidth: number, classNames: string[]): number;
     abstract createButton(id?: string, classNames?: string[]): HTMLElement;
-    abstract createList(id?: string, classNames?: string[]): Node;
-    abstract createListItem(id?: string, classNames?: string[]): Node;
+    abstract createList(id?: string, classNames?: string[]): HTMLElement;
+    abstract createListItem(id?: string, classNames?: string[]): HTMLElement;
+    abstract isAnimationDisabled(): boolean;
     abstract createImage(src: string, id?: string, classNames?: string[], size?: ISize, onLoad?: (...args: any[]) => void, onError?: (...args: any[]) => void): HTMLImageElement;
     abstract removeElement(el: HTMLElement): void;
     /**

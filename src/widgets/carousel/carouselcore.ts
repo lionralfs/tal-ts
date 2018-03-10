@@ -29,7 +29,7 @@ export class CarouselCore extends Container {
   private autoCalculate: boolean;
   private navigator: Navigator;
   private aligner: Aligner;
-  private remapEvent: (evt: BaseEvent) => void;
+  private remapEvent: (evt: any) => void;
 
   /**
    * @param id The id of the carousel, id_CarouselMask will be used as the id for the mask element
@@ -326,13 +326,13 @@ export class CarouselCore extends Container {
     this.remapWidgetStripEventToCarousel('afteralign');
   }
 
-  private remapWidgetStripEventToCarousel(eventName: string) {
-    const fallbackFunction = (evt: AfterAlignEvent) => {
+  private remapWidgetStripEventToCarousel(eventName) {
+    const fallback = evt => {
       if (evt.target === this.widgetStrip) {
         evt.target = this;
       }
     };
-    this.remapEvent = this.remapEvent || fallbackFunction;
+    this.remapEvent = this.remapEvent || fallback;
     this.addEventListener(eventName, this.remapEvent);
   }
 }

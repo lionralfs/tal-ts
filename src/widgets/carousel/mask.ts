@@ -28,13 +28,13 @@ export class Mask extends Container {
    * @param orientation the orientation of the mask, one of
    * `HorizontalOrientation` or `VerticalOrientation`
    */
-  constructor(id: string, widgetStrip: object, orientation: Orientation) {
+  constructor(id: string, widgetStrip: WidgetStrip, orientation: Orientation) {
     super(id);
 
     this.addClass(orientation.styleClass());
     this.addClass('carouselmask');
     this.orientation = orientation;
-    // this.setWidgetStrip(widgetStrip);
+    this.setWidgetStrip(widgetStrip);
     this.alignmentPoint = 0;
     this.normalisedWidgetAlignPoint = 0;
     this.normalisedAlignmentPoint = 0;
@@ -91,7 +91,7 @@ export class Mask extends Container {
 
   /**
    * Sets the widget strip to mask and align
-   * @param widgetStrip an instance of antie.widgets.carousel.strips.WidgetStrip
+   * @param widgetStrip an instance of WidgetStrip
    */
   public setWidgetStrip(widgetStrip: WidgetStrip) {
     if (this.widgetStrip) {

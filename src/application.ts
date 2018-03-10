@@ -52,7 +52,7 @@ export abstract class Application extends BaseClass implements IApplication {
 
   private static runtimeContext: IRuntimeContext = RuntimeContext;
 
-  private rootElement: Element;
+  private rootElement: HTMLElement;
   private rootWidget: Container = null;
   private focussedWidget: Button = null;
   private onReadyHandler: (...args: any[]) => void;
@@ -61,7 +61,7 @@ export abstract class Application extends BaseClass implements IApplication {
   private layout: any; // TODO
 
   constructor(
-    rootElement: Element,
+    rootElement: HTMLElement,
     styleBaseUrl: string,
     imageBaseUrl: string,
     onReadyHandler?: (...args: any[]) => void,
@@ -175,7 +175,6 @@ export abstract class Application extends BaseClass implements IApplication {
   public showComponent(id: string, component: Component, args?: object) {
     const widget = this.rootWidget.getChildWidget(id);
     if (widget instanceof ComponentContainer) {
-      console.log('should be shown now: ', component);
       widget.showComponent(component, args);
     }
   }

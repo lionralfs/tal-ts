@@ -62,7 +62,7 @@ export declare class Container extends Widget implements IContainer {
      * Appends a child widget to this widget.
      * @param widget The child widget to add.
      */
-    appendChildWidget<K extends Widget>(widget: K): K;
+    appendChildWidget(widget: Widget): Widget;
     /**
      * Attempt to set focus to the given child widget.
      *

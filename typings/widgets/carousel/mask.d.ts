@@ -20,7 +20,7 @@ export declare class Mask extends Container {
      * @param orientation the orientation of the mask, one of
      * `HorizontalOrientation` or `VerticalOrientation`
      */
-    constructor(id: string, widgetStrip: object, orientation: Orientation);
+    constructor(id: string, widgetStrip: WidgetStrip, orientation: Orientation);
     /**
      * Moves the masked widget strip such that the alignment point of the mask and the alignment
      * point of the indexed widget are the same place
@@ -54,7 +54,7 @@ export declare class Mask extends Container {
     getWidgetStrip(): WidgetStrip;
     /**
      * Sets the widget strip to mask and align
-     * @param widgetStrip an instance of antie.widgets.carousel.strips.WidgetStrip
+     * @param widgetStrip an instance of WidgetStrip
      */
     setWidgetStrip(widgetStrip: WidgetStrip): void;
     setLength(length: number): void;

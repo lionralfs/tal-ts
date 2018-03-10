@@ -62,6 +62,7 @@ export interface IDeviceConfig {
       animate?: boolean;
     };
   };
+  animationDisabled: boolean;
 }
 
 export interface ISupportedVideoStreaming {
@@ -79,17 +80,22 @@ export interface ISupportedAudioStreaming {
 }
 
 export interface IAnimOptions {
-  el?: Node;
+  el?: HTMLElement;
   to?: {
     left?: number;
     right?: number;
+    opacity?: number;
+    top?: number;
   };
-  from?: {};
+  from?: {
+    opacity?: number;
+  };
   skipAnim?: boolean;
   onComplete?: () => void;
   fps?: number;
   duration?: number;
   easing?: string;
+  units?: { [key: string]: string };
 }
 
 export interface ILoggingMethods {
@@ -106,11 +112,16 @@ export interface IDeviceCallbacks {
 }
 
 export interface IShowElementOptions extends IShowOptions {
-  el: Node;
+  el: HTMLElement;
 }
 
 export interface ILoggingStrategies {
   [key: string]: ILoggingMethods;
+}
+
+export interface IAnimator {
+  start: () => void;
+  stop: () => void;
 }
 
 export interface IDevice {
@@ -381,11 +392,11 @@ export abstract class Device extends BaseClass implements IDevice {
 
   public abstract insertChildElementBefore(to: HTMLElement, el: HTMLElement, ref: HTMLElement): void;
 
-  public abstract appendChildElement(to: Node, el: Node): void;
+  public abstract appendChildElement(to: HTMLElement, el: Node): void;
 
-  public abstract setElementClasses(el: Node, classNames: string[]): void;
+  public abstract setElementClasses(el: HTMLElement, classNames: string[]): void;
 
-  public abstract removeClassFromElement(el: Node, className: string, deep?: boolean): void;
+  public abstract removeClassFromElement(el: HTMLElement, className: string, deep?: boolean): void;
 
   public abstract addClassToElement(el: Node, className: string): void;
 
@@ -426,7 +437,7 @@ export abstract class Device extends BaseClass implements IDevice {
 
   public abstract tweenElementStyle(options: IAnimOptions): void; // TODO: check options
 
-  public abstract stopAnimation(anim: boolean): void; // TODO: implement anim interface
+  public abstract stopAnimation(animator?: IAnimator): void;
 
   public abstract loadStyleSheet(url: string, callback?: (res: string) => void): void;
 
@@ -450,6 +461,8 @@ export abstract class Device extends BaseClass implements IDevice {
   public abstract createList(id?: string, classNames?: string[]): HTMLElement;
 
   public abstract createListItem(id?: string, classNames?: string[]): HTMLElement;
+
+  public abstract isAnimationDisabled(): boolean;
 
   public abstract createImage(
     src: string,

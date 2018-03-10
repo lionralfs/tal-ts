@@ -1,7 +1,7 @@
 import { BaseClass } from './class';
 export declare class Iterator extends BaseClass {
+    currentIndex: number;
     private array;
-    private currentIndex;
     constructor(array?: any[]);
     /**
      * Sets the iterator pointer to the first item

@@ -15,7 +15,7 @@ export class WidgetStrip extends Container {
    * @param orientation an object representing the strip's orientation.
    */
   constructor(id: string, orientation: Orientation) {
-    super();
+    super(id);
     this.addClass(orientation.styleClass());
     this.orientation = orientation;
     this.lengths = [];

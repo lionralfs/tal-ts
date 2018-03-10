@@ -26,7 +26,7 @@ export declare class DataSource extends BaseClass {
      */
     load(callbacks: {
         onSuccess: (data: Iterator | any[]) => void;
-        onError: () => void;
+        onError: (response?: object) => void;
     }): void;
     /**
      * Aborts a currently loading request.

@@ -29,6 +29,7 @@ export declare abstract class Widget extends BaseClass implements IWidget {
     parentWidget: Container;
     outputElement: HTMLElement;
     focussed: boolean;
+    listIndex: number;
     private classNames;
     private eventListeners;
     private dataItem;
@@ -62,6 +63,15 @@ export declare abstract class Widget extends BaseClass implements IWidget {
      */
     isFocusable(): boolean;
     getCurrentApplication(): Application;
+    /**
+     * Get any data item associated with this widget.
+     */
+    getDataItem(): object;
+    /**
+     * Associate a data item with this widget.
+     * @param dataItem Object to associate with this widget.
+     */
+    setDataItem(dataItem: object): void;
     show(options: IShowOptions): void;
     /**
      * Hides a widget. If animation is enabled the widget will be faded out of view.

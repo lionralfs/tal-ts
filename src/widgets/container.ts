@@ -182,7 +182,7 @@ export class Container extends Widget implements IContainer {
    * Appends a child widget to this widget.
    * @param widget The child widget to add.
    */
-  public appendChildWidget<K extends Widget>(widget: K) {
+  public appendChildWidget(widget: Widget) {
     if (!this.hasChildWidget(widget.id)) {
       this.childWidgets[widget.id] = widget;
       this.childWidgetOrder.push(widget);

@@ -1,14 +1,17 @@
 import { Container } from '..';
 import { CarouselCore } from './carousel/carouselcore';
+import { HorizontalOrientation } from './carousel/orientations/horizontal';
+import { VerticalOrientation } from './carousel/orientations/vertical';
 import { Widget } from './widget';
 
 export class Carousel extends CarouselCore {
-  // public static orientations = CarouselCore.orientations;
+  public static orientations = CarouselCore.orientations;
+
   /**
    * Appends a child widget to this widget.
    * @param widget The child widget to add.
    */
-  public appendChildWidget2(widget: Widget) {
+  public appendChildWidget(widget: Widget) {
     return this.append(widget);
   }
 
@@ -176,6 +179,6 @@ export class Carousel extends CarouselCore {
   }
 
   protected directAppend(widget: Widget) {
-    Container.prototype.appendChildWidget.call(this, widget);
+    super.appendChildWidget(widget);
   }
 }

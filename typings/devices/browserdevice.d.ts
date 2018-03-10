@@ -1,7 +1,7 @@
 import { Historian } from '../historian';
 import { MediaPlayer } from '../mediaplayer/mediaplayer';
 import { ISize } from '../widgets/image';
-import { Device, IAnimOptions } from './device';
+import { Device, IAnimator, IAnimOptions } from './device';
 export declare class BrowserDevice extends Device {
     private mediaPlayer;
     private windowLocation;
@@ -89,12 +89,13 @@ export declare class BrowserDevice extends Device {
         width?: number;
         height?: number;
     }): void;
-    scrollElementTo(options: IAnimOptions): void;
-    moveElementTo(options: IAnimOptions): void;
-    hideElement(options: IAnimOptions): void;
-    showElement(options: IAnimOptions): void;
-    tweenElementStyle(options: IAnimOptions): void;
-    stopAnimation(anim: object): void;
+    scrollElementTo(options: IAnimOptions): IAnimator;
+    moveElementTo(options: IAnimOptions): IAnimator;
+    hideElement(options: IAnimOptions): IAnimator;
+    showElement(options: IAnimOptions): IAnimator;
+    tweenElementStyle(options: IAnimOptions): IAnimator;
+    stopAnimation(animator?: IAnimator): void;
+    isAnimationDisabled(): boolean;
     loadStyleSheet(url: string, callback?: (res: string) => void): void;
     clearElement(el: HTMLElement): void;
     /**
@@ -143,13 +144,13 @@ export declare class BrowserDevice extends Device {
      * @param classNames An array of class names to apply to the element.
      * @returns A list within the device's user-agent.
      */
-    createList(id?: string, classNames?: string[]): Node;
+    createList(id?: string, classNames?: string[]): HTMLElement;
     /**
      * Creates a list item in the device's user-agent.
      * @param id The id of the element to create.
      * @param classNames An array of class names to apply to the element.
      */
-    createListItem(id?: string, classNames?: string[]): Node;
+    createListItem(id?: string, classNames?: string[]): HTMLElement;
     /**
      * Creates an image in the device's user-agent.
      * @param src The source URL of the image.

@@ -1,12 +1,18 @@
 import { Container } from '..';
 import { CarouselCore } from './carousel/carouselcore';
+import { HorizontalOrientation } from './carousel/orientations/horizontal';
+import { VerticalOrientation } from './carousel/orientations/vertical';
 import { Widget } from './widget';
 export declare class Carousel extends CarouselCore {
+    static orientations: {
+        VERTICAL: VerticalOrientation;
+        HORIZONTAL: HorizontalOrientation;
+    };
     /**
      * Appends a child widget to this widget.
      * @param widget The child widget to add.
      */
-    appendChildWidget2(widget: Widget): Widget;
+    appendChildWidget(widget: Widget): Widget;
     /**
      * Inserts a child widget at the specified index.
      * @param index The index where to insert the child widget.
