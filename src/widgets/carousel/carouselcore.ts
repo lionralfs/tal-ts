@@ -23,9 +23,9 @@ export class CarouselCore extends Container {
     HORIZONTAL: Horizontal
   };
 
+  public orientation: Orientation;
   protected mask: Mask;
   protected widgetStrip: WidgetStrip;
-  private orientation: Orientation;
   private autoCalculate: boolean;
   private navigator: Navigator;
   private aligner: Aligner;

@@ -5,6 +5,8 @@ import { HTML5MediaPlayer } from './mediaplayer/html5';
 import { RuntimeContext } from './runtimecontext';
 import { Button } from './widgets/button';
 import { Carousel } from './widgets/carousel';
+import { ActivateFirstHandler } from './widgets/carousel/keyhandlers/activatefirsthandler';
+import { AlignFirstHandler } from './widgets/carousel/keyhandlers/alignfirsthandler';
 import { Component } from './widgets/component';
 import { ComponentContainer } from './widgets/componentcontainer';
 import { Container } from './widgets/container';
@@ -21,5 +23,7 @@ export {
   RuntimeContext,
   Device,
   HTML5MediaPlayer,
-  Carousel
+  Carousel,
+  ActivateFirstHandler,
+  AlignFirstHandler
 };
