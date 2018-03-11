@@ -59,7 +59,7 @@ export abstract class Application extends BaseClass implements IApplication {
   private onReadyHandler: (...args: any[]) => void;
   private device: Device;
 
-  private layout: any; // TODO
+  private layout: ILayout;
 
   constructor(
     rootElement: HTMLElement,

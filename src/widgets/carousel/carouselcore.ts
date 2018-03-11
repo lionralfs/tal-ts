@@ -127,7 +127,7 @@ export class CarouselCore extends Container {
   /**
    * Removes all widgets from the carousel
    */
-  public removeAll() {
+  public removeAll(): void {
     this.widgetStrip.removeAll();
   }
 
@@ -136,14 +136,14 @@ export class CarouselCore extends Container {
    * If no alignment has been performed previously it will align to the next enabled widget after that at index 0
    * If a wrapping strip and navigator are used the alignment will wrap to the start after the last widget is reached.
    * If an alignment is in progress, the new alignment will be queued to start after the current alignment completes.
-   * @param {Object} [options] An animation options object
-   * @param {Number} [options.fps] The frames per second of the alignment, if using styletopleft animation
-   * @param {Number} [options.duration] The duration of the alignment in ms
-   * @param {String} [options.easing] The alignment easing function
-   * @param {Boolean} [options.skipAnim] If set true, the alignment will complete instantly then fire any provided callback
-   * @param {Function} [options.onComplete] A function which will be executed on completion of the alignment animation.
+   * @param options An animation options object
+   * @param options.fps The frames per second of the alignment, if using styletopleft animation
+   * @param options.duration The duration of the alignment in ms
+   * @param options.easing The alignment easing function
+   * @param options.skipAnim If set true, the alignment will complete instantly then fire any provided callback
+   * @param options.onComplete A function which will be executed on completion of the alignment animation.
    */
-  public alignNext(options?: IAnimOptions) {
+  public alignNext(options?: IAnimOptions): void {
     this.aligner.alignNext(this.navigator, options);
   }
 
@@ -152,14 +152,14 @@ export class CarouselCore extends Container {
    * If no alignment has been performed previously it will align to the first enabled widget before that at index 0
    * If a wrapping strip and navigator are used the alignment will wrap to the end after the first widget is reached.
    * If an alignment is in progress, the new alignment will be queued to start after the current alignment completes.
-   * @param {Object} [options] An animation options object
-   * @param {Number} [options.fps] The frames per second of the alignment, if using styletopleft animation
-   * @param {Number} [options.duration] The duration of the alignment in ms
-   * @param {String} [options.easing] The alignment easing function
-   * @param {Boolean} [options.skipAnim] If set true, the alignment will complete instantly then fire any provided callback
-   * @param {Function} [options.onComplete] A function which will be executed on completion of the alignment animation.
+   * @param options An animation options object
+   * @param options.fps The frames per second of the alignment, if using styletopleft animation
+   * @param options.duration The duration of the alignment in ms
+   * @param options.easing The alignment easing function
+   * @param options.skipAnim If set true, the alignment will complete instantly then fire any provided callback
+   * @param options.onComplete A function which will be executed on completion of the alignment animation.
    */
-  public alignPrevious(options?: IAnimOptions) {
+  public alignPrevious(options?: IAnimOptions): void {
     this.aligner.alignPrevious(this.navigator, options);
   }
 
@@ -168,15 +168,15 @@ export class CarouselCore extends Container {
    * Will always move forward if the index is after that currently aligned and backwards if index is before
    * that currently aligned.
    * If an alignment is in progress, the new alignment will be queued to start after the current alignment completes.
-   * @param {Number} index The index of the widget to align on.
-   * @param {Object} [options] An animation options object
-   * @param {Number} [options.fps] The frames per second of the alignment, if using styletopleft animation
-   * @param {Number} [options.duration] The duration of the alignment in ms
-   * @param {String} [options.easing] The alignment easing function
-   * @param {Boolean} [options.skipAnim] If set true, the alignment will complete instantly then fire any provided callback
-   * @param {Function} [options.onComplete] A function which will be executed on completion of the alignment animation.
+   * @param index The index of the widget to align on.
+   * @param options An animation options object
+   * @param options.fps The frames per second of the alignment, if using styletopleft animation
+   * @param options.duration The duration of the alignment in ms
+   * @param options.easing The alignment easing function
+   * @param options.skipAnim If set true, the alignment will complete instantly then fire any provided callback
+   * @param options.onComplete A function which will be executed on completion of the alignment animation.
    */
-  public alignToIndex(index: number, options?: IAnimOptions) {
+  public alignToIndex(index: number, options?: IAnimOptions): void {
     this.aligner.alignToIndex(index, options);
   }
 
@@ -184,7 +184,7 @@ export class CarouselCore extends Container {
    * Instantly completes any in-flight alignment animations, firing any callbacks that were provided.
    * If several alignments have been queued, all will complete in order.
    */
-  public completeAlignment() {
+  public completeAlignment(): void {
     this.aligner.complete();
   }
 
@@ -193,7 +193,7 @@ export class CarouselCore extends Container {
    * @param pixelsFromEdgeToWidgetEdge A value in pixels from the primary edge (top or left for Vertical/Horizontal)
    * at which widgets are aligned.
    */
-  public setAlignPoint(pixelsFromEdgeToWidgetEdge: number) {
+  public setAlignPoint(pixelsFromEdgeToWidgetEdge: number): void {
     this.mask.setAlignPoint(pixelsFromEdgeToWidgetEdge);
   }
 
@@ -202,7 +202,7 @@ export class CarouselCore extends Container {
    * @param fractionOfMaskLength a value between 0 and 1 specifying how far along the mask a widget should
    * be aligned. i.e. 0.5 is the centre of the mask.
    */
-  public setNormalisedAlignPoint(fractionOfMaskLength: number) {
+  public setNormalisedAlignPoint(fractionOfMaskLength: number): void {
     this.mask.setNormalisedAlignPoint(fractionOfMaskLength);
   }
 
@@ -212,7 +212,7 @@ export class CarouselCore extends Container {
    * aligned with the mask alignment point. i.e. in a horizontal Carousel, 0.5 is the centre of the widget,
    * 0 is the left edge, 1 is the right edge
    */
-  public setNormalisedWidgetAlignPoint(fractionOfWidgetLength: number) {
+  public setNormalisedWidgetAlignPoint(fractionOfWidgetLength: number): void {
     this.mask.setNormalisedWidgetAlignPoint(fractionOfWidgetLength);
   }
 
@@ -220,7 +220,7 @@ export class CarouselCore extends Container {
    * Some widget strips peform calculations which require elements to be present in the document.
    * This method manually performs those recalculations.
    */
-  public recalculate() {
+  public recalculate(): void {
     this.widgetStrip.recalculate();
   }
 
@@ -229,14 +229,14 @@ export class CarouselCore extends Container {
    * By default these calculations are performed whenever their values might be invalidated (after appending elements
    * for instance) This method can be used to be disable/enable this behaviour for performance optimisation.
    */
-  public setAutoCalculate(on: boolean) {
+  public setAutoCalculate(on: boolean): void {
     this.widgetStrip.autoCalculate(on);
   }
 
   /**
    * @return the index of the currently active widget
    */
-  public getActiveIndex() {
+  public getActiveIndex(): number {
     return this.navigator.currentIndex();
   }
 
@@ -245,21 +245,21 @@ export class CarouselCore extends Container {
    * @param index the index of the widget to be made active.
    * If this is invalid or corresponds to a disabled widget the active index will not change
    */
-  public setActiveIndex(index: number) {
+  public setActiveIndex(index: number): void {
     this.navigator.setIndex(index);
   }
 
   /**
    * @return the index first focussable index after the index of the active widget
    */
-  public nextIndex() {
+  public nextIndex(): number {
     return this.navigator.nextIndex();
   }
 
   /**
    * @return the index first focussable index before the index of the active widget
    */
-  public previousIndex() {
+  public previousIndex(): number {
     return this.navigator.previousIndex();
   }
 
@@ -268,7 +268,7 @@ export class CarouselCore extends Container {
    * @param widget the widget to be made active.
    * If the widget is not in the Carousel or corresponds to a disabled widget the active widget will not change
    */
-  public setActiveWidget(widget: Widget) {
+  public setActiveWidget(widget: Widget): void {
     const index = this.widgetStrip.getIndexOfChildWidget(widget);
     this.navigator.setIndex(index);
   }
@@ -279,7 +279,7 @@ export class CarouselCore extends Container {
    * antie.widgets.carousel.navigators.BookendedNavigator or antie.widgets.carousel.navigators.WrappingNavigator
    * On construction, the carousel uses antie.widgets.carousel.navigators.BookendedNavigator by default
    */
-  public setNavigator(navigator: new (container: Container) => Navigator) {
+  public setNavigator(navigator: new (container: Container) => Navigator): void {
     this.navigator = new navigator(this.widgetStrip);
   }
 
@@ -289,7 +289,7 @@ export class CarouselCore extends Container {
    * antie.widgets.carousel.navigators.WidgetStrip, antie.widgets.carousel.navigators.WrappingStrip
    * On construction, the carousel uses antie.widgets.carousel.navigators.WidgetStrip by default
    */
-  public setWidgetStrip(widgetStrip: new (id: string, orientation: Orientation) => WidgetStrip) {
+  public setWidgetStrip(widgetStrip: new (id: string, orientation: Orientation) => WidgetStrip): void {
     this.widgetStrip = new widgetStrip(this.id + '_WidgetStrip', this.orientation);
     if (this.navigator) {
       this.navigator.setContainer(this.widgetStrip);
@@ -309,24 +309,24 @@ export class CarouselCore extends Container {
   /**
    * @return The orientation object associated with the carousel
    */
-  public getOrientation() {
+  public getOrientation(): Orientation {
     return this.orientation;
   }
 
-  protected directAppend(widget: Widget) {
+  protected directAppend(widget: Widget): void {
     this.appendChildWidget(widget);
   }
 
-  private setOrientation(orientation: Orientation) {
+  private setOrientation(orientation: Orientation): void {
     this.orientation = orientation;
   }
 
-  private setAlignEventsFromStripToHaveCarouselAsTarget() {
+  private setAlignEventsFromStripToHaveCarouselAsTarget(): void {
     this.remapWidgetStripEventToCarousel('beforealign');
     this.remapWidgetStripEventToCarousel('afteralign');
   }
 
-  private remapWidgetStripEventToCarousel(eventName) {
+  private remapWidgetStripEventToCarousel(eventName): void {
     const fallback = evt => {
       if (evt.target === this.widgetStrip) {
         evt.target = this;

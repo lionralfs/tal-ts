@@ -7,7 +7,6 @@ import { ISize } from '../widgets/image';
 import { IShowOptions } from '../widgets/widget';
 import { BrowserDevice } from './browserdevice';
 
-// TODO: this needs more checks
 export interface IDeviceConfig {
   pageStrategy?: string;
   css?: IConfigCss[];
@@ -435,7 +434,7 @@ export abstract class Device extends BaseClass implements IDevice {
 
   public abstract showElement(options: IAnimOptions): void;
 
-  public abstract tweenElementStyle(options: IAnimOptions): void; // TODO: check options
+  public abstract tweenElementStyle(options: IAnimOptions): void;
 
   public abstract stopAnimation(animator?: IAnimator): void;
 

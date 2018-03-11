@@ -2,6 +2,7 @@ import { DataSource } from '../datasource';
 import { KeyEvent } from '../events/keyevent';
 import { Formatter } from '../formatter';
 import { List } from './list';
+import { Widget } from './widget';
 
 /**
  * The HorizontalList widget is a container widget that supports spatial navigation between items using `KeyEvent.VK_LEFT` and `KeyEvent.VK_RIGHT`.
@@ -14,9 +15,9 @@ export class HorizontalList extends List {
   private wrapMode: number;
 
   /**
-   * @param {String} [id] The unique ID of the widget. If excluded, a temporary internal ID will be used (but not included in any output).
-   * @param {antie.Formatter} [itemFormatter] A formatter class used on each data item to generate the list item child widgets.
-   * @param {antie.DataSource|Array} [dataSource] An array of data to be used to generate the list items, or an aysnchronous data source.
+   * @param id The unique ID of the widget. If excluded, a temporary internal ID will be used (but not included in any output).
+   * @param itemFormatter A formatter class used on each data item to generate the list item child widgets.
+   * @param dataSource An array of data to be used to generate the list items, or an aysnchronous data source.
    */
   constructor(id?: string, itemFormatter?: Formatter, dataSource?: DataSource | any[]) {
     super(id, itemFormatter, dataSource);
@@ -35,7 +36,7 @@ export class HorizontalList extends List {
    * @param wrapMode Pass `HorizontalList.WRAP_MODE_NONE` for no wrapping.
    * Pass `HorizontalList.WRAP_MODE_NONE` to allow navigation to wrap.
    */
-  public setWrapMode(wrapMode: number) {
+  public setWrapMode(wrapMode: number): void {
     this.wrapMode = wrapMode;
   }
 
@@ -45,13 +46,13 @@ export class HorizontalList extends List {
    * spatial navigation out of the list.
    * @param evt The key event.
    */
-  private onKeyDown(evt: KeyEvent) {
+  private onKeyDown(evt: KeyEvent): boolean {
     if (evt.keyCode !== KeyEvent.VK_LEFT && evt.keyCode !== KeyEvent.VK_RIGHT) {
-      return;
+      return false;
     }
 
     let newSelectedIndex = this.selectedIndex;
-    let newSelectedWidget = null;
+    let newSelectedWidget: Widget = null;
     do {
       if (evt.keyCode === KeyEvent.VK_LEFT) {
         newSelectedIndex--;

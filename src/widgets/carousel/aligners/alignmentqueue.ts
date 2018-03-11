@@ -47,14 +47,14 @@ export class AlignmentQueue extends BaseClass {
   /**
    * Queues an alignment operation
    * @param index The index of the widget to align on.
-   * @param {Object} [options] An animation options object
-   * @param {Number} [options.fps] The frames per second of the alignment, if using styletopleft animation
-   * @param {Number} [options.duration] The duration of the alignment in ms
-   * @param {String} [options.easing] The alignment easing function
-   * @param {Boolean} [options.skipAnim] If set true, the alignment will complete instantly then fire any provided callback
-   * @param {Function} [options.onComplete] A function which will be executed on completion of the alignment animation.
+   * @param options An animation options object
+   * @param options.fps The frames per second of the alignment, if using styletopleft animation
+   * @param options.duration The duration of the alignment in ms
+   * @param options.easing The alignment easing function
+   * @param options.skipAnim If set true, the alignment will complete instantly then fire any provided callback
+   * @param options.onComplete A function which will be executed on completion of the alignment animation.
    */
-  public add(index: number, options: IAnimOptions) {
+  public add(index: number, options: IAnimOptions): void {
     const alignFunction = createAlignFunction(this, index, options);
 
     this.queue.push(alignFunction);
