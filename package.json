@@ -1,6 +1,6 @@
 {
   "name": "tal-ts",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "TAL in TypeScript",
   "main": "dist/index.js",
   "typings": "typings",
