@@ -28,7 +28,7 @@ export interface IShowOptions {
 }
 
 export abstract class Widget extends BaseClass implements IWidget {
-  public static createUniqueID() {
+  public static createUniqueID(): string {
     const res = '#' + new Date().getTime() + '_' + this.widgetUniqueIDIndex++;
     return res;
   }
@@ -59,11 +59,11 @@ export abstract class Widget extends BaseClass implements IWidget {
     this.id = id ? id : Widget.createUniqueID();
   }
 
-  public pushComponent(...args: any[]) {
+  public pushComponent(...args: any[]): void {
     throw new TypeError(`pushComponent called on Widget. Args: ${args}`);
   }
 
-  public addClass(className: string) {
+  public addClass(className: string): void {
     if (!this.classNames[className]) {
       this.classNames[className] = true;
       if (this.outputElement) {
@@ -76,7 +76,7 @@ export abstract class Widget extends BaseClass implements IWidget {
   /**
    * Checks to see if the widget has a given CSS class.
    * @param className The class name to check.
-   * @returns Boolean true if the device has the className. Otherwise boolean false.
+   * @return Boolean true if the device has the className. Otherwise boolean false.
    */
   public hasClass(className: string): boolean {
     return this.classNames[className] ? true : false;
@@ -97,7 +97,7 @@ export abstract class Widget extends BaseClass implements IWidget {
    * @param ev The event type to listen for (e.g. `keydown`)
    * @param func The handler to be called when the event is fired.
    */
-  public addEventListener(ev: string, func: (...args: any[]) => void) {
+  public addEventListener(ev: string, func: (...args: any[]) => void): void {
     let listeners = this.eventListeners[ev];
     if (typeof listeners === 'undefined') {
       listeners = [];
@@ -110,18 +110,17 @@ export abstract class Widget extends BaseClass implements IWidget {
 
   /**
    * Removes an event listener function to this widget.
-   * @param {String} ev The event type that the listener is to be removed from (e.g. <code>keydown</code>)
-   * @param {Function} func The handler to be removed.
-   * @see antie.events.Event
+   * @param ev The event type that the listener is to be removed from (e.g. <code>keydown</code>)
+   * @param func The handler to be removed.
    */
-  public removeEventListener(ev: string, func: (...args: any[]) => void) {
+  public removeEventListener(ev: string, func: (...args: any[]) => void): void {
     const listeners = this.eventListeners[ev];
 
     if (!listeners) {
       RuntimeContext.getDevice()
         .getLogger()
         .error('Attempting to remove non-existent event listener');
-      return false;
+      return;
     }
 
     const listener = listeners.indexOf(func);
@@ -130,7 +129,7 @@ export abstract class Widget extends BaseClass implements IWidget {
     }
   }
 
-  public fireEvent(ev: BaseEvent) {
+  public fireEvent(ev: BaseEvent): void {
     const listeners = this.eventListeners[ev.type];
     if (listeners) {
       for (const func in listeners) {
@@ -152,7 +151,7 @@ export abstract class Widget extends BaseClass implements IWidget {
     }
   }
 
-  public bubbleEvent(ev: BaseEvent) {
+  public bubbleEvent(ev: BaseEvent): void {
     this.fireEvent(ev);
     if (!ev.isPropagationStopped()) {
       if (this.parentWidget) {
@@ -161,6 +160,16 @@ export abstract class Widget extends BaseClass implements IWidget {
         ev.stopPropagation();
       }
     }
+  }
+
+  /**
+   * Broadcast an event from object, triggering any event listeners bound to this widget and any
+   * parent widgets.
+   * To halt bubbling of the event, see `BaseEvent#stopPropagation`.
+   * @param ev The event to bubble.
+   */
+  public broadcastEvent(ev: BaseEvent): void {
+    this.fireEvent(ev);
   }
 
   /**
@@ -179,7 +188,7 @@ export abstract class Widget extends BaseClass implements IWidget {
   /**
    * Get any data item associated with this widget.
    */
-  public getDataItem() {
+  public getDataItem(): object {
     return this.dataItem;
   }
 
@@ -187,11 +196,11 @@ export abstract class Widget extends BaseClass implements IWidget {
    * Associate a data item with this widget.
    * @param dataItem Object to associate with this widget.
    */
-  public setDataItem(dataItem: object) {
+  public setDataItem(dataItem: object): void {
     this.dataItem = dataItem;
   }
 
-  public show(options: IShowOptions) {
+  public show(options: IShowOptions): void {
     if (this.outputElement) {
       const newOptions = { ...options, el: this.outputElement };
       options.el = this.outputElement;
@@ -212,7 +221,7 @@ export abstract class Widget extends BaseClass implements IWidget {
     fps?: number;
     duration?: number;
     easing?: string;
-  }) {
+  }): void {
     if (this.outputElement) {
       const newOptions = { ...options, el: this.outputElement };
       const device = this.getCurrentApplication().getDevice();
@@ -222,7 +231,7 @@ export abstract class Widget extends BaseClass implements IWidget {
     }
   }
 
-  public removeFocus() {
+  public removeFocus(): void {
     this.removeClass('focus');
     this.focussed = false;
   }
@@ -238,11 +247,11 @@ export abstract class Widget extends BaseClass implements IWidget {
   /**
    * Returns whether the widget is a Component, `true` if the widget is a Component.
    */
-  public isComponent() {
+  public isComponent(): boolean {
     return false;
   }
 
-  public removeClass(className: string) {
+  public removeClass(className: string): void {
     if (this.classNames[className]) {
       delete this.classNames[className];
       if (this.outputElement) {

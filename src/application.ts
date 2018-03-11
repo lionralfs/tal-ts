@@ -7,6 +7,7 @@ import { Button } from './widgets/button';
 import { Component } from './widgets/component';
 import { ComponentContainer } from './widgets/componentcontainer';
 import { Container } from './widgets/container';
+import { List } from './widgets/list';
 import { Widget } from './widgets/widget';
 
 declare const antie: { framework: { deviceConfiguration: IDeviceConfig } };
@@ -46,7 +47,7 @@ export interface IApplication {
 }
 
 export abstract class Application extends BaseClass implements IApplication {
-  public static getCurrentApplication() {
+  public static getCurrentApplication(): Application {
     return this.runtimeContext.getCurrentApplication();
   }
 
@@ -141,7 +142,7 @@ export abstract class Application extends BaseClass implements IApplication {
   /**
    * Must be called when the application startup is complete and application can accept user input.
    */
-  public ready() {
+  public ready(): void {
     if (this.onReadyHandler) {
       // Run this after the current execution path is complete
       window.setTimeout(() => {
@@ -150,18 +151,7 @@ export abstract class Application extends BaseClass implements IApplication {
     }
   }
 
-  // public addComponentContainer(id: string, requireModule?: string, args?: object) {
-  //   const container: Container = new ComponentContainer(id);
-  //   this.rootWidget.appendChildWidget(container);
-
-  //   // if (requireModule) {
-  //   //   this.showComponent(id, requireModule, args);
-  //   // }
-
-  //   return container;
-  // }
-
-  public addComponentContainer(id: string, component?: Component, args?: object) {
+  public addComponentContainer(id: string, component?: Component, args?: object): Container {
     const container: Container = new ComponentContainer(id);
     this.rootWidget.appendChildWidget(container);
 
@@ -172,7 +162,7 @@ export abstract class Application extends BaseClass implements IApplication {
     return container;
   }
 
-  public showComponent(id: string, component: Component, args?: object) {
+  public showComponent(id: string, component: Component, args?: object): void {
     const widget = this.rootWidget.getChildWidget(id);
     if (widget instanceof ComponentContainer) {
       widget.showComponent(component, args);
@@ -185,15 +175,15 @@ export abstract class Application extends BaseClass implements IApplication {
    * @param modules The requirejs module name of the component to show.
    * @param args An optional object to pass arguments to the component.
    */
-  public pushComponent(id: string, component: Component, args?: object) {
+  public pushComponent(id: string, component: Component, args?: object): void {
     this.rootWidget.getChildWidget(id).pushComponent(component, args);
   }
 
-  public getDevice() {
+  public getDevice(): Device {
     return this.device;
   }
 
-  public bubbleEvent(evt: BaseEvent) {
+  public bubbleEvent(evt: BaseEvent): void {
     if (this.focussedWidget) {
       this.focussedWidget.bubbleEvent(evt);
     }
@@ -203,7 +193,7 @@ export abstract class Application extends BaseClass implements IApplication {
    * Set the currently focussed Button.
    * @param button The button that has recieved focus.
    */
-  public setFocussedWidget(button: Button) {
+  public setFocussedWidget(button: Button): void {
     // Check to see the widget is a Button and itself has correct focus state before recording
     // it as the focussed widget.
     if (button instanceof Button && button.isFocussed()) {
@@ -230,7 +220,7 @@ export abstract class Application extends BaseClass implements IApplication {
     additionalClasses: string[],
     additionalPreloadImages: string[],
     callback: () => void
-  ) {
+  ): void {
     let i;
     this.layout = layout;
     const tle = this.device.getTopLevelElement();
@@ -276,11 +266,11 @@ export abstract class Application extends BaseClass implements IApplication {
    * Set the root widget of the application.
    * @param widget The new root widget.
    */
-  public setRootWidget(widget: Container) {
+  public setRootWidget(widget: Container): void {
     widget.addClass('rootwidget');
-    // if (widget instanceof List) {
-    //   widget.setRenderMode(List.RENDER_MODE_CONTAINER);
-    // }
+    if (widget instanceof List) {
+      widget.setRenderMode(List.RENDER_MODE_CONTAINER);
+    }
     this.rootWidget = widget;
     this.rootWidget.focussed = true;
     if (!this.rootWidget.outputElement) {
@@ -323,7 +313,6 @@ export abstract class Application extends BaseClass implements IApplication {
    */
   public destroy(): void {
     RuntimeContext.clearCurrentApplication();
-    ComponentContainer.destroy();
   }
 
   /**
@@ -353,7 +342,7 @@ export abstract class Application extends BaseClass implements IApplication {
    * application in the history stack. Will exit to broadcast if the first TAL application was launched from
    * broadcast and a broadcast exit modifier is loaded.
    */
-  public exit() {
+  public exit(): void {
     if (
       this.getDevice()
         .getHistorian()

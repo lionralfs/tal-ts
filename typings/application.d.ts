@@ -29,7 +29,7 @@ export interface IApplication {
     getFocussedWidget(): Button;
 }
 export declare abstract class Application extends BaseClass implements IApplication {
-    static getCurrentApplication(): object;
+    static getCurrentApplication(): Application;
     private static runtimeContext;
     private rootElement;
     private rootWidget;

@@ -5,18 +5,18 @@ import { Device } from './devices/device';
 export interface IRuntimeContext extends BaseClass {
   clearCurrentApplication(): void;
   setCurrentApplication(app: Application): void;
-  getCurrentApplication(): object;
+  getCurrentApplication(): Application;
   getDevice(): object;
 }
 
 export class RuntimeContextClass extends BaseClass implements IRuntimeContext {
   private static applicationObject: Application;
 
-  public clearCurrentApplication() {
+  public clearCurrentApplication(): void {
     RuntimeContextClass.applicationObject = null;
   }
 
-  public setCurrentApplication(app: Application) {
+  public setCurrentApplication(app: Application): void {
     if (RuntimeContextClass.applicationObject) {
       throw new Error(
         'RuntimeContext.setCurrentApplication called for a second time. You can only have one application instance running at any time.'
@@ -26,7 +26,7 @@ export class RuntimeContextClass extends BaseClass implements IRuntimeContext {
     }
   }
 
-  public getCurrentApplication() {
+  public getCurrentApplication(): Application {
     return RuntimeContextClass.applicationObject;
   }
 

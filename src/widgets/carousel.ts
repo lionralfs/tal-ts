@@ -54,7 +54,7 @@ export class Carousel extends CarouselCore {
    * Classes 'active' and 'focus' are appended to widgets with these states.
    *
    * @param widget The child widget to set focus to.
-   * @returns Boolean true if the child widget was focusable, otherwise boolean false.
+   * @return Boolean true if the child widget was focusable, otherwise boolean false.
    */
   public setActiveChildWidget(widget: Widget): boolean {
     if (widget === this.mask) {
@@ -146,7 +146,7 @@ export class Carousel extends CarouselCore {
   /**
    * Checks to see if the widget strip has a given CSS class.
    * @param className The class name to check.
-   * @returns Boolean true if the device has the className. Otherwise boolean false.
+   * @return Boolean true if the device has the className. Otherwise boolean false.
    */
   public hasClass(className: string) {
     if (this.widgetStrip) {

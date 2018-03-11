@@ -142,7 +142,7 @@ export declare class BrowserDevice extends Device {
      * Creates a list in the device's user-agent.
      * @param id The id of the element to create.
      * @param classNames An array of class names to apply to the element.
-     * @returns A list within the device's user-agent.
+     * @return A list within the device's user-agent.
      */
     createList(id?: string, classNames?: string[]): HTMLElement;
     /**

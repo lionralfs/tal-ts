@@ -46,7 +46,7 @@ export declare class Label extends Widget {
     setText(text: string): void;
     /**
      * Gets the current text displayed by this label.
-     * @returns The current text displayed by this label.
+     * @return The current text displayed by this label.
      */
     getText(): string;
     /**

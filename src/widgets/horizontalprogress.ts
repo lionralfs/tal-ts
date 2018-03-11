@@ -35,7 +35,7 @@ export class HorizontalProgress extends Container {
   /**
    * Renders the widget and any child widgets to device-specific output.
    * @param device The device to render to.
-   * @returns A device-specific object that represents the widget as displayed on the device (in a browser, a DOMElement);
+   * @return A device-specific object that represents the widget as displayed on the device (in a browser, a DOMElement);
    */
   public render(device: Device) {
     this.outputElement = device.createContainer(this.id, this.getClasses());

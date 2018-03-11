@@ -22,19 +22,6 @@ export interface IHistoryItem {
 }
 
 export class ComponentContainer extends Container implements IComponentContainer {
-  public static destroy() {
-    // for (const module in this.knownComponents) {
-    //   if (this.knownComponents.hasOwnProperty(module)) {
-    //     delete this.knownComponents[module];
-    //   }
-    // }
-  }
-
-  // private static knownComponents: object = {};
-
-  // private loadingIndex: number;
-  // private loadingModule: string;
-  // private currentModule: string;
   private currentComponent: Component;
   private currentArgs: object;
   private historyStack: IHistoryItem[];
@@ -72,13 +59,7 @@ export class ComponentContainer extends Container implements IComponentContainer
     state?: object,
     fromBack?: boolean,
     focus?: Button
-  ) {
-    // this.loadingModule = module;
-
-    // this.loadingIndex++;
-    // const loadingIndex = this.loadingIndex;
-
-    // if (ComponentContainer.knownComponents[module]) {
+  ): void {
     const device = this.getCurrentApplication().getDevice();
 
     const focussedButton = this.getCurrentApplication().getFocussedWidget();
@@ -86,8 +67,6 @@ export class ComponentContainer extends Container implements IComponentContainer
       this.hideComponent(null, args, keepHistory, state, fromBack);
     }
 
-    // this.currentModule = module;
-    // this.currentComponent = ComponentContainer.knownComponents[module];
     this.currentComponent = component;
     this.currentArgs = args;
     if (!fromBack) {
@@ -95,8 +74,6 @@ export class ComponentContainer extends Container implements IComponentContainer
     }
 
     if (!this.focussed) {
-      // We don't have focus, so any of our children shouldn't
-      // (focussed state can be set to true if focussed widget is in a unloaded component)
       let p: Container = this.currentComponent;
       while (p) {
         p.removeFocus();
@@ -152,22 +129,6 @@ export class ComponentContainer extends Container implements IComponentContainer
         .getLogger()
         .warn('active component is not currently focusable', this.activeChildWidget);
     }
-    // } else {
-    // hook into requirejs to load the component from the module and call us again
-    // requirejs([module], object => {
-    //   // Check we've not navigated elsewhere whilst requirejs has been loading the module
-    //   if (this.loadingModule === module && this.loadingIndex === loadingIndex) {
-    //     const componentClassConstructor: new (...args: any[]) => Widget = object[Object.keys(object)[0]];
-    //     this.loadComponentCallback(
-    //       module,
-    //       componentClassConstructor,
-    //       args,
-    //       keepHistory,
-    //       state /*, fromBack, focussedButton*/
-    //     );
-    //   }
-    // });
-    // }
   }
 
   /**
@@ -175,7 +136,7 @@ export class ComponentContainer extends Container implements IComponentContainer
    * @param module The requirejs module name of the component to show.
    * @param args An optional object to pass arguments to the component.
    */
-  public pushComponent(component: Component, args?: object) {
+  public pushComponent(component: Component, args?: object): void {
     this.showComponent(component, args, true);
   }
 
@@ -189,7 +150,7 @@ export class ComponentContainer extends Container implements IComponentContainer
   /**
    * Return this component container to the previous component in the history.
    */
-  public back() {
+  public back(): void {
     const focus = this.currentComponent.getIsModal() ? this.previousFocus : null;
 
     const lastComponent = this.historyStack.pop();
@@ -209,7 +170,13 @@ export class ComponentContainer extends Container implements IComponentContainer
    * @param state
    * @param fromBack
    */
-  public hideComponent(focusToComponent: string, args: object, keepHistory: boolean, state: object, fromBack: boolean) {
+  public hideComponent(
+    focusToComponent: string,
+    args: object,
+    keepHistory: boolean,
+    state: object,
+    fromBack: boolean
+  ): void {
     if (this.currentComponent) {
       const evt = new ComponentEvent('beforehide', this, this.currentComponent, args, state, fromBack);
       this.currentComponent.bubbleEvent(evt);
@@ -258,51 +225,7 @@ export class ComponentContainer extends Container implements IComponentContainer
   /**
    *
    */
-  // public getCurrentModule(): string {
-  //   return this.currentModule;
-  // }
-
-  /**
-   *
-   */
   public getCurrentArguments(): object {
     return this.currentArgs;
   }
-
-  /**
-   *
-   * @param module
-   * @param componentClass
-   * @param args
-   * @param keepHistory
-   * @param state
-   */
-  // private loadComponentCallback(
-  //   module: string,
-  //   componentClass: new () => Widget,
-  //   args?: object,
-  //   keepHistory?: boolean,
-  //   state?: object
-  // ) {
-  //   if (!this.getCurrentApplication()) {
-  //     // Application has been destroyed, abort
-  //     return;
-  //   }
-
-  //   const newComponent = new componentClass();
-
-  //   // Add the component to our table of known components.
-  //   ComponentContainer.knownComponents[module] = newComponent;
-
-  //   // set the parent widget so the next event bubbles correctly through the tree
-  //   newComponent.parentWidget = this;
-  //   newComponent.bubbleEvent(
-  //     new ComponentEvent('load', this, ComponentContainer.knownComponents[module], args, null, null)
-  //   );
-  //   // clear the parent widget again
-  //   newComponent.parentWidget = null;
-
-  //   // Show the component.
-  //   // this.showComponent(module, args, keepHistory, state);
-  // }
 }

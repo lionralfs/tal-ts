@@ -14,7 +14,6 @@ export interface IHistoryItem {
     previousFocus: Button;
 }
 export declare class ComponentContainer extends Container implements IComponentContainer {
-    static destroy(): void;
     private currentComponent;
     private currentArgs;
     private historyStack;
@@ -56,9 +55,6 @@ export declare class ComponentContainer extends Container implements IComponentC
      * @param fromBack
      */
     hideComponent(focusToComponent: string, args: object, keepHistory: boolean, state: object, fromBack: boolean): void;
-    /**
-     *
-     */
     /**
      *
      */

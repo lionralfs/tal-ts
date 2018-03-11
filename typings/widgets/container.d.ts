@@ -14,7 +14,7 @@ export declare class Container extends Widget implements IContainer {
         [key: string]: Widget;
     };
     protected childWidgetOrder: Widget[];
-    private autoRenderChildren;
+    protected autoRenderChildren: boolean;
     constructor(id?: string);
     back(): void;
     /**
@@ -46,7 +46,7 @@ export declare class Container extends Widget implements IContainer {
     getChildWidget(id: string): Widget;
     /**
      * Get an array of all this widget's children.
-     * @returns An array of all this widget's children.
+     * @return An array of all this widget's children.
      */
     getChildWidgets(): Widget[];
     getIndexOfChildWidget(widget: Widget): number;

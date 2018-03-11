@@ -3,7 +3,7 @@ import { RuntimeContext } from '../runtimecontext';
 import { Widget } from '../widgets/widget';
 
 export abstract class BaseEvent extends BaseClass {
-  public static addEventListener(ev: string, func: () => void) {
+  public static addEventListener(ev: string, func: () => void): void {
     let listeners = this.eventListeners[ev];
     if (typeof listeners === 'undefined') {
       listeners = [];
@@ -14,7 +14,7 @@ export abstract class BaseEvent extends BaseClass {
     }
   }
 
-  public static removeEventListener(ev: string, func: () => void) {
+  public static removeEventListener(ev: string, func: () => void): void {
     const listeners = this.eventListeners[ev];
     let listener;
 
@@ -22,7 +22,7 @@ export abstract class BaseEvent extends BaseClass {
       RuntimeContext.getDevice()
         .getLogger()
         .error('Attempting to remove non-existent event listener');
-      return false;
+      return;
     }
 
     listener = listeners.indexOf(func);
@@ -31,7 +31,7 @@ export abstract class BaseEvent extends BaseClass {
     }
   }
 
-  public static fireEvent(ev: string) {
+  public static fireEvent(ev: string): void {
     const listeners = this.eventListeners[ev];
     if (listeners) {
       for (const func in listeners) {
@@ -59,7 +59,7 @@ export abstract class BaseEvent extends BaseClass {
     BaseEvent.eventCount++;
   }
 
-  public stopPropagation() {
+  public stopPropagation(): void {
     this.propagationStopped = true;
     BaseEvent.eventCount--;
     if (!BaseEvent.eventCount) {
@@ -67,15 +67,15 @@ export abstract class BaseEvent extends BaseClass {
     }
   }
 
-  public isPropagationStopped() {
+  public isPropagationStopped(): boolean {
     return this.propagationStopped;
   }
 
-  public preventDefault() {
+  public preventDefault(): void {
     this.defaultPrevented = true;
   }
 
-  public isDefaultPrevented() {
+  public isDefaultPrevented(): boolean {
     return this.defaultPrevented;
   }
 }

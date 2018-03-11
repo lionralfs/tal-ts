@@ -234,7 +234,7 @@ export class CarouselCore extends Container {
   }
 
   /**
-   * @returns the index of the currently active widget
+   * @return the index of the currently active widget
    */
   public getActiveIndex() {
     return this.navigator.currentIndex();

@@ -39,7 +39,7 @@ export declare abstract class Widget extends BaseClass implements IWidget {
     /**
      * Checks to see if the widget has a given CSS class.
      * @param className The class name to check.
-     * @returns Boolean true if the device has the className. Otherwise boolean false.
+     * @return Boolean true if the device has the className. Otherwise boolean false.
      */
     hasClass(className: string): boolean;
     getClasses(): string[];
@@ -51,13 +51,19 @@ export declare abstract class Widget extends BaseClass implements IWidget {
     addEventListener(ev: string, func: (...args: any[]) => void): void;
     /**
      * Removes an event listener function to this widget.
-     * @param {String} ev The event type that the listener is to be removed from (e.g. <code>keydown</code>)
-     * @param {Function} func The handler to be removed.
-     * @see antie.events.Event
+     * @param ev The event type that the listener is to be removed from (e.g. <code>keydown</code>)
+     * @param func The handler to be removed.
      */
-    removeEventListener(ev: string, func: (...args: any[]) => void): boolean;
+    removeEventListener(ev: string, func: (...args: any[]) => void): void;
     fireEvent(ev: BaseEvent): void;
     bubbleEvent(ev: BaseEvent): void;
+    /**
+     * Broadcast an event from object, triggering any event listeners bound to this widget and any
+     * parent widgets.
+     * To halt bubbling of the event, see `BaseEvent#stopPropagation`.
+     * @param ev The event to bubble.
+     */
+    broadcastEvent(ev: BaseEvent): void;
     /**
      * Checks to see if a widget is focussable, i.e. contains an enabled button.
      */

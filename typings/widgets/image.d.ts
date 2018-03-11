@@ -39,7 +39,7 @@ export declare class Image extends Container {
     setSrc(src: string): void;
     /**
      * Gets the image source URL.
-     * @returns The current image source URL.
+     * @return The current image source URL.
      */
     getSrc(): string;
     setRenderMode(mode: 0 | 1): void;

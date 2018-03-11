@@ -71,7 +71,7 @@ export class Image extends Container {
 
   /**
    * Gets the image source URL.
-   * @returns The current image source URL.
+   * @return The current image source URL.
    */
   public getSrc() {
     return this.src;

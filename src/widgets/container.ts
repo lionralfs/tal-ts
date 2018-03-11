@@ -19,7 +19,7 @@ export class Container extends Widget implements IContainer {
   public activeChildWidget: Container;
   public childWidgets: { [key: string]: Widget };
   protected childWidgetOrder: Widget[];
-  private autoRenderChildren: boolean;
+  protected autoRenderChildren: boolean;
 
   constructor(id?: string) {
     super(id);
@@ -32,7 +32,7 @@ export class Container extends Widget implements IContainer {
     this.addClass('container');
   }
 
-  public back() {
+  public back(): void {
     console.warn('back called on container');
   }
 
@@ -41,7 +41,7 @@ export class Container extends Widget implements IContainer {
    * @param index The index where to insert the child widget.
    * @param widget The child widget to add.
    */
-  public insertChildWidget(index: number, widget: Widget) {
+  public insertChildWidget(index: number, widget: Widget): Widget {
     if (!this.hasChildWidget(widget.id)) {
       if (index >= this.childWidgetOrder.length) {
         return this.appendChildWidget(widget);
@@ -78,7 +78,7 @@ export class Container extends Widget implements IContainer {
   /**
    * Remove all child widgets from this widget.
    */
-  public removeChildWidgets() {
+  public removeChildWidgets(): void {
     if (this.isFocussed && this.activeChildWidget) {
       const logger = this.getCurrentApplication()
         .getDevice()
@@ -151,7 +151,7 @@ export class Container extends Widget implements IContainer {
 
   /**
    * Get an array of all this widget's children.
-   * @returns An array of all this widget's children.
+   * @return An array of all this widget's children.
    */
   public getChildWidgets(): Widget[] {
     return this.childWidgetOrder;
@@ -169,7 +169,7 @@ export class Container extends Widget implements IContainer {
    *
    * @param device The device to render to.
    */
-  public render(device: Device) {
+  public render(device: Device): HTMLElement {
     let i;
     if (!this.outputElement) {
       this.outputElement = device.createContainer(this.id, this.getClasses());
@@ -186,7 +186,7 @@ export class Container extends Widget implements IContainer {
    * Appends a child widget to this widget.
    * @param widget The child widget to add.
    */
-  public appendChildWidget(widget: Widget) {
+  public appendChildWidget(widget: Widget): Widget {
     if (!this.hasChildWidget(widget.id)) {
       this.childWidgets[widget.id] = widget;
       this.childWidgetOrder.push(widget);
@@ -283,7 +283,7 @@ export class Container extends Widget implements IContainer {
    * Get the current active widget.
    * @return The current active widget
    */
-  public getActiveChildWidget() {
+  public getActiveChildWidget(): Container {
     return this.activeChildWidget;
   }
 
@@ -326,7 +326,7 @@ export class Container extends Widget implements IContainer {
    * Flags the active child as focussed or blurred.
    * @param focus `true` if the active child is to be focussed, `false` if the active child is to be blurred.
    */
-  protected setActiveChildFocussed(focus: boolean) {
+  protected setActiveChildFocussed(focus: boolean): void {
     if (this.activeChildWidget && this.activeChildWidget.focussed !== focus) {
       this.activeChildWidget.focussed = focus;
       if (focus) {

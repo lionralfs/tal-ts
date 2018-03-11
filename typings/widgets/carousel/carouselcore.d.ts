@@ -157,7 +157,7 @@ export declare class CarouselCore extends Container {
      */
     setAutoCalculate(on: boolean): void;
     /**
-     * @returns the index of the currently active widget
+     * @return the index of the currently active widget
      */
     getActiveIndex(): number;
     /**

@@ -117,7 +117,7 @@ export class Label extends Widget {
 
   /**
    * Gets the current text displayed by this label.
-   * @returns The current text displayed by this label.
+   * @return The current text displayed by this label.
    */
   public getText(): string {
     return this.text;
