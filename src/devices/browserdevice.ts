@@ -398,7 +398,7 @@ export class BrowserDevice extends Device {
     }
   }
 
-  public clearElement(el: HTMLElement) {
+  public clearElement(el: HTMLElement): void {
     for (let i = el.childNodes.length - 1; i >= 0; i--) {
       el.removeChild(el.childNodes[i]);
     }
@@ -431,7 +431,7 @@ export class BrowserDevice extends Device {
    * @param maxWidth The width the text is constrained to.
    * @param classNames An array of class names which define the style of the text.
    */
-  public getTextHeight(text: string, maxWidth: number, classNames: string[]):number {
+  public getTextHeight(text: string, maxWidth: number, classNames: string[]): number {
     // TODO: is there a more efficient way of doing this?
     // const cacheKey = maxWidth + ':' + classNames.join(' ') + ':' + text;
     // let height;

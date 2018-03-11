@@ -3,8 +3,14 @@ import { DataSource } from '../../datasource';
 import { DataBoundEvent } from '../../events/databoundevent';
 import { Formatter } from '../../formatter';
 import { Iterator } from '../../iterator';
+import { Container } from '../container';
 import { List } from '../list';
 import { Widget } from '../widget';
+
+export interface IBinderCallbacks {
+  onSuccess: (data: any) => void;
+  onError: (error?: object) => void;
+}
 
 /**
  * Class for adding children to an existing widget based on a combination
@@ -26,11 +32,11 @@ export class Binder extends BaseClass {
    * by the source is reached.
    * @param widget The parent of the widgets to be created.
    */
-  public appendAllTo(widget: List) {
+  public appendAllTo(widget: Container): void {
     this.bindAll(widget, this.appendItem);
   }
 
-  private bindAll(widget: List, processItemFn, preBindFn?, postBindFn?) {
+  private bindAll(widget: Container, processItemFn, preBindFn?, postBindFn?): void {
     const callbacks = this.getCallbacks(widget, processItemFn, postBindFn);
     const beforeBindEvent = new DataBoundEvent('beforedatabind', widget);
 
@@ -47,10 +53,10 @@ export class Binder extends BaseClass {
   }
 
   private getCallbacks(
-    widget: List,
-    processItemFn: (widget: Widget, boundItem: Widget) => void,
-    postBindFn: (evt: DataBoundEvent) => void
-  ) {
+    widget: Container,
+    processItemFn: (widget: Container, boundItem: Widget) => void,
+    postBindFn?: (evt: DataBoundEvent) => void
+  ): IBinderCallbacks {
     return {
       // TODO: fix argument types
       onSuccess: (data: any) => {
@@ -74,7 +80,7 @@ export class Binder extends BaseClass {
     };
   }
 
-  private appendItem(widget, item) {
+  private appendItem(widget: Container, item: Widget): Widget {
     return widget.appendChildWidget(item);
   }
 }

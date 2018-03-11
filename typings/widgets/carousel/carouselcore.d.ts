@@ -86,12 +86,12 @@ export declare class CarouselCore extends Container {
      * If no alignment has been performed previously it will align to the next enabled widget after that at index 0
      * If a wrapping strip and navigator are used the alignment will wrap to the start after the last widget is reached.
      * If an alignment is in progress, the new alignment will be queued to start after the current alignment completes.
-     * @param {Object} [options] An animation options object
-     * @param {Number} [options.fps] The frames per second of the alignment, if using styletopleft animation
-     * @param {Number} [options.duration] The duration of the alignment in ms
-     * @param {String} [options.easing] The alignment easing function
-     * @param {Boolean} [options.skipAnim] If set true, the alignment will complete instantly then fire any provided callback
-     * @param {Function} [options.onComplete] A function which will be executed on completion of the alignment animation.
+     * @param options An animation options object
+     * @param options.fps The frames per second of the alignment, if using styletopleft animation
+     * @param options.duration The duration of the alignment in ms
+     * @param options.easing The alignment easing function
+     * @param options.skipAnim If set true, the alignment will complete instantly then fire any provided callback
+     * @param options.onComplete A function which will be executed on completion of the alignment animation.
      */
     alignNext(options?: IAnimOptions): void;
     /**
@@ -99,12 +99,12 @@ export declare class CarouselCore extends Container {
      * If no alignment has been performed previously it will align to the first enabled widget before that at index 0
      * If a wrapping strip and navigator are used the alignment will wrap to the end after the first widget is reached.
      * If an alignment is in progress, the new alignment will be queued to start after the current alignment completes.
-     * @param {Object} [options] An animation options object
-     * @param {Number} [options.fps] The frames per second of the alignment, if using styletopleft animation
-     * @param {Number} [options.duration] The duration of the alignment in ms
-     * @param {String} [options.easing] The alignment easing function
-     * @param {Boolean} [options.skipAnim] If set true, the alignment will complete instantly then fire any provided callback
-     * @param {Function} [options.onComplete] A function which will be executed on completion of the alignment animation.
+     * @param options An animation options object
+     * @param options.fps The frames per second of the alignment, if using styletopleft animation
+     * @param options.duration The duration of the alignment in ms
+     * @param options.easing The alignment easing function
+     * @param options.skipAnim If set true, the alignment will complete instantly then fire any provided callback
+     * @param options.onComplete A function which will be executed on completion of the alignment animation.
      */
     alignPrevious(options?: IAnimOptions): void;
     /**
@@ -112,13 +112,13 @@ export declare class CarouselCore extends Container {
      * Will always move forward if the index is after that currently aligned and backwards if index is before
      * that currently aligned.
      * If an alignment is in progress, the new alignment will be queued to start after the current alignment completes.
-     * @param {Number} index The index of the widget to align on.
-     * @param {Object} [options] An animation options object
-     * @param {Number} [options.fps] The frames per second of the alignment, if using styletopleft animation
-     * @param {Number} [options.duration] The duration of the alignment in ms
-     * @param {String} [options.easing] The alignment easing function
-     * @param {Boolean} [options.skipAnim] If set true, the alignment will complete instantly then fire any provided callback
-     * @param {Function} [options.onComplete] A function which will be executed on completion of the alignment animation.
+     * @param index The index of the widget to align on.
+     * @param options An animation options object
+     * @param options.fps The frames per second of the alignment, if using styletopleft animation
+     * @param options.duration The duration of the alignment in ms
+     * @param options.easing The alignment easing function
+     * @param options.skipAnim If set true, the alignment will complete instantly then fire any provided callback
+     * @param options.onComplete A function which will be executed on completion of the alignment animation.
      */
     alignToIndex(index: number, options?: IAnimOptions): void;
     /**

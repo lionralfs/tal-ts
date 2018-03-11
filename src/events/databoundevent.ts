@@ -1,12 +1,12 @@
 import { Iterator } from '../iterator';
-import { List } from '../widgets/list';
+import { Container } from '../widgets/container';
 import { BaseEvent } from './event';
 
 /**
  * Class of events raised before and after databinding of a List.
  */
 export class DataBoundEvent extends BaseEvent {
-  public target: List;
+  public target: Container;
   public iterator: Iterator;
   public error: object;
 
@@ -16,7 +16,7 @@ export class DataBoundEvent extends BaseEvent {
    * @param iterator An iterator to the data that has been bound to the list.
    * @param error Error details (if applicable to the event type).
    */
-  constructor(type: string, target: List, iterator?: Iterator, error?: object) {
+  constructor(type: string, target: Container, iterator?: Iterator, error?: object) {
     super(type);
     this.target = target;
     this.iterator = iterator;

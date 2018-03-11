@@ -10,9 +10,9 @@ export declare class HorizontalList extends List {
     private maskElement;
     private wrapMode;
     /**
-     * @param {String} [id] The unique ID of the widget. If excluded, a temporary internal ID will be used (but not included in any output).
-     * @param {antie.Formatter} [itemFormatter] A formatter class used on each data item to generate the list item child widgets.
-     * @param {antie.DataSource|Array} [dataSource] An array of data to be used to generate the list items, or an aysnchronous data source.
+     * @param id The unique ID of the widget. If excluded, a temporary internal ID will be used (but not included in any output).
+     * @param itemFormatter A formatter class used on each data item to generate the list item child widgets.
+     * @param dataSource An array of data to be used to generate the list items, or an aysnchronous data source.
      */
     constructor(id?: string, itemFormatter?: Formatter, dataSource?: DataSource | any[]);
     /**

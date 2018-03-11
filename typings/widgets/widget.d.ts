@@ -92,6 +92,10 @@ export declare abstract class Widget extends BaseClass implements IWidget {
     }): void;
     removeFocus(): void;
     /**
+     * Remove focus state from this widget.
+     */
+    focus(): void;
+    /**
      * Get if this widget is in the current focus path.
      * returns `true` if this widget is in the focus path, otherwise `false`.
      */

@@ -237,6 +237,13 @@ export abstract class Widget extends BaseClass implements IWidget {
   }
 
   /**
+   * Remove focus state from this widget.
+   */
+  public focus(): void {
+    console.warn('called focus() on a widget');
+  }
+
+  /**
    * Get if this widget is in the current focus path.
    * returns `true` if this widget is in the focus path, otherwise `false`.
    */
