@@ -113,23 +113,11 @@ export abstract class Application extends BaseClass implements IApplication {
             this.route(device.getCurrentRoute());
           }
         );
-      }, 1000);
-      // requirejs([layout.module], (loadedLayout: ILayout) => {
-      //   this.setLayout(loadedLayout, styleBaseUrl, imageBaseUrl, loadedLayout.css, loadedLayout.classes, [], () => {
-      //     this.run();
-      //     this.route(device.getCurrentRoute());
-      //   });
-      // });
+      }, 1000); // TODO
     };
 
     if (!this.device) {
       deviceLoaded(new BrowserDevice(config));
-      // Device.load(config, {
-      //   onSuccess: deviceLoaded,
-      //   onError: function onError(err) {
-      //     console.error('Unable to load device', err);
-      //   }
-      // });
     } else {
       deviceLoaded(this.device);
     }

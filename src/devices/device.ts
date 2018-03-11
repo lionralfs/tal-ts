@@ -6,6 +6,7 @@ import { MediaPlayer } from '../mediaplayer/mediaplayer';
 import { ISize } from '../widgets/image';
 import { IShowOptions } from '../widgets/widget';
 import { BrowserDevice } from './browserdevice';
+import { StorageProvider, STORAGE_TYPE } from '../storageprovider';
 
 export interface IDeviceConfig {
   pageStrategy?: string;
@@ -349,20 +350,58 @@ export abstract class Device extends BaseClass implements IDevice {
     }
   }
 
-  public setApplication(app: Application) {
+  public setApplication(app: Application): void {
     this.application = app;
   }
 
-  public getConfig() {
+  public getConfig(): IDeviceConfig {
     return this.config;
   }
 
-  public getLogger() {
+  public getLogger(): ILoggingMethods {
     return Device.filteredLoggingMethods;
   }
 
-  public getKeyMap() {
+  public getKeyMap(): { [key: string]: number } {
     return this.keyMap;
+  }
+
+  /**
+   * Get a storage provider of a given type for the specified namespace.
+   * @param storageType The type of storage required (either `STORAGE_TYPE.SESSION` or `STORAGE_TYPE.PERSISTENT`).
+   * @param namespace The storage namespace.
+   * @return StorageProvider object.
+   */
+  public getStorage(storageType: STORAGE_TYPE, namespace: string, opts): StorageProvider {
+    if (storageType === StorageProvider.STORAGE_TYPE.SESSION) {
+      return SessionStorage.getNamespace(namespace);
+    } else if (storageType === StorageProvider.STORAGE_TYPE.PERSISTENT) {
+      return this.getPersistentStorage(namespace, opts);
+    }
+  }
+
+  /**
+   * Exits the application directly - no history.
+   */
+  public exit(): void {
+    throw new Error('Not supported on this device.');
+  }
+
+  /**
+   * Exits to broadcast if this function has been overloaded by a modifier. Otherwise, calls exit().
+   */
+  public exitToBroadcast(): void {
+    this.exit();
+  }
+
+  /**
+   * TODO: move to device/storage/cookie
+   */
+  public getPersistentStorage(namespace: string, opts): CookieStorage {
+    if (!namespaces[namespace]) {
+      namespaces[namespace] = new CookieStorage(namespace, opts);
+    }
+    return namespaces[namespace];
   }
 
   public abstract preloadImage(url: string): void;
@@ -498,14 +537,4 @@ export abstract class Device extends BaseClass implements IDevice {
    * Returns an object that can be used to get a back or forward url between applications while preserving history
    */
   public abstract getHistorian(): IHistorian;
-
-  /**
-   * Exits to broadcast if this function has been overloaded by a modifier. Otherwise, calls exit().
-   */
-  public abstract exitToBroadcast(): void;
-
-  /**
-   * Exits the application directly - no history.
-   */
-  public abstract exit(): void;
 }
