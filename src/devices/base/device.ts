@@ -147,7 +147,7 @@ export interface IDevice {
 export abstract class Device extends BaseClass implements IDevice {
   public static load(config: IDeviceConfig, callbacks: IDeviceCallbacks): void {
     console.log(config);
-    callbacks.onSuccess(new BrowserDevice(config));
+    // callbacks.onSuccess(new BrowserDevice(config));
     // callbacks.onSuccess(new BrowserDevice(window.antie.framework.deviceConfiguration));
     try {
       // requirejs([config.modules.base].concat(config.modules.modifiers), object => {

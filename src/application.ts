@@ -63,6 +63,7 @@ export abstract class Application extends BaseClass implements IApplication {
 
   constructor(
     rootElement: HTMLElement,
+    deviceConstructor: new (config: IDeviceConfig) => Device,
     styleBaseUrl: string,
     imageBaseUrl: string,
     onReadyHandler?: (...args: any[]) => void,
@@ -79,60 +80,37 @@ export abstract class Application extends BaseClass implements IApplication {
 
     const config: IDeviceConfig = configOverride || antie.framework.deviceConfiguration;
 
-    const deviceLoaded = (device: Device): void => {
-      let i: number;
-      this.device = device;
-      device.setApplication(this);
-      device.addKeyEventListener();
-      const layout = this.getBestFitLayout();
-      layout.css = layout.css || [];
-      if (config.css) {
-        for (i = 0; i < config.css.length; i++) {
-          if (config.css[i].width === layout.width && config.css[i].height === layout.height) {
-            layout.css = layout.css.concat(config.css[i].files);
-          }
+    this.device = new deviceConstructor(config);
+    this.device.setApplication(this);
+    this.device.addKeyEventListener();
+    const layout = this.getBestFitLayout();
+    layout.css = layout.css || [];
+    if (config.css) {
+      for (const css of config.css) {
+        if (css.width === layout.width && css.height === layout.height) {
+          layout.css = layout.css.concat(css.files);
         }
       }
-
-      setTimeout(() => {
-        this.setLayout(
-          {
-            classes: [],
-            css: [],
-            width: 1280,
-            height: 720,
-            module: ''
-          },
-          styleBaseUrl,
-          imageBaseUrl,
-          [],
-          [],
-          [],
-          () => {
-            this.run();
-            this.route(device.getCurrentRoute());
-          }
-        );
-      }, 1000);
-      // requirejs([layout.module], (loadedLayout: ILayout) => {
-      //   this.setLayout(loadedLayout, styleBaseUrl, imageBaseUrl, loadedLayout.css, loadedLayout.classes, [], () => {
-      //     this.run();
-      //     this.route(device.getCurrentRoute());
-      //   });
-      // });
-    };
-
-    if (!this.device) {
-      deviceLoaded(new BrowserDevice(config));
-      // Device.load(config, {
-      //   onSuccess: deviceLoaded,
-      //   onError: function onError(err) {
-      //     console.error('Unable to load device', err);
-      //   }
-      // });
-    } else {
-      deviceLoaded(this.device);
     }
+
+    this.setLayout(
+      {
+        classes: [],
+        css: [],
+        width: 1280,
+        height: 720,
+        module: ''
+      },
+      styleBaseUrl,
+      imageBaseUrl,
+      [],
+      [],
+      [],
+      () => {
+        this.run();
+        this.route(this.device.getCurrentRoute());
+      }
+    );
   }
 
   public abstract run(): void;

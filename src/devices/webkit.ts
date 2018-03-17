@@ -1,7 +1,7 @@
-import { BrowserDevice } from './base/browserdevice';
-import { HTML5MediaPlayer } from './mediaplayer/html5';
 import { isAnimationDisabled, stopAnimation, tweenElementStyle } from './anim/styletopleft';
+import { BrowserDevice } from './base/browserdevice';
 import { IAnimator, IAnimOptions } from './base/device';
+import { HTML5MediaPlayer } from './mediaplayer/html5';
 
 export class WebkitDevice extends BrowserDevice {
   protected mediaPlayer = new HTML5MediaPlayer();
