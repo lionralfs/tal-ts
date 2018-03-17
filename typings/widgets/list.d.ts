@@ -1,5 +1,5 @@
 import { DataSource } from '../datasource';
-import { Device } from '../devices/device';
+import { Device } from '../devices/base/device';
 import { Formatter } from '../formatter';
 import { Container } from './container';
 import { HorizontalProgress } from './horizontalprogress';

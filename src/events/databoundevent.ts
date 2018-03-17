@@ -7,7 +7,7 @@ import { BaseEvent } from './event';
  */
 export class DataBoundEvent extends BaseEvent {
   public target: Container;
-  public iterator: Iterator;
+  public iterator: Iterator<any>;
   public error: object;
 
   /**
@@ -16,7 +16,7 @@ export class DataBoundEvent extends BaseEvent {
    * @param iterator An iterator to the data that has been bound to the list.
    * @param error Error details (if applicable to the event type).
    */
-  constructor(type: string, target: Container, iterator?: Iterator, error?: object) {
+  constructor(type: string, target: Container, iterator?: Iterator<any>, error?: object) {
     super(type);
     this.target = target;
     this.iterator = iterator;

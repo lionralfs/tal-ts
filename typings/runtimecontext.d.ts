@@ -1,6 +1,6 @@
 import { Application } from './application';
 import { BaseClass } from './class';
-import { Device } from './devices/device';
+import { Device } from './devices/base/device';
 export interface IRuntimeContext extends BaseClass {
     clearCurrentApplication(): void;
     setCurrentApplication(app: Application): void;

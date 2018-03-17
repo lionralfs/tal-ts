@@ -1,5 +1,5 @@
 import { BaseClass } from '../../../class';
-import { IAnimOptions } from '../../../devices/device';
+import { IAnimOptions } from '../../../devices/base/device';
 import { Mask } from '../mask';
 export declare class AlignmentQueue extends BaseClass {
     mask: Mask;

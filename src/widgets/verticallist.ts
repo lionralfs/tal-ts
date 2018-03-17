@@ -28,7 +28,7 @@ export class VerticalList extends List {
    * spatial navigation out of the list.
    * @param evt The key event.
    */
-  private onKeyDown(evt: KeyEvent) {
+  private onKeyDown(evt: KeyEvent): void {
     if (evt.keyCode !== KeyEvent.VK_UP && evt.keyCode !== KeyEvent.VK_DOWN) {
       return;
     }

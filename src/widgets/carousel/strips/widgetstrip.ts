@@ -1,3 +1,4 @@
+import { Device } from '../../../devices/base/device';
 import { Container } from '../../container';
 import { Widget } from '../../widget';
 import { Orientation } from '../orientations/orientation';
@@ -30,7 +31,7 @@ export class WidgetStrip extends Container {
    * positioning calculations rather then a calculated value (can be useful when widgets change size)
    * Note length only currently working with non-wrapping strips.
    */
-  public append(widget: Widget, length?: number) {
+  public append(widget: Widget, length?: number): Widget {
     this.lengths.push(length);
     return this.appendChildWidget(widget);
   }
@@ -44,7 +45,7 @@ export class WidgetStrip extends Container {
    * positioning calculations rather then a calculated value (can be useful when widgets change size)
    * Note length only currently working with non-wrapping strips.
    */
-  public insert(index: number, widget: Widget, length?: number) {
+  public insert(index: number, widget: Widget, length?: number): Widget {
     this.lengths.splice(index, 0, length);
     return this.insertChildWidget(index, widget);
   }
@@ -54,22 +55,22 @@ export class WidgetStrip extends Container {
    * @param widget Widget to remove from the strip
    * @param retainElement Whether to keep the widget's output element in the DOM after removing widget
    */
-  public remove(widget: Widget, retainElement = false) {
+  public remove(widget: Widget, retainElement = false): void {
     const widgets = this.widgets();
     for (let i = 0; i !== widgets.length; i += 1) {
       if (widgets[i] === widget) {
         this.lengths.splice(i, 1);
       }
     }
-    return this.removeChildWidget(widget, retainElement);
+    this.removeChildWidget(widget, retainElement);
   }
 
   /**
    * Removes all widgets from the strip
    */
-  public removeAll() {
+  public removeAll(): void {
     this.lengths = [];
-    return this.removeChildWidgets();
+    this.removeChildWidgets();
   }
 
   /**
@@ -97,7 +98,7 @@ export class WidgetStrip extends Container {
    * If provided with an array, the lengths will be set with the corresponding widgets (so the first number will be used
    * for the first widget's length, etc..)
    */
-  public setLengths(lengths: number | number[]) {
+  public setLengths(lengths: number | number[]): void {
     if (typeof lengths === 'number') {
       const widgetCount = this.getChildWidgetCount();
       for (let i = 0; i !== widgetCount; i += 1) {
@@ -120,7 +121,7 @@ export class WidgetStrip extends Container {
    * Strip should ensure all widgets indexed in the array are attached to the parent
    * @param indexArray
    */
-  public attachIndexedWidgets(indexArray: number[]) {
+  public attachIndexedWidgets(indexArray: number[]): void {
     //
   }
 
@@ -140,7 +141,7 @@ export class WidgetStrip extends Container {
   /**
    * Manually performs any processing required to put the carousel in a valid state after an append/insert
    */
-  public recalculate() {
+  public recalculate(): void {
     //
   }
 
@@ -150,11 +151,11 @@ export class WidgetStrip extends Container {
    * Calculation is any strip defined processing required after an append/insert to put the carousel in a valid state
    * Autocalculation is on by default when a carousel is created.
    */
-  public autoCalculate(on: boolean) {
+  public autoCalculate(on: boolean): void {
     //
   }
 
-  private lengthToIndexByCalculatingUsingElements(index: number) {
+  private lengthToIndexByCalculatingUsingElements(index: number): number {
     const elements: HTMLElement[] = [];
     const widgets = this.getChildWidgets();
     const endIndex = this.getValidatedIndex(widgets, index + 1);
@@ -193,7 +194,7 @@ export class WidgetStrip extends Container {
     return endIndex;
   }
 
-  private getOffsetToLastElementInArray(elementArray: HTMLElement[]) {
+  private getOffsetToLastElementInArray(elementArray: HTMLElement[]): number {
     let length = 0;
     const lastIndex = elementArray.length - 1;
     if (lastIndex >= 0) {
@@ -202,28 +203,28 @@ export class WidgetStrip extends Container {
     return length;
   }
 
-  private getElementOffset(element: HTMLElement) {
+  private getElementOffset(element: HTMLElement): number {
     const device = this.getDevice();
     return device.getElementOffset(element)[this.getEdge()];
   }
 
-  private getDevice() {
+  private getDevice(): Device {
     return this.getCurrentApplication().getDevice();
   }
 
-  private getDimension() {
+  private getDimension(): string {
     return this.orientation.dimension();
   }
 
-  private getEdge() {
+  private getEdge(): string {
     return this.orientation.edge();
   }
 
-  private getWidgetLength(widget: Widget) {
+  private getWidgetLength(widget: Widget): number {
     return this.getElementLength(widget.outputElement);
   }
 
-  private getElementLength(element: HTMLElement) {
+  private getElementLength(element: HTMLElement): number {
     const device = this.getDevice();
     return device.getElementSize(element)[this.getDimension()];
   }

@@ -1,4 +1,4 @@
-import { Device } from '../devices/device';
+import { Device } from '../devices/base/device';
 import { Container } from './container';
 export interface ISize {
     width?: number;

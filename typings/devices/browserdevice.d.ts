@@ -2,7 +2,7 @@ import { Historian } from '../historian';
 import { MediaPlayer } from '../mediaplayer/mediaplayer';
 import { ISize } from '../widgets/image';
 import { Device, IAnimator, IAnimOptions } from './device';
-export declare class BrowserDevice extends Device {
+export declare abstract class BrowserDevice extends Device {
     private mediaPlayer;
     private windowLocation;
     preloadImage(url: string): void;

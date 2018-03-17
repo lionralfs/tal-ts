@@ -1,5 +1,5 @@
 import { BaseClass } from '../../../class';
-import { IAnimOptions } from '../../../devices/device';
+import { IAnimOptions } from '../../../devices/base/device';
 import { Mask } from '../mask';
 import { Navigator } from '../navigators/navigator';
 /**

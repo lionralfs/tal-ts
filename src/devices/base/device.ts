@@ -1,10 +1,10 @@
-import { Application, IConfigCss, ILayout } from '../application';
-import { BaseClass } from '../class';
-import { KeyEvent } from '../events/keyevent';
-import { IHistorian } from '../historian';
+import { Application, IConfigCss, ILayout } from '../../application';
+import { BaseClass } from '../../class';
+import { KeyEvent } from '../../events/keyevent';
+import { IHistorian } from '../../historian';
+import { ISize } from '../../widgets/image';
+import { IShowOptions } from '../../widgets/widget';
 import { MediaPlayer } from '../mediaplayer/mediaplayer';
-import { ISize } from '../widgets/image';
-import { IShowOptions } from '../widgets/widget';
 import { BrowserDevice } from './browserdevice';
 
 export interface IDeviceConfig {
@@ -90,11 +90,13 @@ export interface IAnimOptions {
     opacity?: number;
   };
   skipAnim?: boolean;
+  onStart?: () => void;
   onComplete?: () => void;
   fps?: number;
   duration?: number;
   easing?: string;
   units?: { [key: string]: string };
+  className?: string;
 }
 
 export interface ILoggingMethods {
@@ -125,7 +127,7 @@ export interface IAnimator {
 
 export interface IDevice {
   setApplication(app: Application): void;
-  getTopLevelElement(): Node;
+  getTopLevelElement(): HTMLElement | Document;
   preloadImage(url: string): void;
   getCurrentRoute(): string[];
   appendChildElement(to: Node, el: Node): void;
@@ -143,7 +145,7 @@ export interface IDevice {
 }
 
 export abstract class Device extends BaseClass implements IDevice {
-  public static load(config: IDeviceConfig, callbacks: IDeviceCallbacks) {
+  public static load(config: IDeviceConfig, callbacks: IDeviceCallbacks): void {
     console.log(config);
     callbacks.onSuccess(new BrowserDevice(config));
     // callbacks.onSuccess(new BrowserDevice(window.antie.framework.deviceConfiguration));
@@ -165,8 +167,7 @@ export abstract class Device extends BaseClass implements IDevice {
     }
   }
 
-  public static addLoggingStrategy(moduleId: string, loggingMethods: ILoggingMethods) {
-    console.log(moduleId, loggingMethods);
+  public static addLoggingStrategy(moduleId: string, loggingMethods: ILoggingMethods): void {
     this.loggingStrategies[moduleId] = loggingMethods;
   }
 
@@ -349,19 +350,19 @@ export abstract class Device extends BaseClass implements IDevice {
     }
   }
 
-  public setApplication(app: Application) {
+  public setApplication(app: Application): void {
     this.application = app;
   }
 
-  public getConfig() {
+  public getConfig(): IDeviceConfig {
     return this.config;
   }
 
-  public getLogger() {
+  public getLogger(): ILoggingMethods {
     return Device.filteredLoggingMethods;
   }
 
-  public getKeyMap() {
+  public getKeyMap(): { [key: string]: number } {
     return this.keyMap;
   }
 
@@ -414,7 +415,7 @@ export abstract class Device extends BaseClass implements IDevice {
 
   public abstract getChildElementsByTagName(el: Node, tagName: string): Node[];
 
-  public abstract getTopLevelElement(): Node;
+  public abstract getTopLevelElement(): HTMLElement | Document;
 
   public abstract getStylesheetElements(): Node[];
 

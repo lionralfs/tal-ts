@@ -1,4 +1,4 @@
-import { Device } from '../devices/device';
+import { Device } from '../devices/base/device';
 import { Widget } from './widget';
 /**
  * The Label widget displays text. It supports auto-truncation (with ellipsis) of text to fit.
@@ -38,7 +38,7 @@ export declare class Label extends Widget {
      * Returns a string that will be displayed in the label after truncation, etc...
      * @param device The device to render to.
      */
-    getTextAsRendered(device: Device): any;
+    getTextAsRendered(device: Device): string;
     /**
      * Sets the text displayed by this label.
      * @param text The new text to be displayed.
@@ -50,10 +50,10 @@ export declare class Label extends Widget {
      */
     getText(): string;
     /**
-     * Sets the truncation mode (currently {@link antie.widgets.Label.TRUNCATION_MODE_NONE} or
-     * {@link antie.widgets.Label.TRUNCATION_MODE_RIGHT_ELLIPSIS}).
+     * Sets the truncation mode (currently `Label.TRUNCATION_MODE_NONE` or
+     * `Label.TRUNCATION_MODE_RIGHT_ELLIPSIS`).
      *
-     * @deprecated TRUNCATION_MODE_RIGHT_ELLIPSIS relies on browserdevice.getTextHeight(), which can be inaccurate.
+     * @deprecated `TRUNCATION_MODE_RIGHT_ELLIPSIS` relies on browserdevice.getTextHeight(), which can be inaccurate.
      * @param mode The new truncation mode.
      */
     setTruncationMode(mode: boolean): void;

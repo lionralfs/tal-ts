@@ -1,4 +1,4 @@
-import { Device } from '../devices/device';
+import { Device } from '../devices/base/device';
 import { Container } from './container';
 
 export interface ISize {
@@ -42,7 +42,7 @@ export class Image extends Container {
    *
    * @param device The device to render to.
    */
-  public render(device: Device) {
+  public render(device: Device): HTMLElement {
     this.imageElement = device.createImage(this.src, this.id + '_img', [], this.size);
     if (this.renderMode === Image.RENDER_MODE_CONTAINER) {
       super.render(device);
@@ -62,7 +62,7 @@ export class Image extends Container {
    * Sets the image source URL.
    * @param src The new image source URL to display.
    */
-  public setSrc(src: string) {
+  public setSrc(src: string): void {
     this.src = src;
     if (this.imageElement) {
       this.imageElement.src = src;
@@ -73,15 +73,15 @@ export class Image extends Container {
    * Gets the image source URL.
    * @return The current image source URL.
    */
-  public getSrc() {
+  public getSrc(): string {
     return this.src;
   }
 
-  public setRenderMode(mode: 0 | 1) {
+  public setRenderMode(mode: 0 | 1): void {
     this.renderMode = mode;
   }
 
-  public getRenderMode() {
+  public getRenderMode(): number {
     return this.renderMode;
   }
 }

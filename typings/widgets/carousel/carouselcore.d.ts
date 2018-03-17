@@ -1,4 +1,4 @@
-import { Device, IAnimOptions } from '../../devices/device';
+import { Device, IAnimOptions } from '../../devices/base/device';
 import { Container } from '../container';
 import { Widget } from '../widget';
 import { Mask } from './mask';

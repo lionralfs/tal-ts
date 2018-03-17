@@ -1,5 +1,5 @@
 import { BaseClass } from './class';
-import { Device, IDeviceConfig } from './devices/device';
+import { Device, IDeviceConfig } from './devices/base/device';
 import { BaseEvent } from './events/event';
 import { Button } from './widgets/button';
 import { Component } from './widgets/component';

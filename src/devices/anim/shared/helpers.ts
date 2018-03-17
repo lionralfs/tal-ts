@@ -1,5 +1,5 @@
 import { RuntimeContext } from '../../../runtimecontext';
-import { IAnimOptions } from '../../device';
+import { IAnimOptions } from '../../base/device';
 
 const VENDOR_PREFIXES: string[] = ['-webkit-', '-moz-', '-o-'];
 const TRANSITION_END_EVENTS: string[] = ['webkitTransitionEnd', 'oTransitionEnd', 'otransitionend', 'transitionend'];

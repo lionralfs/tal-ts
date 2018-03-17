@@ -1,5 +1,5 @@
 import { DataSource } from '../datasource';
-import { Device } from '../devices/device';
+import { Device } from '../devices/base/device';
 import { DataBoundEvent } from '../events/databoundevent';
 import { BaseEvent } from '../events/event';
 import { SelectedItemChangeEvent } from '../events/selecteditemchangeevent';
@@ -80,7 +80,7 @@ export class List extends Container {
    * @param index The index where to insert the child widget.
    * @param widget The child widget to add.
    */
-  public insertChildWidget(index: number, widget: Widget) {
+  public insertChildWidget(index: number, widget: Widget): Widget {
     let w;
     if (this.renderMode === List.RENDER_MODE_LIST && !(widget instanceof ListItem)) {
       w = new ListItem();
@@ -124,7 +124,7 @@ export class List extends Container {
    * @param device The device to render to.
    * @return A device-specific object that represents the widget as displayed on the device (in a browser, a DOMElement);
    */
-  public render(device: Device) {
+  public render(device: Device): HTMLElement {
     if (!this.dataBound && this.dataSource && this.itemFormatter) {
       this.createDataBoundItems();
     }
@@ -139,7 +139,7 @@ export class List extends Container {
    * the output will be updated to reflect the new data.
    * @param dataSource The data source to bind to.
    */
-  public setDataSource(dataSource: DataSource | any[]) {
+  public setDataSource(dataSource: DataSource | any[]): void {
     // abort currently processing data requests
     if (this.dataSource && this.dataSource instanceof DataSource && typeof this.dataSource.abort === 'function') {
       this.dataSource.abort();
@@ -153,14 +153,14 @@ export class List extends Container {
   /**
    * Invalidates the data-related bindings - causing items to be re-created on next render;
    */
-  public resetDataBindings() {
+  public resetDataBindings(): void {
     this.dataBound = false;
   }
 
   /**
    * Re-iterates the data source, recreating list items.
    */
-  public rebindDataSource() {
+  public rebindDataSource(): void {
     this.dataBound = false;
     this.setDataSource(this.dataSource);
   }
@@ -171,14 +171,14 @@ export class List extends Container {
    * list item. List.RENDER_MODE_LIST causes the list to be rendered as a list (e.g. &lt;ul&gt;), with list item elements (e.g. &lt;li&gt;) for each item.
    * @param mode The rendering mode to use.
    */
-  public setRenderMode(mode: number) {
+  public setRenderMode(mode: number): void {
     this.renderMode = mode;
   }
 
   /**
    * Unbinds a previously-bound progress indicator widget.
    */
-  public unbindProgressIndicator() {
+  public unbindProgressIndicator(): void {
     if (this.updateProgressHandler) {
       this.removeEventListener('selecteditemchange', this.updateProgressHandler);
       this.removeEventListener('focus', this.updateProgressHandler);
@@ -187,7 +187,7 @@ export class List extends Container {
     }
   }
 
-  public removeChildWidget(widget: Widget) {
+  public removeChildWidget(widget: Widget): void {
     // TODO: Make this more generic - it will only work if carousel items contain a
     // TODO: single item of data.
     if (this.updateProgressHandler && this.childWidgetOrder.length < this.totalDataItems) {
@@ -204,29 +204,27 @@ export class List extends Container {
 
     const ignore = this.childWidgetOrder.length - this.totalDataItems;
     this.totalDataItems--;
-    const retValue = super.removeChildWidget(widget);
     widget.removeClass('listitem');
 
     for (let i = 0; i < this.childWidgetOrder.length; i++) {
       this.childWidgetOrder[i].listIndex = i - ignore;
     }
-    return retValue;
   }
 
-  public removeChildWidgets() {
+  public removeChildWidgets(): void {
     for (const childWidget of this.childWidgetOrder) {
       childWidget.removeClass('listitem');
     }
 
     this.totalDataItems = 0;
-    return super.removeChildWidgets();
+    super.removeChildWidgets();
   }
 
-  public setDataBindingOrder(order) {
+  public setDataBindingOrder(order): void {
     this.dataBindingOrder = order;
   }
 
-  public getDataBindingOrder() {
+  public getDataBindingOrder(): number {
     return this.dataBindingOrder;
   }
 
@@ -239,7 +237,7 @@ export class List extends Container {
   public bindProgressIndicator(
     widget: HorizontalProgress,
     formatterCallback?: (currentIndex: number, total: number) => string
-  ) {
+  ): void {
     this.updateProgressHandler = evt => {
       if (evt.target !== this) {
         return;
@@ -300,14 +298,14 @@ export class List extends Container {
     this.addEventListener('databound', this.updateProgressHandler);
   }
 
-  private updateProgressHandler(evt: BaseEvent) {
+  private updateProgressHandler(evt: BaseEvent): void {
     //
   }
 
   /**
    * Create list items from the bound data.
    */
-  private createDataBoundItems() {
+  private createDataBoundItems(): void {
     this.dataBound = true;
 
     const processDataCallback = data => {

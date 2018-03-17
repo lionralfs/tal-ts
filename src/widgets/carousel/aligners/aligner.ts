@@ -1,9 +1,8 @@
 import { BaseClass } from '../../../class';
-import { IAnimOptions } from '../../../devices/device';
+import { IAnimOptions } from '../../../devices/base/device';
 import { Mask } from '../mask';
 import { Navigator } from '../navigators/navigator';
 import { AlignmentQueue } from './alignmentqueue';
-
 /**
  * Converts simple index based alignment instructions to combinations of
  * one or more pixel based alignments to be performed on the mask
@@ -88,11 +87,11 @@ export class Aligner extends BaseClass {
    * Instantly completes any in-flight alignment animations, firing any callbacks that were provided.
    * If several alignments have been queued, all will complete in order.
    */
-  public complete() {
+  public complete(): void {
     this.queue.complete();
   }
 
-  private align(navigator: Navigator, direction: number, options: IAnimOptions) {
+  private align(navigator: Navigator, direction: number, options: IAnimOptions): void {
     const startIndex = this.indexOfLastAlignRequest();
     const targetIndex = this.subsequentIndexInDirection(navigator, direction);
 
@@ -106,7 +105,7 @@ export class Aligner extends BaseClass {
     }
   }
 
-  private subsequentIndexInDirection(navigator: Navigator, direction: number) {
+  private subsequentIndexInDirection(navigator: Navigator, direction: number): number {
     const lastAligned = this.indexOfLastAlignRequest();
     const startPoint = lastAligned === null ? 0 : lastAligned;
     if (direction === Aligner.directions.FORWARD) {
@@ -126,16 +125,22 @@ export class Aligner extends BaseClass {
     return false;
   }
 
-  private informMaskBeforeAlign(index: number) {
+  private informMaskBeforeAlign(index: number): void {
     this.mask.beforeAlignTo(this.lastAlignIndex, index);
     this.lastAlignIndex = index;
   }
 
-  private informMaskAfterAlign(index: number) {
+  private informMaskAfterAlign(index: number): void {
     this.mask.afterAlignTo(index);
   }
 
-  private wrap(fromIndex: number, toIndex: number, navigator: Navigator, direction: number, options: IAnimOptions) {
+  private wrap(
+    fromIndex: number,
+    toIndex: number,
+    navigator: Navigator,
+    direction: number,
+    options: IAnimOptions
+  ): void {
     if (this.fromIndexActive(fromIndex, navigator)) {
       this.visibleActiveItemWrap(fromIndex, toIndex, navigator, direction, options);
     } else {
@@ -143,7 +148,7 @@ export class Aligner extends BaseClass {
     }
   }
 
-  private fromIndexActive(fromIndex: number, navigator: Navigator) {
+  private fromIndexActive(fromIndex: number, navigator: Navigator): boolean {
     const activeIndex = navigator.currentIndex();
     return fromIndex === activeIndex;
   }
@@ -154,14 +159,18 @@ export class Aligner extends BaseClass {
     navigator: Navigator,
     direction: number,
     options: IAnimOptions
-  ) {
+  ): void {
     const index = this.firstIndexToAlignForInvisibleActiveItemWrap(fromIndex, navigator, direction);
     this.queue.add(index, { skipAnim: true });
     this.queueFinalAlign(toIndex, options);
     this.queue.start();
   }
 
-  private firstIndexToAlignForInvisibleActiveItemWrap(fromIndex: number, navigator: Navigator, direction: number) {
+  private firstIndexToAlignForInvisibleActiveItemWrap(
+    fromIndex: number,
+    navigator: Navigator,
+    direction: number
+  ): number {
     const widgetCount = navigator.indexCount();
     if (direction === Aligner.directions.FORWARD) {
       return fromIndex - navigator.indexCount();
@@ -176,14 +185,14 @@ export class Aligner extends BaseClass {
     navigator: Navigator,
     direction: number,
     options: IAnimOptions
-  ) {
+  ): void {
     const firstAlignIndex = this.firstIndexToAlignForVisibleActiveItemWrap(toIndex, navigator, direction);
     this.queue.add(firstAlignIndex, options);
     this.queueFinalAlign(toIndex, { skipAnim: true });
     this.queue.start();
   }
 
-  private firstIndexToAlignForVisibleActiveItemWrap(toIndex: number, navigator: Navigator, direction: number) {
+  private firstIndexToAlignForVisibleActiveItemWrap(toIndex: number, navigator: Navigator, direction: number): number {
     if (direction === Aligner.directions.FORWARD) {
       return navigator.indexCount() + toIndex;
     } else {
@@ -191,13 +200,13 @@ export class Aligner extends BaseClass {
     }
   }
 
-  private moveNormally(toIndex: number, options: IAnimOptions) {
+  private moveNormally(toIndex: number, options: IAnimOptions): void {
     this.queueFinalAlign(toIndex, options);
     this.queue.start();
   }
 
-  private queueFinalAlign(toIndex: number, options: IAnimOptions) {
-    function OptionsClone() {
+  private queueFinalAlign(toIndex: number, options: IAnimOptions): void {
+    function OptionsClone(): void {
       //
     }
 

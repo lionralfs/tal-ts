@@ -1,4 +1,4 @@
-import { IDeviceConfig } from '../devices/device';
+import { IDeviceConfig } from '../devices/base/device';
 import { RuntimeContext } from '../runtimecontext';
 import { IHistoryItem } from './componentcontainer';
 import { Container } from './container';
@@ -21,7 +21,7 @@ export class Component extends Container implements IComponent {
     this.isModal = false;
   }
 
-  public hide() {
+  public hide(): void {
     if (this.parentWidget) {
       this.parentWidget.hide();
     }
@@ -31,15 +31,15 @@ export class Component extends Container implements IComponent {
     return null;
   }
 
-  public getIsModal() {
+  public getIsModal(): boolean {
     return this.isModal;
   }
 
-  public getConfig() {
+  public getConfig(): IDeviceConfig {
     return RuntimeContext.getDevice().getConfig();
   }
 
-  public isComponent() {
+  public isComponent(): boolean {
     return true;
   }
 }

@@ -1,4 +1,4 @@
-import { Device } from '../devices/device';
+import { Device } from '../devices/base/device';
 import { Widget } from './widget';
 export interface IContainer {
     hasChildWidget(id: string): boolean;

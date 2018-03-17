@@ -24,7 +24,7 @@ export class Historian implements IHistorian {
     }
   }
 
-  public back() {
+  public back(): string {
     let recent: string;
     let remaining: string;
     let fragmentSeparator: string;
@@ -59,7 +59,7 @@ export class Historian implements IHistorian {
     return buildBackUrl();
   }
 
-  public forward(destinationUrl: string) {
+  public forward(destinationUrl: string): string {
     let fragmentSeparator;
 
     const isRouteInDestination = () => destinationUrl.indexOf('#') !== -1;
@@ -93,16 +93,16 @@ export class Historian implements IHistorian {
     return destinationUrl + fragmentSeparator + this.toString();
   }
 
-  public toString() {
+  public toString(): string {
     return this.historyArray.join('');
   }
 
-  public hasHistory() {
+  public hasHistory(): boolean {
     const historyMinimumLength = this.hasBroadcastOrigin() ? 2 : 1;
     return this.historyArray.length >= historyMinimumLength;
   }
 
-  public hasBroadcastOrigin() {
+  public hasBroadcastOrigin(): boolean {
     return (
       this.historyArray.length > 0 &&
       this.historyArray[this.historyArray.length - 1] === Historian.HISTORY_TOKEN + Historian.BROADCAST_ENTRY

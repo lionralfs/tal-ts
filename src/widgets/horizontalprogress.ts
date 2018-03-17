@@ -1,4 +1,4 @@
-import { Device, IAnimator } from '../devices/device';
+import { Device, IAnimator } from '../devices/base/device';
 import { Container } from './container';
 import { Label } from './label';
 
@@ -37,7 +37,7 @@ export class HorizontalProgress extends Container {
    * @param device The device to render to.
    * @return A device-specific object that represents the widget as displayed on the device (in a browser, a DOMElement);
    */
-  public render(device: Device) {
+  public render(device: Device): HTMLElement {
     this.outputElement = device.createContainer(this.id, this.getClasses());
     this.leftElement = device.createContainer(this.id + '_left');
     this.innerElement = device.createContainer(this.id + '_inner');
@@ -56,7 +56,7 @@ export class HorizontalProgress extends Container {
   /**
    * Returns the current value shown by the progress indicator.
    */
-  public getValue() {
+  public getValue(): number {
     return this.value;
   }
 
@@ -64,7 +64,7 @@ export class HorizontalProgress extends Container {
    * Sets the current value to be shown by the progress indicator.
    * @param val The value to show (between 0.0 and 1.0 inclusive).
    */
-  public setValue(val: number) {
+  public setValue(val: number): void {
     this.value = val;
     this.moveInner();
   }
@@ -72,7 +72,7 @@ export class HorizontalProgress extends Container {
    * Sets the text to show in the label.
    * @param val The text to show.
    */
-  public setText(val: string) {
+  public setText(val: string): void {
     if (this.label) {
       this.label.setText(val);
     }
@@ -81,7 +81,7 @@ export class HorizontalProgress extends Container {
   /**
    * Moves the inner element to show the current value.
    */
-  private moveInner() {
+  private moveInner(): void {
     const device = this.getCurrentApplication().getDevice();
     const elsize = device.getElementSize(this.leftElement);
     const handleSize = device.getElementSize(this.innerElement);

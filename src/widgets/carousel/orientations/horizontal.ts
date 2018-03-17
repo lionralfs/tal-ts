@@ -6,19 +6,19 @@ import { Orientation } from './orientation';
  * Class to encapsulate any data specific to a horizontal orientation
  */
 export class HorizontalOrientation extends Orientation {
-  public dimension() {
+  public dimension(): string {
     return 'width';
   }
 
-  public edge() {
+  public edge(): string {
     return 'left';
   }
 
-  public styleClass() {
+  public styleClass(): string {
     return 'horizontal';
   }
 
-  public defaultKeys() {
+  public defaultKeys(): { PREVIOUS: number; NEXT: number } {
     return {
       PREVIOUS: KeyEvent.VK_LEFT,
       NEXT: KeyEvent.VK_RIGHT

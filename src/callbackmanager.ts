@@ -30,7 +30,7 @@ export class CallbackManager extends BaseClass {
    * @param thisArg The object that was used as "this" when adding the callback.
    * @param callback The callback function
    */
-  public removeCallback(thisArg: object, callback: (...args: any[]) => void) {
+  public removeCallback(thisArg: object, callback: (...args: any[]) => void): void {
     const foundIndex = this.getIndexOf(thisArg, callback);
 
     if (foundIndex !== undefined) {
@@ -41,7 +41,7 @@ export class CallbackManager extends BaseClass {
   /**
    * Remove all callbacks.
    */
-  public removeAllCallbacks() {
+  public removeAllCallbacks(): void {
     this.callbacks = [];
   }
 
@@ -50,14 +50,14 @@ export class CallbackManager extends BaseClass {
    * @example manager.callAll(1);
    * @example manager.callAll(1,2,3,4);
    */
-  public callAll(...args: any[]) {
+  public callAll(...args: any[]): void {
     this.callbacks.forEach(cbTuple => {
       cbTuple[1].apply(cbTuple[0], args);
     });
   }
 
-  private getIndexOf(thisArg: object, callback: (...args: any[]) => void) {
-    let result;
+  private getIndexOf(thisArg: object, callback: (...args: any[]) => void): number {
+    let result: number;
     for (let i = 0; i < this.callbacks.length; i++) {
       if (this.callbacks[i][0] === thisArg && this.callbacks[i][1] === callback) {
         result = i;

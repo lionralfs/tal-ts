@@ -78,7 +78,7 @@ export class MediaSource extends BaseClass {
    *
    * Returns the URL of this source.
    */
-  public getURL(tags?: { [key: string]: string }) {
+  public getURL(tags?: { [key: string]: string }): string {
     const tagsObj = tags || {};
 
     const config = RuntimeContext.getCurrentApplication()

@@ -1,4 +1,4 @@
-import { IDeviceConfig } from '../devices/device';
+import { IDeviceConfig } from '../devices/base/device';
 import { IHistoryItem } from './componentcontainer';
 import { Container } from './container';
 export interface IComponent {

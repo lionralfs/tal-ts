@@ -6,19 +6,19 @@ import { Orientation } from './orientation';
  * Class to encapsulate any data specific to a vertical orientation
  */
 export class VerticalOrientation extends Orientation {
-  public dimension() {
+  public dimension(): string {
     return 'height';
   }
 
-  public edge() {
+  public edge(): string {
     return 'top';
   }
 
-  public styleClass() {
+  public styleClass(): string {
     return 'vertical';
   }
 
-  public defaultKeys() {
+  public defaultKeys(): { PREVIOUS: number; NEXT: number } {
     return {
       PREVIOUS: KeyEvent.VK_UP,
       NEXT: KeyEvent.VK_DOWN

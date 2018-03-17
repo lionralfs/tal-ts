@@ -1,4 +1,4 @@
-import { Device } from '../devices/device';
+import { Device } from '../devices/base/device';
 import { BaseEvent } from '../events/event';
 import { KeyEvent } from '../events/keyevent';
 import { SelectedItemChangeEvent } from '../events/selecteditemchangeevent';

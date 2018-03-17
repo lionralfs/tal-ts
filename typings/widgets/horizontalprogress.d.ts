@@ -1,4 +1,4 @@
-import { Device } from '../devices/device';
+import { Device } from '../devices/base/device';
 import { Container } from './container';
 /**
  * The horizontal progress widget provides a UI control for showing progress (with associated label)

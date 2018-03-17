@@ -1,4 +1,4 @@
-import { Device, IAnimOptions } from '../../devices/device';
+import { Device, IAnimOptions } from '../../devices/base/device';
 import { AfterAlignEvent } from '../../events/afteralignevent';
 import { BeforeAlignEvent } from '../../events/beforealignevent';
 import { BaseEvent } from '../../events/event';
@@ -59,7 +59,7 @@ export class CarouselCore extends Container {
    * @return A device-specific object that represents the Carousel as displayed on the device
    * (in a browser, two nested DIVs with the inner containing child widgets and the outer acting as a mask);
    */
-  public render(device: Device) {
+  public render(device: Device): HTMLElement {
     this.outputElement = this.mask.render(device);
     return this.outputElement;
   }
@@ -72,7 +72,7 @@ export class CarouselCore extends Container {
    * positioning calculations rather then a calculated value (can be useful when widgets change size)
    * Note length only currently working with non-wrapping strips.
    */
-  public append(widget: Widget, length?: number) {
+  public append(widget: Widget, length?: number): Widget {
     widget.addClass('carouselItem');
     return this.widgetStrip.append(widget, length);
   }
@@ -86,7 +86,7 @@ export class CarouselCore extends Container {
    * positioning calculations rather then a calculated value (can be useful when widgets change size)
    * Note length only currently working with non-wrapping strips.
    */
-  public insert(index: number, widget: Widget, length?: number) {
+  public insert(index: number, widget: Widget, length?: number): Widget {
     widget.addClass('carouselItem');
     return this.widgetStrip.insert(index, widget, length);
   }
@@ -98,7 +98,7 @@ export class CarouselCore extends Container {
    * for the first widget's length, etc..)
    * Note only currently working with non-wrapping strips.
    */
-  public setWidgetLengths(lengths: number | number[]) {
+  public setWidgetLengths(lengths: number | number[]): void {
     this.widgetStrip.setLengths(lengths);
   }
 
@@ -108,7 +108,7 @@ export class CarouselCore extends Container {
    * the mask.
    * @param length The length in pixels to use in Mask calculations.
    */
-  public setMaskLength(length: number) {
+  public setMaskLength(length: number): void {
     this.mask.setLength(length);
   }
 
@@ -117,10 +117,10 @@ export class CarouselCore extends Container {
    * @param widget Widget to remove from the DOM
    * @param retainElement Whether to keep the widget's output element in the DOM after removing widget
    */
-  public remove(widget: Widget, retainElement = false) {
+  public remove(widget: Widget, retainElement = false): void {
     if (this.hasChildWidget(widget.id)) {
       widget.removeClass('carouselItem');
-      return this.widgetStrip.remove(widget, retainElement);
+      this.widgetStrip.remove(widget, retainElement);
     }
   }
 

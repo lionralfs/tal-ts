@@ -1,5 +1,10 @@
-import { RuntimeContext } from '../runtimecontext';
+import { RuntimeContext } from '../../runtimecontext';
 import { MediaPlayer, MediaPlayerEvent, MediaPlayerState, MediaPlayerType } from './mediaplayer';
+
+export interface ISeekableRange {
+  start: number;
+  end: number;
+}
 
 /**
  * Main MediaPlayer implementation for HTML5 devices.
@@ -27,7 +32,7 @@ export class HTML5MediaPlayer extends MediaPlayer {
       currentAttemptCount: number;
     };
     seek: {
-      maximumAttempts: 2;
+      maximumAttempts: number;
       successEvent: MediaPlayerEvent;
       failureEvent: MediaPlayerEvent;
       currentAttemptCount: number;
@@ -57,7 +62,7 @@ export class HTML5MediaPlayer extends MediaPlayer {
     this.wrapOnSourceError = this.wrapOnSourceError.bind(this);
   }
 
-  public setSource(mediaType: MediaPlayerType, url: string, mimeType: string) {
+  public setSource(mediaType: MediaPlayerType, url: string, mimeType: string): void {
     if (this.getState() === MediaPlayer.STATE.EMPTY) {
       this.trustZeroes = false;
       this.ignoreNextPauseEvent = false;
@@ -110,7 +115,7 @@ export class HTML5MediaPlayer extends MediaPlayer {
     }
   }
 
-  public playFrom(seconds: number) {
+  public playFrom(seconds: number): void {
     this.postBufferingState = MediaPlayer.STATE.PLAYING;
     this.targetSeekTime = seconds;
     this.sentinelLimits.seek.currentAttemptCount = 0;
@@ -145,7 +150,7 @@ export class HTML5MediaPlayer extends MediaPlayer {
     }
   }
 
-  public beginPlayback() {
+  public beginPlayback(): void {
     this.postBufferingState = MediaPlayer.STATE.PLAYING;
     this.sentinelSeekTime = undefined;
     switch (this.getState()) {
@@ -161,7 +166,7 @@ export class HTML5MediaPlayer extends MediaPlayer {
     }
   }
 
-  public beginPlaybackFrom(seconds: number) {
+  public beginPlaybackFrom(seconds: number): void {
     this.postBufferingState = MediaPlayer.STATE.PLAYING;
     this.targetSeekTime = seconds;
     this.sentinelLimits.seek.currentAttemptCount = 0;
@@ -179,7 +184,7 @@ export class HTML5MediaPlayer extends MediaPlayer {
     }
   }
 
-  public pause() {
+  public pause(): void {
     this.postBufferingState = MediaPlayer.STATE.PAUSED;
     switch (this.getState()) {
       case MediaPlayer.STATE.PAUSED:
@@ -205,7 +210,7 @@ export class HTML5MediaPlayer extends MediaPlayer {
     }
   }
 
-  public resume() {
+  public resume(): void {
     this.postBufferingState = MediaPlayer.STATE.PLAYING;
     switch (this.getState()) {
       case MediaPlayer.STATE.PLAYING:
@@ -229,7 +234,7 @@ export class HTML5MediaPlayer extends MediaPlayer {
     }
   }
 
-  public stop() {
+  public stop(): void {
     switch (this.getState()) {
       case MediaPlayer.STATE.STOPPED:
         break;
@@ -248,7 +253,7 @@ export class HTML5MediaPlayer extends MediaPlayer {
     }
   }
 
-  public reset() {
+  public reset(): void {
     switch (this.getState()) {
       case MediaPlayer.STATE.EMPTY:
         break;
@@ -272,7 +277,7 @@ export class HTML5MediaPlayer extends MediaPlayer {
     return this.mimeType;
   }
 
-  public getCurrentTime() {
+  public getCurrentTime(): number {
     switch (this.getState()) {
       case MediaPlayer.STATE.STOPPED:
       case MediaPlayer.STATE.ERROR:
@@ -287,22 +292,22 @@ export class HTML5MediaPlayer extends MediaPlayer {
     return undefined;
   }
 
-  public getState() {
+  public getState(): MediaPlayerState {
     return this.state;
   }
 
-  public getPlayerElement() {
+  public getPlayerElement(): HTMLMediaElement {
     return this.mediaElement;
   }
 
-  public getMediaDuration() {
+  public getMediaDuration(): number {
     if (this.mediaElement && this.isReadyToPlayFrom()) {
       return this.mediaElement.duration;
     }
     return undefined;
   }
 
-  public getSeekableRange() {
+  public getSeekableRange(): ISeekableRange {
     switch (this.getState()) {
       case MediaPlayer.STATE.STOPPED:
       case MediaPlayer.STATE.ERROR:
@@ -314,7 +319,7 @@ export class HTML5MediaPlayer extends MediaPlayer {
     return undefined;
   }
 
-  private getSeekableRangeFromElement() {
+  private getSeekableRangeFromElement(): ISeekableRange {
     if (this.mediaElement) {
       if (this.isReadyToPlayFrom() && this.mediaElement.seekable && this.mediaElement.seekable.length > 0) {
         return {
@@ -335,16 +340,16 @@ export class HTML5MediaPlayer extends MediaPlayer {
     return undefined;
   }
 
-  private onFinishedBuffering() {
+  private onFinishedBuffering(): void {
     this.exitBuffering();
   }
 
-  private pauseMediaElement() {
+  private pauseMediaElement(): void {
     this.mediaElement.pause();
     this.ignoreNextPauseEvent = true;
   }
 
-  private onPause() {
+  private onPause(): void {
     if (this.ignoreNextPauseEvent) {
       this.ignoreNextPauseEvent = false;
       return;
@@ -355,35 +360,35 @@ export class HTML5MediaPlayer extends MediaPlayer {
     }
   }
 
-  private onDeviceError() {
+  private onDeviceError(): void {
     this.reportError(`Media element error code: ${this.mediaElement.error.code}`);
   }
 
-  private onSourceError() {
+  private onSourceError(): void {
     this.reportError('Media source element error');
   }
 
-  private onDeviceBuffering() {
+  private onDeviceBuffering(): void {
     if (this.getState() === MediaPlayer.STATE.PLAYING) {
       this.toBuffering();
     }
   }
 
-  private onEndOfMedia() {
+  private onEndOfMedia(): void {
     this.toComplete();
   }
 
-  private onStatus() {
+  private onStatus(): void {
     if (this.getState() === MediaPlayer.STATE.PLAYING) {
       this.emitEvent(MediaPlayer.EVENT.STATUS);
     }
   }
 
-  private onMetadata() {
+  private onMetadata(): void {
     this.metadataLoaded();
   }
 
-  private exitBuffering() {
+  private exitBuffering(): void {
     this.metadataLoaded();
     if (this.getState() !== MediaPlayer.STATE.BUFFERING) {
       return;
@@ -394,14 +399,14 @@ export class HTML5MediaPlayer extends MediaPlayer {
     }
   }
 
-  private metadataLoaded() {
+  private metadataLoaded(): void {
     this.readyToPlayFrom = true;
     if (this.waitingToPlayFrom()) {
       this.deferredPlayFrom();
     }
   }
 
-  private playFromIfReady() {
+  private playFromIfReady(): void {
     if (this.isReadyToPlayFrom()) {
       if (this.waitingToPlayFrom()) {
         this.deferredPlayFrom();
@@ -409,11 +414,11 @@ export class HTML5MediaPlayer extends MediaPlayer {
     }
   }
 
-  private waitingToPlayFrom() {
+  private waitingToPlayFrom(): boolean {
     return this.targetSeekTime !== undefined;
   }
 
-  private deferredPlayFrom() {
+  private deferredPlayFrom(): void {
     this.seekTo(this.targetSeekTime);
     this.mediaElement.play();
     if (this.postBufferingState === MediaPlayer.STATE.PAUSED) {
@@ -422,41 +427,41 @@ export class HTML5MediaPlayer extends MediaPlayer {
     this.targetSeekTime = undefined;
   }
 
-  private seekTo(seconds: number) {
+  private seekTo(seconds: number): void {
     const clampedTime = this.getClampedTimeForPlayFrom(seconds);
     this.mediaElement.currentTime = clampedTime;
     this.sentinelSeekTime = clampedTime;
   }
 
-  private wrapOnFinishedBuffering() {
+  private wrapOnFinishedBuffering(): void {
     this.onFinishedBuffering();
   }
 
-  private wrapOnError() {
+  private wrapOnError(): void {
     this.onDeviceError();
   }
 
-  private wrapOnEndOfMedia() {
+  private wrapOnEndOfMedia(): void {
     this.onEndOfMedia();
   }
 
-  private wrapOnDeviceBuffering() {
+  private wrapOnDeviceBuffering(): void {
     this.onDeviceBuffering();
   }
 
-  private wrapOnStatus() {
+  private wrapOnStatus(): void {
     this.onStatus();
   }
 
-  private wrapOnMetadata() {
+  private wrapOnMetadata(): void {
     this.onMetadata();
   }
 
-  private wrapOnSourceError() {
+  private wrapOnSourceError(): void {
     this.onSourceError();
   }
 
-  private wrapOnPause() {
+  private wrapOnPause(): void {
     this.onPause();
   }
 
@@ -481,7 +486,7 @@ export class HTML5MediaPlayer extends MediaPlayer {
     return clampedTime;
   }
 
-  private wipe() {
+  private wipe(): void {
     this.type = undefined;
     this.source = undefined;
     this.mimeType = undefined;
@@ -492,7 +497,7 @@ export class HTML5MediaPlayer extends MediaPlayer {
     this.readyToPlayFrom = false;
   }
 
-  private destroyMediaElement() {
+  private destroyMediaElement(): void {
     if (this.mediaElement) {
       this.mediaElement.removeEventListener('canplay', this.wrapOnFinishedBuffering, false);
       this.mediaElement.removeEventListener('seeked', this.wrapOnFinishedBuffering, false);
@@ -516,14 +521,14 @@ export class HTML5MediaPlayer extends MediaPlayer {
     }
   }
 
-  private unloadMediaSrc() {
+  private unloadMediaSrc(): void {
     // Reset source as advised by HTML5 video spec, section 4.8.10.15:
     // http://www.w3.org/TR/2011/WD-html5-20110405/video.html#best-practices-for-authors-using-media-elements
     this.mediaElement.removeAttribute('src');
     this.mediaElement.load();
   }
 
-  private generateSourceElement(url: string, mimeType: string) {
+  private generateSourceElement(url: string, mimeType: string): HTMLSourceElement {
     const device = RuntimeContext.getDevice();
     const sourceElement = device.createElement('source');
     sourceElement.src = url;
@@ -531,60 +536,60 @@ export class HTML5MediaPlayer extends MediaPlayer {
     return sourceElement;
   }
 
-  private reportError(errorMessage: string) {
+  private reportError(errorMessage: string): void {
     RuntimeContext.getDevice()
       .getLogger()
       .error(errorMessage);
     this.emitEvent(MediaPlayer.EVENT.ERROR, { errorMessage });
   }
 
-  private toStopped() {
+  private toStopped(): void {
     this.state = MediaPlayer.STATE.STOPPED;
     this.emitEvent(MediaPlayer.EVENT.STOPPED);
     this.setSentinels([]);
   }
 
-  private toBuffering() {
+  private toBuffering(): void {
     this.state = MediaPlayer.STATE.BUFFERING;
     this.emitEvent(MediaPlayer.EVENT.BUFFERING);
     this.setSentinels([this.exitBufferingSentinel]);
   }
 
-  private toPlaying() {
+  private toPlaying(): void {
     this.state = MediaPlayer.STATE.PLAYING;
     this.emitEvent(MediaPlayer.EVENT.PLAYING);
     this.setSentinels([this.endOfMediaSentinel, this.shouldBeSeekedSentinel, this.enterBufferingSentinel]);
   }
 
-  private toPaused() {
+  private toPaused(): void {
     this.state = MediaPlayer.STATE.PAUSED;
     this.emitEvent(MediaPlayer.EVENT.PAUSED);
     this.setSentinels([this.shouldBeSeekedSentinel, this.shouldBePausedSentinel]);
   }
 
-  private toComplete() {
+  private toComplete(): void {
     this.state = MediaPlayer.STATE.COMPLETE;
     this.emitEvent(MediaPlayer.EVENT.COMPLETE);
     this.setSentinels([]);
   }
 
-  private toEmpty() {
+  private toEmpty(): void {
     this.wipe();
     this.state = MediaPlayer.STATE.EMPTY;
   }
 
-  private toError(errorMessage: string) {
+  private toError(errorMessage: string): void {
     this.wipe();
     this.state = MediaPlayer.STATE.ERROR;
     this.reportError(errorMessage);
     throw new Error('ApiError: ' + errorMessage);
   }
 
-  private clearSentinels() {
+  private clearSentinels(): void {
     clearInterval(this.sentinelInterval);
   }
 
-  private setSentinels(sentinels: Array<() => boolean>) {
+  private setSentinels(sentinels: Array<() => boolean>): void {
     this.clearSentinels();
     this.sentinelIntervalNumber = 0;
     this.lastSentinelTime = this.getCurrentTime();
@@ -610,7 +615,7 @@ export class HTML5MediaPlayer extends MediaPlayer {
     }, 1100);
   }
 
-  private setSentinelLimits() {
+  private setSentinelLimits(): void {
     this.sentinelLimits = {
       pause: {
         maximumAttempts: 2,
@@ -747,14 +752,14 @@ export class HTML5MediaPlayer extends MediaPlayer {
     return false;
   }
 
-  private isReadyToPlayFrom() {
+  private isReadyToPlayFrom(): boolean {
     if (this.readyToPlayFrom !== undefined) {
       return this.readyToPlayFrom;
     }
     return false;
   }
 
-  private setSeekSentinelTolerance() {
+  private setSeekSentinelTolerance(): void {
     const ON_DEMAND_SEEK_SENTINEL_TOLERANCE = 15;
     const LIVE_SEEK_SENTINEL_TOLERANCE = 30;
 
