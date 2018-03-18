@@ -1,5 +1,5 @@
 import { Tweenable } from 'shifty';
-import { Device, IAnimOptions } from '../base/device';
+import { Device, IAnimator, IAnimOptions } from '../base/device';
 
 // A set of queues of DOM updates to perform. Each animation framerate gets its own queue
 // so they are in sync between themselves.
@@ -110,7 +110,7 @@ const step = (options: IAnimOptions, tweenValues): void => {
   }
 };
 
-export const tween = (self: Device, options: IAnimOptions) => {
+export const tween = (self: Device, options): IAnimator => {
   const anim = new Tweenable(options);
 
   const opts = {
@@ -156,5 +156,5 @@ export const tween = (self: Device, options: IAnimOptions) => {
 
   anim.tween(opts);
 
-  return anim;
+  return anim as IAnimator;
 };

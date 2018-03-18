@@ -192,8 +192,8 @@ export abstract class BrowserDevice extends Device {
   /**
    * Returns the top-level DOM element. This is the target of layout class names.
    */
-  public getTopLevelElement(): HTMLElement | Document {
-    return document.documentElement || (document.body.parentNode as HTMLElement) || document;
+  public getTopLevelElement(): HTMLElement {
+    return document.documentElement || (document.body.parentNode as HTMLElement) || (document as any);
   }
 
   /**
@@ -277,63 +277,68 @@ export abstract class BrowserDevice extends Device {
     return options.skipAnim ? null : animator;
   }
 
-  public moveElementTo(options: IAnimOptions): IAnimator {
-    const animator = getAnimator(options);
-    animator.start();
-    return options.skipAnim ? null : animator;
-  }
+  public abstract moveElementTo(options: IAnimOptions): IAnimator;
 
-  public hideElement(options: IAnimOptions): IAnimator {
-    const onComplete = () => {
-      options.el.style.visibility = 'hidden';
-      if (options.onComplete) {
-        options.onComplete();
-      }
-    };
+  // public moveElementTo(options: IAnimOptions): IAnimator {
+  //   const animator = getAnimator(options);
+  //   animator.start();
+  //   return options.skipAnim ? null : animator;
+  // }
 
-    const fadeOptions: IAnimOptions = {
-      el: options.el,
-      to: {
-        opacity: 0
-      },
-      duration: options.duration,
-      easing: options.easing || 'linear',
-      onComplete,
-      skipAnim: options.skipAnim
-    };
+  public abstract hideElement(options: IAnimOptions): IAnimator;
+  // public hideElement(options: IAnimOptions): IAnimator {
+  //   const onComplete = () => {
+  //     options.el.style.visibility = 'hidden';
+  //     if (options.onComplete) {
+  //       options.onComplete();
+  //     }
+  //   };
 
-    return this.tweenElementStyle(fadeOptions);
-  }
+  //   const fadeOptions: IAnimOptions = {
+  //     el: options.el,
+  //     to: {
+  //       opacity: 0
+  //     },
+  //     duration: options.duration,
+  //     easing: options.easing || 'linear',
+  //     onComplete,
+  //     skipAnim: options.skipAnim
+  //   };
 
-  public showElement(options: IAnimOptions): IAnimator {
-    const fadeOptions: IAnimOptions = {
-      el: options.el,
-      to: {
-        opacity: 1
-      },
-      from: {
-        opacity: 0
-      },
-      duration: options.duration,
-      easing: options.easing || 'linear',
-      onComplete: options.onComplete,
-      skipAnim: options.skipAnim
-    };
+  //   return this.tweenElementStyle(fadeOptions);
+  // }
 
-    options.el.style.visibility = 'visible';
-    return this.tweenElementStyle(fadeOptions);
-  }
+  public abstract showElement(options: IAnimOptions): IAnimator;
+  // public showElement(options: IAnimOptions): IAnimator {
+  //   const fadeOptions: IAnimOptions = {
+  //     el: options.el,
+  //     to: {
+  //       opacity: 1
+  //     },
+  //     from: {
+  //       opacity: 0
+  //     },
+  //     duration: options.duration,
+  //     easing: options.easing || 'linear',
+  //     onComplete: options.onComplete,
+  //     skipAnim: options.skipAnim
+  //   };
 
-  public tweenElementStyle(options: IAnimOptions): IAnimator {
-    const animator = getAnimator(options);
-    if (!animator) {
-      return;
-    }
-    animator.start();
-    return options.skipAnim ? null : animator;
-  }
+  //   options.el.style.visibility = 'visible';
+  //   return this.tweenElementStyle(fadeOptions);
+  // }
 
-  // public abstract stopAnimation(animator?: IAnimator): void;
+  public abstract tweenElementStyle(options: IAnimOptions): IAnimator;
+  // public tweenElementStyle(options: IAnimOptions): IAnimator {
+  //   const animator = getAnimator(options);
+  //   if (!animator) {
+  //     return;
+  //   }
+  //   animator.start();
+  //   return options.skipAnim ? null : animator;
+  // }
+
+  public abstract stopAnimation(animator?: IAnimator): void;
 
   // public stopAnimation(animator: IAnimator) {
   //   if (animator) {

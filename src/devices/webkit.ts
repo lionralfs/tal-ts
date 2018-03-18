@@ -1,4 +1,12 @@
-import { isAnimationDisabled, stopAnimation, tweenElementStyle } from './anim/styletopleft';
+import {
+  hideElement,
+  isAnimationDisabled,
+  moveElementTo,
+  scrollElementTo,
+  showElement,
+  stopAnimation,
+  tweenElementStyle
+} from './anim/styletopleft';
 import { BrowserDevice } from './base/browserdevice';
 import { IAnimator, IAnimOptions } from './base/device';
 import { HTML5MediaPlayer } from './mediaplayer/html5';
@@ -6,13 +14,21 @@ import { HTML5MediaPlayer } from './mediaplayer/html5';
 export class WebkitDevice extends BrowserDevice {
   protected mediaPlayer = new HTML5MediaPlayer();
 
-  public scrollElementTo() {}
+  public scrollElementTo(options: IAnimOptions): IAnimator {
+    return scrollElementTo(options);
+  }
 
-  public moveElementTo() {}
+  public moveElementTo(options: IAnimOptions): IAnimator {
+    return moveElementTo(options);
+  }
 
-  public hideElement() {}
+  public hideElement(options: IAnimOptions): IAnimator {
+    return hideElement(this, options);
+  }
 
-  public showElement() {}
+  public showElement(options: IAnimOptions): IAnimator {
+    return showElement(options);
+  }
 
   public tweenElementStyle(options: IAnimOptions): IAnimator {
     return tweenElementStyle(this, options);

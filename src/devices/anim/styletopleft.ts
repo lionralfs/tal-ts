@@ -1,7 +1,15 @@
-import { Device, IAnimOptions } from '../base/device';
+import { Device, IAnimator, IAnimOptions } from '../base/device';
+import { TransitionEndPoints } from './shared/transitionendpoints';
+import { tween } from './tween';
 
-export const movesScroll = (startLeft, startTop, changeLeft, changeTop, options) => {
-  var to, from;
+export const movesScroll = (
+  self: Device,
+  startLeft: number,
+  startTop: number,
+  changeLeft: number,
+  changeTop: number,
+  options: IAnimOptions
+) => {
   if (changeLeft === 0 && changeTop === 0) {
     if (options.onComplete) {
       options.onComplete();
@@ -22,7 +30,7 @@ export const movesScroll = (startLeft, startTop, changeLeft, changeTop, options)
     }
     return null;
   } else {
-    from = {};
+    const from: any = {};
     if (startTop !== undefined) {
       from.top = startTop + 'px';
     }
@@ -30,7 +38,7 @@ export const movesScroll = (startLeft, startTop, changeLeft, changeTop, options)
       from.left = startLeft + 'px';
     }
 
-    to = {};
+    const to: any = {};
     if (options.to.top !== undefined) {
       to.top = options.to.top + 'px';
     }
@@ -38,11 +46,11 @@ export const movesScroll = (startLeft, startTop, changeLeft, changeTop, options)
       to.left = options.to.left + 'px';
     }
 
-    return this._tween({
+    return tween(self, {
       el: options.el,
       style: options.el.style,
-      from: from,
-      to: to,
+      from,
+      to,
       offset: options.offset || 0,
       easing: options.easing,
       fps: options.fps,
@@ -52,11 +60,12 @@ export const movesScroll = (startLeft, startTop, changeLeft, changeTop, options)
   }
 };
 
-export const scrollElementTo = options => {
-  var startLeft, changeLeft, startTop, changeTop, newOptions;
+export const scrollElementTo = (options: IAnimOptions): IAnimator => {
   // Helper function to return an object that inherits from the original
-  function inherit(original) {
-    function Inherited() {}
+  function inherit<T>(original: T): T {
+    function Inherited(): void {
+      //
+    }
 
     Inherited.prototype = original;
     return new Inherited();
@@ -65,7 +74,7 @@ export const scrollElementTo = options => {
   // Make a new modifiable options object inheriting from the original. Need to do this rather than
   // simply reverting any changes before returning, as the tweening library calls onComplete() which
   // may require an unchanged object.
-  newOptions = inherit(options);
+  const newOptions: IAnimOptions = inherit(options);
   if (options.to) {
     newOptions.to = inherit(options.to);
   }
@@ -76,7 +85,7 @@ export const scrollElementTo = options => {
       return null;
     }
     options.el.style.position = 'relative';
-    newOptions.el = options.el.childNodes[0];
+    newOptions.el = options.el.childNodes[0] as HTMLElement;
     newOptions.el.style.position = 'relative';
   } else {
     return null;
@@ -90,39 +99,37 @@ export const scrollElementTo = options => {
     newOptions.to.top = -options.to.top;
   }
 
-  startLeft = newOptions.el.style.left.replace(/px/, '') || 0;
-  changeLeft = options.to.left !== undefined ? options.to.left - Math.abs(startLeft) : 0;
-  startTop = newOptions.el.style.top.replace(/px/, '') || 0;
-  changeTop = options.to.top !== undefined ? options.to.top - Math.abs(startTop) : 0;
+  const startLeft = parseInt(newOptions.el.style.left.replace(/px/, ''), 10) || 0;
+  const changeLeft = options.to.left !== undefined ? options.to.left - Math.abs(startLeft) : 0;
+  const startTop = parseInt(newOptions.el.style.top.replace(/px/, ''), 10) || 0;
+  const changeTop = options.to.top !== undefined ? options.to.top - Math.abs(startTop) : 0;
 
   return movesScroll.apply(this, [startLeft, startTop, changeLeft, changeTop, newOptions]);
 };
 
-export const moveElementTo = options => {
-  var startLeft, changeLeft, startTop, changeTop;
+export const moveElementTo = (options: IAnimOptions): IAnimator => {
   // Performance consideration: if left or top is null they are ignored to prevent the additional
   // work animating them.
 
-  startLeft = parseInt(options.el.style.left.replace(/px|em|pt/, ''), 10) || 0;
-  changeLeft = options.to.left !== undefined ? options.to.left - startLeft : 0;
-  startTop = parseInt(options.el.style.top.replace(/px|em|pt/, ''), 10) || 0;
-  changeTop = options.to.top !== undefined ? options.to.top - startTop : 0;
+  const startLeft = parseInt(options.el.style.left.replace(/px|em|pt/, ''), 10) || 0;
+  const changeLeft = options.to.left !== undefined ? options.to.left - startLeft : 0;
+  const startTop = parseInt(options.el.style.top.replace(/px|em|pt/, ''), 10) || 0;
+  const changeTop = options.to.top !== undefined ? options.to.top - startTop : 0;
 
   return movesScroll.apply(this, [startLeft, startTop, changeLeft, changeTop, options]);
 };
 
-export const hideElement = options => {
-  var animationDefaults;
-  if (this.getConfig().animationDisabled || options.skipAnim) {
+export const hideElement = (self: Device, options: IAnimOptions): IAnimator => {
+  if (self.getConfig().animationDisabled || options.skipAnim) {
     options.el.style.visibility = 'hidden';
-    options.el.style.opacity = 0;
+    options.el.style.opacity = '0';
     if (typeof options.onComplete === 'function') {
       options.onComplete();
     }
     return null;
   } else {
-    animationDefaults = (this.getConfig().defaults && this.getConfig().defaults.hideElementFade) || {};
-    return this._tween({
+    const animationDefaults = (self.getConfig().defaults && self.getConfig().defaults.hideElementFade) || {};
+    return tween(self, {
       el: options.el,
       style: options.el.style,
       from: {
@@ -134,7 +141,7 @@ export const hideElement = options => {
       fps: options.fps || animationDefaults.fps || 25,
       duration: options.duration || animationDefaults.duration || 840,
       easing: options.easing || animationDefaults.easing || 'linear',
-      onComplete: function onComplete() {
+      onComplete: function onComplete(): void {
         options.el.style.visibility = 'hidden';
         if (options.onComplete) {
           options.onComplete();
@@ -144,17 +151,16 @@ export const hideElement = options => {
   }
 };
 
-export const showElement = options => {
-  var animationDefaults;
+export const showElement = (options: IAnimOptions): IAnimator => {
   if (this.getConfig().animationDisabled || options.skipAnim) {
     options.el.style.visibility = 'visible';
-    options.el.style.opacity = 1;
+    options.el.style.opacity = '1';
     if (typeof options.onComplete === 'function') {
       options.onComplete();
     }
     return undefined;
   } else {
-    animationDefaults = (this.getConfig().defaults && this.getConfig().defaults.showElementFade) || {};
+    const animationDefaults = (this.getConfig().defaults && this.getConfig().defaults.showElementFade) || {};
     return this._tween({
       el: options.el,
       style: options.el.style,
@@ -168,14 +174,14 @@ export const showElement = options => {
       duration: options.duration || animationDefaults.duration || 840,
       easing: options.easing || animationDefaults.easing || 'linear',
       onComplete: options.onComplete,
-      onStart: function onStart() {
+      onStart: function onStart(): void {
         options.el.style.visibility = 'visible';
       }
     });
   }
 };
 
-export const tweenElementStyle = (self: Device, options: IAnimOptions) => {
+export const tweenElementStyle = (self: Device, options: IAnimOptions): IAnimator => {
   const endPoints = new TransitionEndPoints(options);
   endPoints.completeOriginsUsingElement(options.el);
 
@@ -225,7 +231,7 @@ export const tweenElementStyle = (self: Device, options: IAnimOptions) => {
     return undefined;
   }
 
-  return self.tween(getTweenOptions());
+  return tween(self, getTweenOptions());
 };
 
 export const stopAnimation = anim => {

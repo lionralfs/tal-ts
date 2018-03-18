@@ -87,7 +87,10 @@ export interface IAnimOptions {
     top?: number;
   };
   from?: {
+    left?: number;
+    right?: number;
     opacity?: number;
+    top?: number;
   };
   skipAnim?: boolean;
   onStart?: () => void;
@@ -97,6 +100,7 @@ export interface IAnimOptions {
   easing?: string;
   units?: { [key: string]: string };
   className?: string;
+  offset?: number;
 }
 
 export interface ILoggingMethods {
@@ -415,7 +419,7 @@ export abstract class Device extends BaseClass implements IDevice {
 
   public abstract getChildElementsByTagName(el: Node, tagName: string): Node[];
 
-  public abstract getTopLevelElement(): HTMLElement | Document;
+  public abstract getTopLevelElement(): HTMLElement;
 
   public abstract getStylesheetElements(): Node[];
 
@@ -427,7 +431,7 @@ export abstract class Device extends BaseClass implements IDevice {
 
   public abstract setElementContent(el: HTMLElement, content: string, enableHTML?: boolean): void;
 
-  public abstract scrollElementTo(options: IAnimOptions): void;
+  public abstract scrollElementTo(options: IAnimOptions): IAnimator;
 
   public abstract moveElementTo(options: IAnimOptions): IAnimator;
 
