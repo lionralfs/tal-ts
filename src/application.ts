@@ -93,24 +93,26 @@ export abstract class Application extends BaseClass implements IApplication {
       }
     }
 
-    this.setLayout(
-      {
-        classes: [],
-        css: [],
-        width: 1280,
-        height: 720,
-        module: ''
-      },
-      styleBaseUrl,
-      imageBaseUrl,
-      [],
-      [],
-      [],
-      () => {
-        this.run();
-        this.route(this.device.getCurrentRoute());
-      }
-    );
+    setTimeout(() => {
+      this.setLayout(
+        {
+          classes: [],
+          css: [],
+          width: 1280,
+          height: 720,
+          module: ''
+        },
+        styleBaseUrl,
+        imageBaseUrl,
+        [],
+        [],
+        [],
+        () => {
+          this.run();
+          this.route(this.device.getCurrentRoute());
+        }
+      );
+    }, 1);
   }
 
   public abstract run(): void;

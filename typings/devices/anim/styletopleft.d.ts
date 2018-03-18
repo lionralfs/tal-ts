@@ -1,9 +1,9 @@
-import { Device, IAnimOptions } from '../base/device';
-export declare const movesScroll: (startLeft: any, startTop: any, changeLeft: any, changeTop: any, options: any) => any;
-export declare const scrollElementTo: (options: any) => any;
-export declare const moveElementTo: (options: any) => any;
-export declare const hideElement: (options: any) => any;
-export declare const showElement: (options: any) => any;
-export declare const tweenElementStyle: (self: Device, options: IAnimOptions) => any;
+import { Device, IAnimator, IAnimOptions } from '../base/device';
+export declare const movesScroll: (self: Device, startLeft: number, startTop: number, changeLeft: number, changeTop: number, options: IAnimOptions) => IAnimator;
+export declare const scrollElementTo: (self: Device, options: IAnimOptions) => IAnimator;
+export declare const moveElementTo: (self: Device, options: IAnimOptions) => IAnimator;
+export declare const hideElement: (self: Device, options: IAnimOptions) => IAnimator;
+export declare const showElement: (self: Device, options: IAnimOptions) => IAnimator;
+export declare const tweenElementStyle: (self: Device, options: IAnimOptions) => IAnimator;
 export declare const stopAnimation: (anim: any) => void;
 export declare const isAnimationDisabled: () => boolean;

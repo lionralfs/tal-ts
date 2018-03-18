@@ -61,6 +61,18 @@ export interface IDeviceConfig {
         };
     };
     animationDisabled: boolean;
+    defaults?: {
+        showElementFade?: {
+            fps?: number;
+            duration?: number;
+            easing?: string;
+        };
+        hideElementFade?: {
+            fps?: number;
+            duration?: number;
+            easing?: string;
+        };
+    };
 }
 export interface ISupportedVideoStreaming {
     protocols: string[];
@@ -83,7 +95,10 @@ export interface IAnimOptions {
         top?: number;
     };
     from?: {
+        left?: number;
+        right?: number;
         opacity?: number;
+        top?: number;
     };
     skipAnim?: boolean;
     onStart?: () => void;
@@ -95,6 +110,7 @@ export interface IAnimOptions {
         [key: string]: string;
     };
     className?: string;
+    offset?: number;
 }
 export interface ILoggingMethods {
     log: (message?: any, ...optionalParams: any[]) => void;
@@ -189,7 +205,7 @@ export declare abstract class Device extends BaseClass implements IDevice {
      */
     abstract addKeyEventListener(): void;
     abstract getChildElementsByTagName(el: Node, tagName: string): Node[];
-    abstract getTopLevelElement(): HTMLElement | Document;
+    abstract getTopLevelElement(): HTMLElement;
     abstract getStylesheetElements(): Node[];
     abstract getElementOffset(el: HTMLElement): {
         top: number;
@@ -199,7 +215,7 @@ export declare abstract class Device extends BaseClass implements IDevice {
     abstract getElementSize(el: HTMLElement): ISize;
     abstract setElementSize(el: HTMLElement, size: ISize): void;
     abstract setElementContent(el: HTMLElement, content: string, enableHTML?: boolean): void;
-    abstract scrollElementTo(options: IAnimOptions): void;
+    abstract scrollElementTo(options: IAnimOptions): IAnimator;
     abstract moveElementTo(options: IAnimOptions): IAnimator;
     abstract hideElement(options: IAnimOptions): void;
     abstract showElement(options: IAnimOptions): void;

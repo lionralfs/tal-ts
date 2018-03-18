@@ -62,6 +62,18 @@ export interface IDeviceConfig {
     };
   };
   animationDisabled: boolean;
+  defaults?: {
+    showElementFade?: {
+      fps?: number;
+      duration?: number;
+      easing?: string;
+    };
+    hideElementFade?: {
+      fps?: number;
+      duration?: number;
+      easing?: string;
+    };
+  };
 }
 
 export interface ISupportedVideoStreaming {

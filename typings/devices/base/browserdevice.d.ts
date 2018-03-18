@@ -58,7 +58,7 @@ export declare abstract class BrowserDevice extends Device {
     /**
      * Returns the top-level DOM element. This is the target of layout class names.
      */
-    getTopLevelElement(): HTMLElement | Document;
+    getTopLevelElement(): HTMLElement;
     /**
      * Returns all the loaded stylesheet elements, an array containing all stylesheet
      * related DOM elements (link and style elements)
@@ -84,10 +84,11 @@ export declare abstract class BrowserDevice extends Device {
      */
     setElementSize(el: HTMLElement, size: ISize): void;
     scrollElementTo(options: IAnimOptions): IAnimator;
-    moveElementTo(options: IAnimOptions): IAnimator;
-    hideElement(options: IAnimOptions): IAnimator;
-    showElement(options: IAnimOptions): IAnimator;
-    tweenElementStyle(options: IAnimOptions): IAnimator;
+    abstract moveElementTo(options: IAnimOptions): IAnimator;
+    abstract hideElement(options: IAnimOptions): IAnimator;
+    abstract showElement(options: IAnimOptions): IAnimator;
+    abstract tweenElementStyle(options: IAnimOptions): IAnimator;
+    abstract stopAnimation(animator?: IAnimator): void;
     loadStyleSheet(url: string, callback?: (res: string) => void): void;
     clearElement(el: HTMLElement): void;
     /**

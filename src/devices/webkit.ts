@@ -15,11 +15,11 @@ export class WebkitDevice extends BrowserDevice {
   protected mediaPlayer = new HTML5MediaPlayer();
 
   public scrollElementTo(options: IAnimOptions): IAnimator {
-    return scrollElementTo(options);
+    return scrollElementTo(this, options);
   }
 
   public moveElementTo(options: IAnimOptions): IAnimator {
-    return moveElementTo(options);
+    return moveElementTo(this, options);
   }
 
   public hideElement(options: IAnimOptions): IAnimator {
@@ -27,7 +27,7 @@ export class WebkitDevice extends BrowserDevice {
   }
 
   public showElement(options: IAnimOptions): IAnimator {
-    return showElement(options);
+    return showElement(this, { ...options, skipAnim: true });
   }
 
   public tweenElementStyle(options: IAnimOptions): IAnimator {

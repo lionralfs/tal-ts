@@ -17,7 +17,7 @@ export const movesScroll = (
     return null;
   }
 
-  if (this.getConfig().animationDisabled || options.skipAnim) {
+  if (self.getConfig().animationDisabled || options.skipAnim) {
     if (options.to.left !== undefined) {
       options.el.style.left = options.to.left + 'px';
     }
@@ -60,7 +60,7 @@ export const movesScroll = (
   }
 };
 
-export const scrollElementTo = (options: IAnimOptions): IAnimator => {
+export const scrollElementTo = (self: Device, options: IAnimOptions): IAnimator => {
   // Helper function to return an object that inherits from the original
   function inherit<T>(original: T): T {
     function Inherited(): void {
@@ -104,10 +104,10 @@ export const scrollElementTo = (options: IAnimOptions): IAnimator => {
   const startTop = parseInt(newOptions.el.style.top.replace(/px/, ''), 10) || 0;
   const changeTop = options.to.top !== undefined ? options.to.top - Math.abs(startTop) : 0;
 
-  return movesScroll.apply(this, [startLeft, startTop, changeLeft, changeTop, newOptions]);
+  return movesScroll.apply(self, [startLeft, startTop, changeLeft, changeTop, newOptions]);
 };
 
-export const moveElementTo = (options: IAnimOptions): IAnimator => {
+export const moveElementTo = (self: Device, options: IAnimOptions): IAnimator => {
   // Performance consideration: if left or top is null they are ignored to prevent the additional
   // work animating them.
 
@@ -116,7 +116,7 @@ export const moveElementTo = (options: IAnimOptions): IAnimator => {
   const startTop = parseInt(options.el.style.top.replace(/px|em|pt/, ''), 10) || 0;
   const changeTop = options.to.top !== undefined ? options.to.top - startTop : 0;
 
-  return movesScroll.apply(this, [startLeft, startTop, changeLeft, changeTop, options]);
+  return movesScroll.apply(self, [startLeft, startTop, changeLeft, changeTop, options]);
 };
 
 export const hideElement = (self: Device, options: IAnimOptions): IAnimator => {
@@ -151,8 +151,8 @@ export const hideElement = (self: Device, options: IAnimOptions): IAnimator => {
   }
 };
 
-export const showElement = (options: IAnimOptions): IAnimator => {
-  if (this.getConfig().animationDisabled || options.skipAnim) {
+export const showElement = (self: Device, options: IAnimOptions): IAnimator => {
+  if (self.getConfig().animationDisabled || options.skipAnim) {
     options.el.style.visibility = 'visible';
     options.el.style.opacity = '1';
     if (typeof options.onComplete === 'function') {
@@ -160,8 +160,8 @@ export const showElement = (options: IAnimOptions): IAnimator => {
     }
     return undefined;
   } else {
-    const animationDefaults = (this.getConfig().defaults && this.getConfig().defaults.showElementFade) || {};
-    return this._tween({
+    const animationDefaults = (self.getConfig().defaults && self.getConfig().defaults.showElementFade) || {};
+    return tween(self, {
       el: options.el,
       style: options.el.style,
       from: {
@@ -204,7 +204,7 @@ export const tweenElementStyle = (self: Device, options: IAnimOptions): IAnimato
     const tweenOptions = {
       el: options.el,
       style: options.el.style,
-      fps: options.el.fps,
+      fps: options.fps,
       duration: options.duration,
       easing: options.easing,
       onComplete: options.onComplete,
@@ -225,7 +225,7 @@ export const tweenElementStyle = (self: Device, options: IAnimOptions): IAnimato
     return null;
   }
 
-  if (options.skipAnim || this.getConfig().animationDisabled) {
+  if (options.skipAnim || self.getConfig().animationDisabled) {
     skipAnimation();
     fireComplete();
     return undefined;
