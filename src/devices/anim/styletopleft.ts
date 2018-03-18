@@ -104,7 +104,7 @@ export const scrollElementTo = (self: Device, options: IAnimOptions): IAnimator 
   const startTop = parseInt(newOptions.el.style.top.replace(/px/, ''), 10) || 0;
   const changeTop = options.to.top !== undefined ? options.to.top - Math.abs(startTop) : 0;
 
-  return movesScroll.apply(self, [startLeft, startTop, changeLeft, changeTop, newOptions]);
+  return movesScroll(self, startLeft, startTop, changeLeft, changeTop, newOptions);
 };
 
 export const moveElementTo = (self: Device, options: IAnimOptions): IAnimator => {
@@ -116,7 +116,7 @@ export const moveElementTo = (self: Device, options: IAnimOptions): IAnimator =>
   const startTop = parseInt(options.el.style.top.replace(/px|em|pt/, ''), 10) || 0;
   const changeTop = options.to.top !== undefined ? options.to.top - startTop : 0;
 
-  return movesScroll.apply(self, [startLeft, startTop, changeLeft, changeTop, options]);
+  return movesScroll(self, startLeft, startTop, changeLeft, changeTop, options);
 };
 
 export const hideElement = (self: Device, options: IAnimOptions): IAnimator => {

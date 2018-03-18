@@ -83,7 +83,7 @@ export declare abstract class BrowserDevice extends Device {
      * @param size The new size of the element.
      */
     setElementSize(el: HTMLElement, size: ISize): void;
-    scrollElementTo(options: IAnimOptions): IAnimator;
+    abstract scrollElementTo(options: IAnimOptions): IAnimator;
     abstract moveElementTo(options: IAnimOptions): IAnimator;
     abstract hideElement(options: IAnimOptions): IAnimator;
     abstract showElement(options: IAnimOptions): IAnimator;
