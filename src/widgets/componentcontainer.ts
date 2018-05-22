@@ -33,9 +33,6 @@ export class ComponentContainer extends Container implements IComponentContainer
   constructor(id?: string) {
     super(id);
 
-    // this.loadingIndex = 0;
-    // this.loadingModule = null;
-    // this.currentModule = null;
     this.currentComponent = null;
     this.currentArgs = null;
     this.historyStack = [];

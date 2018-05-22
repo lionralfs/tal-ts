@@ -1,10 +1,10 @@
 import { BaseClass } from './class';
 
-export class Iterator extends BaseClass {
+export class Iterator<T> extends BaseClass {
   public currentIndex: number;
-  private array: any[];
+  private array: T[];
 
-  constructor(array?: any[]) {
+  constructor(array?: T[]) {
     super();
     this.array = array || [];
     this.reset();
@@ -13,7 +13,7 @@ export class Iterator extends BaseClass {
   /**
    * Sets the iterator pointer to the first item
    */
-  public reset() {
+  public reset(): void {
     this.currentIndex = 0;
   }
 
@@ -30,7 +30,7 @@ export class Iterator extends BaseClass {
    * Returns the next item and increments the iterator.
    * @return The next item from the iterator, or undefined if there are no more items.
    */
-  public next() {
+  public next(): T {
     if (this.hasNext()) {
       return this.array[this.currentIndex++];
     }
@@ -41,7 +41,7 @@ export class Iterator extends BaseClass {
    * Returns the next item but does not increment the iterator
    * @return The next item from the iterator, or undefined if there are no more items.
    */
-  public peek() {
+  public peek(): T {
     return this.array[this.currentIndex];
   }
 
@@ -49,18 +49,18 @@ export class Iterator extends BaseClass {
    * Returns the the pointer value.
    * @return The pointer value
    */
-  public getPointer() {
+  public getPointer(): number {
     return this.currentIndex;
   }
 
-  public isEmpty() {
+  public isEmpty(): boolean {
     return this.array.length === 0;
   }
   /**
    * Returns the length of the array.
    * @return The length of the array
    */
-  public getLength() {
+  public getLength(): number {
     return this.array.length;
   }
 }

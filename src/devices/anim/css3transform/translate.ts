@@ -1,4 +1,4 @@
-import { IAnimator, IAnimOptions } from '../../device';
+import { IAnimator, IAnimOptions } from '../../base/device';
 import { Helpers } from '../shared/helpers';
 import { Transition } from './transition';
 

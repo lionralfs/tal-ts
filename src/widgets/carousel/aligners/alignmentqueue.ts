@@ -1,8 +1,8 @@
 import { BaseClass } from '../../../class';
-import { IAnimOptions } from '../../../devices/device';
+import { IAnimOptions } from '../../../devices/base/device';
 import { Mask } from '../mask';
 
-function createAlignFunction(self: AlignmentQueue, index: number, options: IAnimOptions) {
+function createAlignFunction(self: AlignmentQueue, index: number, options: IAnimOptions): () => void {
   return () => {
     options = options || {};
     const oldComplete = options.onComplete;
@@ -14,7 +14,7 @@ function createAlignFunction(self: AlignmentQueue, index: number, options: IAnim
       easing: options.easing,
       skipAnim: options.skipAnim,
       fps: options.fps,
-      onComplete: function onComplete() {
+      onComplete: function onComplete(): void {
         if (oldComplete) {
           oldComplete();
         }
@@ -65,7 +65,7 @@ export class AlignmentQueue extends BaseClass {
    * queue has already been started, but has not completed, this will
    * do nothing.
    */
-  public start() {
+  public start(): void {
     if (!this.started) {
       this.runFirstInQueue();
     }
@@ -75,19 +75,19 @@ export class AlignmentQueue extends BaseClass {
    * Completes all queued alignments in order, skipping any animation and
    * firing any associated callbacks in sequence.
    */
-  public complete() {
+  public complete(): void {
     if (this.started) {
       this.setSkip(true);
       this.mask.stopAnimation();
     }
   }
 
-  public next() {
+  public next(): void {
     this.queue.shift();
     this.runFirstInQueue();
   }
 
-  private runFirstInQueue() {
+  private runFirstInQueue(): void {
     if (this.queue.length > 0) {
       this.started = true;
       this.queue[0]();
@@ -97,7 +97,7 @@ export class AlignmentQueue extends BaseClass {
     }
   }
 
-  private setSkip(skip: boolean) {
+  private setSkip(skip: boolean): void {
     this.skip = skip;
   }
 }

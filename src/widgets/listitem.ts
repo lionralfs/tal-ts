@@ -1,4 +1,4 @@
-import { Device } from '../devices/device';
+import { Device } from '../devices/base/device';
 import { Container } from './container';
 
 /**
@@ -20,7 +20,7 @@ export class ListItem extends Container {
    * @param device The device to render to.
    * @return A device-specific object that represents the widget as displayed on the device (in a browser, a DOMElement);
    */
-  public render(device: Device) {
+  public render(device: Device): HTMLElement {
     if (!this.outputElement) {
       this.outputElement = device.createListItem(this.id, this.getClasses());
     }

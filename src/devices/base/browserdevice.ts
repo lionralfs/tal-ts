@@ -1,21 +1,20 @@
-import { KeyEvent } from '../events/keyevent';
-import { Historian } from '../historian';
-import { HTML5MediaPlayer } from '../mediaplayer/html5';
+import { KeyEvent } from '../../events/keyevent';
+import { Historian } from '../../historian';
+import { ISize } from '../../widgets/image';
+import { getAnimator } from '../anim/css3transform/animationfactory';
 import { MediaPlayer } from '../mediaplayer/mediaplayer';
-import { ISize } from '../widgets/image';
-import { getAnimator } from './anim/css3transform/animationfactory';
 import { Device, IAnimator, IAnimOptions, IDevice } from './device';
 
-export class BrowserDevice extends Device {
-  private mediaPlayer = new HTML5MediaPlayer();
+export abstract class BrowserDevice extends Device {
+  protected mediaPlayer: MediaPlayer;
   private windowLocation: Location;
 
-  public preloadImage(url: string) {
+  public preloadImage(url: string): void {
     const img = new Image();
     img.src = url;
   }
 
-  public getCurrentRoute() {
+  public getCurrentRoute(): string[] {
     const unescaped = decodeURI(window.location.hash).split(Historian.HISTORY_TOKEN, 1)[0];
     return unescaped.replace(/^#/, '').split('/');
   }
@@ -51,7 +50,7 @@ export class BrowserDevice extends Device {
    * to manipulate the current location more easily.
    * @param url Full URL to navigate to, including search and hash if applicable.
    */
-  public setWindowLocationUrl(url: string) {
+  public setWindowLocationUrl(url: string): void {
     const windowLocation: Location = this.windowLocation || window.location; // Allow stubbing for unit testing
 
     // Prefer assign(), but some devices don't have this function.
@@ -67,7 +66,7 @@ export class BrowserDevice extends Device {
    * @param to Prepend as a child of this element.
    * @param el The new child element.
    */
-  public prependChildElement(to: HTMLElement, el: HTMLElement) {
+  public prependChildElement(to: HTMLElement, el: HTMLElement): void {
     if (to.childNodes.length > 0) {
       to.insertBefore(el, to.childNodes[0]);
     } else {
@@ -81,15 +80,15 @@ export class BrowserDevice extends Device {
    * @param el The new child element.
    * @param ref The reference element which will appear after the inserted element.
    */
-  public insertChildElementBefore(to: HTMLElement, el: HTMLElement, ref: HTMLElement) {
+  public insertChildElementBefore(to: HTMLElement, el: HTMLElement, ref: HTMLElement): void {
     to.insertBefore(el, ref);
   }
 
-  public appendChildElement(to: Element, el: Element) {
+  public appendChildElement(to: Element, el: Element): void {
     to.appendChild(el);
   }
 
-  public setElementClasses(el: Element, classNames: string[]) {
+  public setElementClasses(el: Element, classNames: string[]): void {
     el.className = classNames.join(' ');
   }
 
@@ -99,7 +98,7 @@ export class BrowserDevice extends Device {
    * @param className The class to remove.
    * @param deep If true, and this element has the given class, remove the class from it's children recursively.
    */
-  public removeClassFromElement(el: Element, className: string, deep?: boolean) {
+  public removeClassFromElement(el: Element, className: string, deep?: boolean): void {
     if (new RegExp(` ${className} `).test(` ${el.className} `)) {
       el.className = this.trim(` ${el.className} `.replace(` ${className} `, ' '));
     }
@@ -117,7 +116,7 @@ export class BrowserDevice extends Device {
    * @param el The element which will receive new class name.
    * @param className The new class name to add.
    */
-  public addClassToElement(el: Element, className: string) {
+  public addClassToElement(el: Element, className: string): void {
     this.removeClassFromElement(el, className, false);
     el.className = this.trim(`${el.className} ${className}`);
   }
@@ -128,7 +127,7 @@ export class BrowserDevice extends Device {
    * cause this.application.bubbleEvent(...) to be called with a {@link KeyEvent}
    * object with the mapped keyCode.
    */
-  public addKeyEventListener() {
+  public addKeyEventListener(): void {
     const keyMap = this.getKeyMap();
     const pressed: { [key: string]: boolean } = {};
 
@@ -175,12 +174,12 @@ export class BrowserDevice extends Device {
    * @param el The element who's children you wish to search.
    * @param tagName The tag name you are looking for.
    */
-  public getChildElementsByTagName(el: Node, tagName: string) {
-    const children: Element[] = [];
+  public getChildElementsByTagName(el: HTMLElement, tagName: string): HTMLElement[] {
+    const children: HTMLElement[] = [];
     const name = tagName.toLowerCase();
     // tslint:disable-next-line
     for (var i = 0; i < el.childNodes.length; i++) {
-      const element = el.childNodes[i] as Element;
+      const element = el.childNodes[i] as HTMLElement;
       if (element.tagName) {
         if (element.tagName.toLowerCase() === name) {
           children.push(element);
@@ -193,8 +192,8 @@ export class BrowserDevice extends Device {
   /**
    * Returns the top-level DOM element. This is the target of layout class names.
    */
-  public getTopLevelElement(): Node {
-    return document.documentElement || document.body.parentNode || document;
+  public getTopLevelElement(): HTMLElement {
+    return document.documentElement || (document.body.parentNode as HTMLElement) || (document as any);
   }
 
   /**
@@ -236,7 +235,7 @@ export class BrowserDevice extends Device {
    * Returns a size object containing the width and height of the element.
    * @param el The element of which to return the size.
    */
-  public getElementSize(el: HTMLElement): { width: number; height: number } {
+  public getElementSize(el: HTMLElement): ISize {
     return {
       width: el.clientWidth || el.offsetWidth,
       height: el.clientHeight || el.offsetHeight
@@ -248,7 +247,7 @@ export class BrowserDevice extends Device {
    * @param el The element of which to set the size.
    * @param size The new size of the element.
    */
-  public setElementSize(el: HTMLElement, size: { width?: number; height?: number }) {
+  public setElementSize(el: HTMLElement, size: ISize): void {
     if (size.width !== undefined) {
       el.style.width = size.width + 'px';
     }
@@ -257,94 +256,19 @@ export class BrowserDevice extends Device {
     }
   }
 
-  public scrollElementTo(options: IAnimOptions) {
-    if (!(/_mask$/.test(options.el.id) && options.el.childNodes.length > 0)) {
-      return null;
-    }
+  public abstract scrollElementTo(options: IAnimOptions): IAnimator;
 
-    options.el = options.el.childNodes[0] as HTMLElement;
+  public abstract moveElementTo(options: IAnimOptions): IAnimator;
 
-    if (options.to.top) {
-      // options.to.top = parseInt(options.to.top, 10) * -1;
-      options.to.top *= -1;
-    }
-    if (options.to.left) {
-      // options.to.left = parseInt(options.to.left, 10) * -1;
-      options.to.left *= -1;
-    }
+  public abstract hideElement(options: IAnimOptions): IAnimator;
 
-    const animator = getAnimator(options);
-    animator.start();
-    return options.skipAnim ? null : animator;
-  }
+  public abstract showElement(options: IAnimOptions): IAnimator;
 
-  public moveElementTo(options: IAnimOptions) {
-    const animator = getAnimator(options);
-    animator.start();
-    return options.skipAnim ? null : animator;
-  }
+  public abstract tweenElementStyle(options: IAnimOptions): IAnimator;
 
-  public hideElement(options: IAnimOptions) {
-    const onComplete = () => {
-      options.el.style.visibility = 'hidden';
-      if (options.onComplete) {
-        options.onComplete();
-      }
-    };
+  public abstract stopAnimation(animator?: IAnimator): void;
 
-    const fadeOptions: IAnimOptions = {
-      el: options.el,
-      to: {
-        opacity: 0
-      },
-      duration: options.duration,
-      easing: options.easing || 'linear',
-      onComplete,
-      skipAnim: options.skipAnim
-    };
-
-    return this.tweenElementStyle(fadeOptions);
-  }
-
-  public showElement(options: IAnimOptions) {
-    const fadeOptions: IAnimOptions = {
-      el: options.el,
-      to: {
-        opacity: 1
-      },
-      from: {
-        opacity: 0
-      },
-      duration: options.duration,
-      easing: options.easing || 'linear',
-      onComplete: options.onComplete,
-      skipAnim: options.skipAnim
-    };
-
-    options.el.style.visibility = 'visible';
-    return this.tweenElementStyle(fadeOptions);
-  }
-
-  public tweenElementStyle(options: IAnimOptions) {
-    const animator = getAnimator(options);
-    if (!animator) {
-      return;
-    }
-    animator.start();
-    return options.skipAnim ? null : animator;
-  }
-
-  public stopAnimation(animator?: IAnimator) {
-    if (animator) {
-      animator.stop();
-    }
-  }
-
-  public isAnimationDisabled() {
-    return false;
-  }
-
-  public loadStyleSheet(url: string, callback?: (res: string) => void) {
+  public loadStyleSheet(url: string, callback?: (res: string) => void): void {
     const supportsCssRules = (): boolean => {
       document.createElement('style');
       const style = this.createElement('style');
@@ -540,7 +464,7 @@ export class BrowserDevice extends Device {
    * Removes an element from its parent.
    * @param el The element to remove.
    */
-  public removeElement(el: HTMLElement) {
+  public removeElement(el: HTMLElement): void {
     if (el.parentNode) {
       el.parentNode.removeChild(el);
     }
@@ -573,14 +497,14 @@ export class BrowserDevice extends Device {
     return el;
   }
 
-  public getHistorian() {
+  public getHistorian(): Historian {
     return new Historian(decodeURI(this.getWindowLocation().href));
   }
 
   /**
    * Exits to broadcast if this function has been overloaded by a modifier. Otherwise, calls exit().
    */
-  public exitToBroadcast() {
+  public exitToBroadcast(): void {
     this.exit();
   }
 

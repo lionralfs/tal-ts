@@ -1,4 +1,4 @@
-import { Device } from '../devices/device';
+import { Device } from '../devices/base/device';
 import { Widget } from './widget';
 
 /**
@@ -51,7 +51,7 @@ export class Label extends Widget {
    * on the device (in a browser, a DOMElement);
    * @param device The device to render to.
    */
-  public render(device: Device) {
+  public render(device: Device): HTMLElement {
     // TODO: is there a more efficient way of doing this?
     const s = this.getTextAsRendered(device);
 
@@ -70,8 +70,8 @@ export class Label extends Widget {
    * Returns a string that will be displayed in the label after truncation, etc...
    * @param device The device to render to.
    */
-  public getTextAsRendered(device: Device) {
-    let s;
+  public getTextAsRendered(device: Device): string {
+    let s: string;
     if (this.width && this.maxLines && this.text && this.truncationMode === Label.TRUNCATION_MODE_RIGHT_ELLIPSIS) {
       const h = device.getTextHeight('fW', this.width, this.getClasses());
       const allowedHeight = h * this.maxLines;
@@ -108,7 +108,7 @@ export class Label extends Widget {
    * Sets the text displayed by this label.
    * @param text The new text to be displayed.
    */
-  public setText(text: string) {
+  public setText(text: string): void {
     this.text = text;
     if (this.outputElement) {
       this.render(this.getCurrentApplication().getDevice());
@@ -124,13 +124,13 @@ export class Label extends Widget {
   }
 
   /**
-   * Sets the truncation mode (currently {@link antie.widgets.Label.TRUNCATION_MODE_NONE} or
-   * {@link antie.widgets.Label.TRUNCATION_MODE_RIGHT_ELLIPSIS}).
+   * Sets the truncation mode (currently `Label.TRUNCATION_MODE_NONE` or
+   * `Label.TRUNCATION_MODE_RIGHT_ELLIPSIS`).
    *
-   * @deprecated TRUNCATION_MODE_RIGHT_ELLIPSIS relies on browserdevice.getTextHeight(), which can be inaccurate.
+   * @deprecated `TRUNCATION_MODE_RIGHT_ELLIPSIS` relies on browserdevice.getTextHeight(), which can be inaccurate.
    * @param mode The new truncation mode.
    */
-  public setTruncationMode(mode: boolean) {
+  public setTruncationMode(mode: boolean): void {
     this.truncationMode = mode;
   }
 
@@ -138,7 +138,7 @@ export class Label extends Widget {
    * Sets the maximum lines displayed when a truncation mode is set.
    * @param lines The maximum number of lines to display.
    */
-  public setMaximumLines(lines: number) {
+  public setMaximumLines(lines: number): void {
     this.maxLines = lines;
   }
 
@@ -146,7 +146,7 @@ export class Label extends Widget {
    * Sets the width of this label for use with truncation only.
    * @param width The width of this label in pixels
    */
-  public setWidth(width: number) {
+  public setWidth(width: number): void {
     this.width = width;
   }
 }

@@ -1,6 +1,6 @@
-import { CallbackManager } from '../callbackmanager';
-import { BaseClass } from '../class';
-import { RuntimeContext } from '../runtimecontext';
+import { CallbackManager } from '../../callbackmanager';
+import { BaseClass } from '../../class';
+import { RuntimeContext } from '../../runtimecontext';
 
 export enum MediaPlayerState {
   /** No source set */
@@ -344,11 +344,11 @@ export abstract class MediaPlayer extends BaseClass {
     return Math.abs(currentTime - targetTime) <= this.CURRENT_TIME_TOLERANCE;
   }
 
-  protected isLiveMedia() {
+  protected isLiveMedia(): boolean {
     return this.type === MediaPlayer.TYPE.LIVE_VIDEO || this.type === MediaPlayer.TYPE.LIVE_AUDIO;
   }
 
-  private getClampOffsetFromConfig() {
+  private getClampOffsetFromConfig(): number {
     let clampOffsetFromEndOfRange: number;
     const config = RuntimeContext.getDevice().getConfig();
     if (config && config.streaming && config.streaming.overrides) {

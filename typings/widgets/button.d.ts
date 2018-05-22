@@ -1,4 +1,4 @@
-import { Device } from '../devices/device';
+import { Device } from '../devices/base/device';
 import { Container } from './container';
 /**
  * The Button widget class represents a container widget which can receive focus and be selected/activated by the user.

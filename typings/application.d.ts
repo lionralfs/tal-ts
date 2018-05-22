@@ -1,5 +1,5 @@
 import { BaseClass } from './class';
-import { Device, IDeviceConfig } from './devices/device';
+import { Device, IDeviceConfig } from './devices/base/device';
 import { BaseEvent } from './events/event';
 import { Button } from './widgets/button';
 import { Component } from './widgets/component';
@@ -37,7 +37,7 @@ export declare abstract class Application extends BaseClass implements IApplicat
     private onReadyHandler;
     private device;
     private layout;
-    constructor(rootElement: HTMLElement, styleBaseUrl: string, imageBaseUrl: string, onReadyHandler?: (...args: any[]) => void, configOverride?: IDeviceConfig);
+    constructor(rootElement: HTMLElement, deviceConstructor: new (config: IDeviceConfig) => Device, styleBaseUrl: string, imageBaseUrl: string, onReadyHandler?: (...args: any[]) => void, configOverride?: IDeviceConfig);
     abstract run(): void;
     abstract route(route: string[]): void;
     /**

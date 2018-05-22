@@ -12,5 +12,5 @@ export declare abstract class Formatter extends BaseClass {
      * @param iterator An iterator pointing to the data to be formatted.
      * @return A widget object representing one or more data items from the iterator.
      */
-    abstract format(iterator: Iterator): Widget;
+    abstract format(iterator: Iterator<any>): Widget;
 }

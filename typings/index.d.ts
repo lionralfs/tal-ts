@@ -1,10 +1,10 @@
 import { Application } from './application';
 import { DataSource } from './datasource';
-import { Device } from './devices/device';
+import { Device } from './devices/base/device';
+import { HTML5MediaPlayer } from './devices/mediaplayer/html5';
+import { MediaPlayer } from './devices/mediaplayer/mediaplayer';
 import { KeyEvent } from './events/keyevent';
 import { Formatter } from './formatter';
-import { HTML5MediaPlayer } from './mediaplayer/html5';
-import { MediaPlayer } from './mediaplayer/mediaplayer';
 import { RuntimeContext } from './runtimecontext';
 import { Button } from './widgets/button';
 import { Carousel } from './widgets/carousel';

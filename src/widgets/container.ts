@@ -1,5 +1,5 @@
 import { BaseClass } from '../class';
-import { Device } from '../devices/device';
+import { Device } from '../devices/base/device';
 import { BlurEvent } from '../events/blurevent';
 import { FocusEvent } from '../events/focusevent';
 import { Button } from './button';

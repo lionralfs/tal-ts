@@ -1,4 +1,4 @@
-import { IAnimator, IAnimOptions } from '../../device';
+import { IAnimator, IAnimOptions } from '../../base/device';
 import { Translate } from './translate';
 import { Tween } from './tween';
 

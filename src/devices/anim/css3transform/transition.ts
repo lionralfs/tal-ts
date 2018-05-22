@@ -1,4 +1,4 @@
-import { IAnimOptions } from '../../device';
+import { IAnimOptions } from '../../base/device';
 import { EasingLookup } from '../css3/easinglookup';
 import { Helpers } from '../shared/helpers';
 

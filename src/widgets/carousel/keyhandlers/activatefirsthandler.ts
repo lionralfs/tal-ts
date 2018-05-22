@@ -5,7 +5,7 @@ import { KeyHandler } from './keyhandler';
  * Before alignment is started, the active widget is changed to the next focusable widget.
  */
 export class ActivateFirstHandler extends KeyHandler {
-  protected addAlignmentListeners() {
+  protected addAlignmentListeners(): void {
     const carousel = this.carousel;
     carousel.addEventListener('beforealign', ev => {
       if (ev.target === carousel) {

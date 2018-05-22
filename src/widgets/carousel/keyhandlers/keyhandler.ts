@@ -1,5 +1,5 @@
 import { BaseClass } from '../../../class';
-import { IAnimOptions } from '../../../devices/device';
+import { IAnimOptions } from '../../../devices/base/device';
 import { Carousel } from '../../carousel';
 
 /**
@@ -20,7 +20,7 @@ export abstract class KeyHandler extends BaseClass {
    * Adds listeners to the supplied carousel to provided behaviour when navigation keys are pressed
    * @param carousel
    */
-  public attach(carousel: Carousel) {
+  public attach(carousel: Carousel): void {
     this.carousel = carousel;
     this.addKeyListeners();
     this.addAlignmentListeners();
@@ -30,13 +30,13 @@ export abstract class KeyHandler extends BaseClass {
    * Sets default animation options for key handled alignments
    * @param options Animation options object
    */
-  public setAnimationOptions(options: IAnimOptions) {
+  public setAnimationOptions(options: IAnimOptions): void {
     this.animationOptions = options;
   }
 
-  protected abstract addAlignmentListeners();
+  protected abstract addAlignmentListeners(): void;
 
-  private addKeyListeners() {
+  private addKeyListeners(): void {
     const carousel = this.carousel;
     const previousKey = carousel.orientation.defaultKeys().PREVIOUS;
     const nextKey = carousel.orientation.defaultKeys().NEXT;

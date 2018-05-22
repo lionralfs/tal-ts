@@ -81,7 +81,7 @@ export abstract class Navigator extends BaseClass {
    * If the index corresponds to an unfocussable widget or an invalid index the function has no effect.
    * @param index A 0 base index into the container being navigated
    */
-  public setIndex(index: number) {
+  public setIndex(index: number): void {
     if (this.isValidIndex(index) && !this.indexedWidgetCantBeFocussed(index)) {
       this.fireItemChangeEvent(index, BeforeSelectedItemChangeEvent);
       this.setActiveIndexOnContainer(index);
@@ -92,13 +92,13 @@ export abstract class Navigator extends BaseClass {
   /**
    * Sets the container the navigator is managing
    */
-  public setContainer(container: Container) {
+  public setContainer(container: Container): void {
     this.container = container;
   }
 
   protected abstract isValidIndex(index: number): boolean;
 
-  private getActiveIndex() {
+  private getActiveIndex(): number {
     const activeWidget = this.container.getActiveChildWidget();
     const activeIndex = this.container.getIndexOfChildWidget(activeWidget);
     if (activeIndex !== -1) {
@@ -108,26 +108,24 @@ export abstract class Navigator extends BaseClass {
     }
   }
 
-  private setActiveIndexOnContainer(activeIndex: number) {
+  private setActiveIndexOnContainer(activeIndex: number): void {
     if (activeIndex !== this.currentIndex()) {
       this.container.setActiveChildIndex(activeIndex);
     }
   }
 
-  private indexedWidgetCantBeFocussed(index: number) {
+  private indexedWidgetCantBeFocussed(index: number): boolean {
     const widgets = this.container.getChildWidgets();
     const focussable = widgets[index].isFocusable();
     return !focussable;
   }
 
-  private getIndexIncrementFunction(direction: number) {
+  private getIndexIncrementFunction(direction: number): (index: number) => number {
     let nextFn: (index: number) => number;
-    function forwardFn(index: number) {
-      return index + 1;
-    }
-    function backFn(index: number) {
-      return index - 1;
-    }
+
+    const forwardFn = (index: number) => index + 1;
+
+    const backFn = (index: number) => index - 1;
 
     switch (direction) {
       case Navigator.directions.FORWARD:
@@ -157,7 +155,7 @@ export abstract class Navigator extends BaseClass {
   private fireItemChangeEvent(
     index: number,
     EventClass: new (target: Widget, item: Widget, index: number) => BaseEvent
-  ) {
+  ): void {
     const target = this.container;
     const item = this.container.getChildWidgets()[index];
     const event = new EventClass(target, item, index);

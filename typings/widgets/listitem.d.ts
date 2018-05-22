@@ -1,4 +1,4 @@
-import { Device } from '../devices/device';
+import { Device } from '../devices/base/device';
 import { Container } from './container';
 /**
  * The ListItem widget is a container widget that is used by the `List` widget when set to `List.RENDER_MODE_LIST`.

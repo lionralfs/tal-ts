@@ -1,5 +1,5 @@
 import { BaseClass } from '../../class';
-import { Device, IAnimator, IAnimOptions } from '../../devices/device';
+import { Device, IAnimator, IAnimOptions } from '../../devices/base/device';
 import { Mask } from './mask';
 import { Orientation } from './orientations/orientation';
 
@@ -35,7 +35,7 @@ export class Spinner extends BaseClass {
    * @param relativePixels The target distance in pixels from the mask's primary edge to the primary edge of it's contents
    * @param animOptions An animation options object
    */
-  public moveContentsTo(relativePixels: number, animOptions: IAnimOptions) {
+  public moveContentsTo(relativePixels: number, animOptions: IAnimOptions): void {
     let moveElementOptions;
     moveElementOptions = this.getOptions(animOptions, relativePixels);
     this.stopAnimation();
@@ -46,7 +46,7 @@ export class Spinner extends BaseClass {
   /**
    * Completes any currently animating alignment, firing any associated callback.
    */
-  public stopAnimation() {
+  public stopAnimation(): void {
     if (this.animating) {
       this.device.stopAnimation(this.currentAnimation);
       this.clearAnimating();
@@ -72,7 +72,7 @@ export class Spinner extends BaseClass {
     return clonedOptions;
   }
 
-  private getWrappedOnComplete(options: IAnimOptions) {
+  private getWrappedOnComplete(options: IAnimOptions): () => void {
     const wrappedComplete = () => {
       this.clearAnimating();
       if (options.onComplete && typeof options.onComplete === 'function') {
@@ -82,12 +82,12 @@ export class Spinner extends BaseClass {
     return wrappedComplete;
   }
 
-  private clearAnimating() {
+  private clearAnimating(): void {
     this.animating = false;
     this.currentAnimation = null;
   }
 
-  private getEdge() {
+  private getEdge(): string {
     return this.orientation.edge();
   }
 }

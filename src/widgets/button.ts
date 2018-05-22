@@ -1,4 +1,4 @@
-import { Device } from '../devices/device';
+import { Device } from '../devices/base/device';
 import { FocusDelayEvent } from '../events/focusdelayevent';
 import { KeyEvent } from '../events/keyevent';
 import { SelectEvent } from '../events/selectevent';

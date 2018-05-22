@@ -1,5 +1,5 @@
 import { BaseClass } from '../../../class';
-import { IAnimOptions } from '../../../devices/device';
+import { IAnimOptions } from '../../../devices/base/device';
 import { Carousel } from '../../carousel';
 /**
  * The base KeyHandler class moves alignment of the carousel on LEFT and RIGHT key presses
@@ -20,6 +20,6 @@ export declare abstract class KeyHandler extends BaseClass {
      * @param options Animation options object
      */
     setAnimationOptions(options: IAnimOptions): void;
-    protected abstract addAlignmentListeners(): any;
+    protected abstract addAlignmentListeners(): void;
     private addKeyListeners();
 }

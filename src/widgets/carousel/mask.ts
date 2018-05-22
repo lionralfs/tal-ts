@@ -1,5 +1,5 @@
 import { Device } from '../..';
-import { IAnimOptions } from '../../devices/device';
+import { IAnimOptions } from '../../devices/base/device';
 import { AfterAlignEvent } from '../../events/afteralignevent';
 import { BeforeAlignEvent } from '../../events/beforealignevent';
 import { Container } from '../container';
@@ -49,7 +49,7 @@ export class Mask extends Container {
    * @param index Index of the widget to be aligned
    * @param options
    */
-  public alignToIndex(index: number, options: { skipAnim: boolean }) {
+  public alignToIndex(index: number, options: { skipAnim: boolean }): void {
     this.doAlign(index, options, this.alignmentPoint);
   }
 
@@ -58,7 +58,7 @@ export class Mask extends Container {
    * (left for horizontal, top for vertical)
    * @param pixelsFromEdge
    */
-  public setAlignPoint(pixelsFromEdge: number) {
+  public setAlignPoint(pixelsFromEdge: number): void {
     this.alignmentPoint = pixelsFromEdge;
     this.normalisedAlignmentPoint = 0;
   }
@@ -68,7 +68,7 @@ export class Mask extends Container {
    * with 0 being the top or left edge and 1 being the bottom or right edge
    * @param fractionOfMaskLength Value between 0 and 1, will be clamped to 0 or 1 if outside this range.
    */
-  public setNormalisedAlignPoint(fractionOfMaskLength: number) {
+  public setNormalisedAlignPoint(fractionOfMaskLength: number): void {
     const clampedFraction = this.clampBetweenZeroAndOne(fractionOfMaskLength);
     this.normalisedAlignmentPoint = clampedFraction;
   }
@@ -78,7 +78,7 @@ export class Mask extends Container {
    * with 0 being the top or left of the widget and 1 being the bottom or right.
    * @param fractionOfWidgetLength Value between 0 and 1, will be clamped to 0 or 1 if outside this range.
    */
-  public setNormalisedWidgetAlignPoint(fractionOfWidgetLength: number) {
+  public setNormalisedWidgetAlignPoint(fractionOfWidgetLength: number): void {
     this.normalisedWidgetAlignPoint = this.clampBetweenZeroAndOne(fractionOfWidgetLength);
   }
 
@@ -93,7 +93,7 @@ export class Mask extends Container {
    * Sets the widget strip to mask and align
    * @param widgetStrip an instance of WidgetStrip
    */
-  public setWidgetStrip(widgetStrip: WidgetStrip) {
+  public setWidgetStrip(widgetStrip: WidgetStrip): void {
     if (this.widgetStrip) {
       this.removeChildWidget(this.widgetStrip);
     }
@@ -101,7 +101,7 @@ export class Mask extends Container {
     this.appendChildWidget(this.widgetStrip);
   }
 
-  public setLength(length: number) {
+  public setLength(length: number): void {
     this.length = length;
   }
 
@@ -136,11 +136,11 @@ export class Mask extends Container {
    * Completes any current alignment operation instantly, firing any associated
    * onComplete callback
    */
-  public stopAnimation() {
+  public stopAnimation(): void {
     this.spinner.stopAnimation();
   }
 
-  public beforeAlignTo(currentIndex: number, newIndex: number) {
+  public beforeAlignTo(currentIndex: number, newIndex: number): void {
     if (this.widgetStrip.needsVisibleIndices()) {
       this.widgetStrip.attachIndexedWidgets(this.visibleIndicesBetween(currentIndex, newIndex));
       this.resetAlignment();
@@ -148,7 +148,7 @@ export class Mask extends Container {
     this.widgetStrip.bubbleEvent(new BeforeAlignEvent(this.widgetStrip, newIndex));
   }
 
-  public afterAlignTo(index: number) {
+  public afterAlignTo(index: number): void {
     this.lastAlignIndex = index;
     if (this.widgetStrip.needsVisibleIndices()) {
       this.widgetStrip.attachIndexedWidgets(this.indicesVisibleWhenAlignedToIndex(index));
@@ -227,7 +227,7 @@ export class Mask extends Container {
     return visibleIndices;
   }
 
-  private deDuplicateAndSortArray(arr: number[]) {
+  private deDuplicateAndSortArray(arr: number[]): number[] {
     const deDuped: number[] = [];
     arr.sort(this.numericalSort);
     for (let i = 0; i !== arr.length; i += 1) {
@@ -238,11 +238,11 @@ export class Mask extends Container {
     return deDuped;
   }
 
-  private numericalSort(a: number, b: number) {
+  private numericalSort(a: number, b: number): number {
     return a - b;
   }
 
-  private moveContentsTo(relativePixels: number, options: IAnimOptions) {
+  private moveContentsTo(relativePixels: number, options: IAnimOptions): void {
     this.spinner.moveContentsTo(relativePixels, options);
   }
 
@@ -250,7 +250,7 @@ export class Mask extends Container {
     return this.orientation.dimension();
   }
 
-  private doAlign(index: number, options: IAnimOptions, alignPoint: number) {
+  private doAlign(index: number, options: IAnimOptions, alignPoint: number): void {
     let distanceContentsMustMoveBack;
     distanceContentsMustMoveBack = this.widgetStrip.getLengthToIndex(index);
     distanceContentsMustMoveBack -= this.getAlignmentPoint();
@@ -259,7 +259,7 @@ export class Mask extends Container {
     this.currentAlignPoint = alignPoint;
   }
 
-  private resetAlignment() {
+  private resetAlignment(): void {
     if (this.lastAlignIndex !== null) {
       this.doAlign(this.lastAlignIndex, { skipAnim: true }, this.currentAlignPoint);
     }

@@ -1,8 +1,8 @@
 import { BaseClass } from './class';
-export declare class Iterator extends BaseClass {
+export declare class Iterator<T> extends BaseClass {
     currentIndex: number;
     private array;
-    constructor(array?: any[]);
+    constructor(array?: T[]);
     /**
      * Sets the iterator pointer to the first item
      */
@@ -17,12 +17,12 @@ export declare class Iterator extends BaseClass {
      * Returns the next item and increments the iterator.
      * @return The next item from the iterator, or undefined if there are no more items.
      */
-    next(): any;
+    next(): T;
     /**
      * Returns the next item but does not increment the iterator
      * @return The next item from the iterator, or undefined if there are no more items.
      */
-    peek(): any;
+    peek(): T;
     /**
      * Returns the the pointer value.
      * @return The pointer value

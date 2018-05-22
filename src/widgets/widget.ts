@@ -1,6 +1,6 @@
 import { Application } from '../application';
 import { BaseClass } from '../class';
-import { Device } from '../devices/device';
+import { Device } from '../devices/base/device';
 import { BaseEvent } from '../events/event';
 import { RuntimeContext } from '../runtimecontext';
 import { ComponentContainer } from './componentcontainer';

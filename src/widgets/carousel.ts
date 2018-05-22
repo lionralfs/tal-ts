@@ -11,7 +11,7 @@ export class Carousel extends CarouselCore {
    * Appends a child widget to this widget.
    * @param widget The child widget to add.
    */
-  public appendChildWidget(widget: Widget) {
+  public appendChildWidget(widget: Widget): Widget {
     return this.append(widget);
   }
 
@@ -20,7 +20,7 @@ export class Carousel extends CarouselCore {
    * @param index The index where to insert the child widget.
    * @param widget The child widget to add.
    */
-  public insertChildWidget(index: number, widget: Widget) {
+  public insertChildWidget(index: number, widget: Widget): Widget {
     return this.insert(index, widget);
   }
 
@@ -29,15 +29,15 @@ export class Carousel extends CarouselCore {
    * @param widget The child widget to remove.
    * @param retainElement Pass <code>true</code> to retain the child output element of the given widget
    */
-  public removeChildWidget(widget: Widget, retainElement?: boolean) {
-    return this.remove(widget, retainElement);
+  public removeChildWidget(widget: Widget, retainElement?: boolean): void {
+    this.remove(widget, retainElement);
   }
 
   /**
    * Remove all child widgets from this widget.
    */
-  public removeChildWidgets() {
-    return this.removeAll();
+  public removeChildWidgets(): void {
+    this.removeAll();
   }
 
   /**
@@ -69,7 +69,7 @@ export class Carousel extends CarouselCore {
    * Checks to see if a specific widget is a direct child of this widget.
    * @param id The widget to check to see if it is a direct child of this widget.
    */
-  public hasChildWidget(id: string) {
+  public hasChildWidget(id: string): boolean {
     if (id === this.mask.id) {
       return super.hasChildWidget(id);
     } else {
@@ -81,7 +81,7 @@ export class Carousel extends CarouselCore {
    * Get the current active widget.
    * @return The current active widget
    */
-  public getActiveChildWidget() {
+  public getActiveChildWidget(): Container {
     return this.widgetStrip.getActiveChildWidget();
   }
 
@@ -90,7 +90,7 @@ export class Carousel extends CarouselCore {
    * @param id The id of the child widget to return.
    * @return of the widget with the given ID, otherwise undefined if the child does not exist.
    */
-  public getChildWidget(id: string) {
+  public getChildWidget(id: string): Widget {
     if (id === this.mask.id) {
       return this.mask;
     } else {
@@ -102,7 +102,7 @@ export class Carousel extends CarouselCore {
    * Gets the number of direct child widgets.
    * @return The number of direct child widgets.
    */
-  public getChildWidgetCount() {
+  public getChildWidgetCount(): number {
     return this.widgetStrip.getChildWidgetCount();
   }
 
@@ -110,7 +110,7 @@ export class Carousel extends CarouselCore {
    * Get an array of all this widget's children.
    * @return An array of all this widget's children.
    */
-  public getChildWidgets() {
+  public getChildWidgets(): Widget[] {
     return this.items();
   }
 
@@ -137,9 +137,9 @@ export class Carousel extends CarouselCore {
    * Adds a CSS class to the widget strip if not already present.
    * @param className The class name to add.
    */
-  public addClass(className: string) {
+  public addClass(className: string): void {
     if (this.widgetStrip) {
-      return this.widgetStrip.addClass(className);
+      this.widgetStrip.addClass(className);
     }
   }
 
@@ -148,7 +148,7 @@ export class Carousel extends CarouselCore {
    * @param className The class name to check.
    * @return Boolean true if the device has the className. Otherwise boolean false.
    */
-  public hasClass(className: string) {
+  public hasClass(className: string): boolean {
     if (this.widgetStrip) {
       return this.widgetStrip.hasClass(className);
     } else {
@@ -160,7 +160,7 @@ export class Carousel extends CarouselCore {
    * Removes a CSS class from the widget strip if present.
    * @param className The class name to remove.
    */
-  public removeClass(className: string) {
+  public removeClass(className: string): void {
     if (this.widgetStrip) {
       return this.widgetStrip.removeClass(className);
     }
@@ -170,7 +170,7 @@ export class Carousel extends CarouselCore {
    * Get an array of class names that this widget strip has.
    * @return An array of class names (Strings)
    */
-  public getClasses() {
+  public getClasses(): string[] {
     if (this.widgetStrip) {
       return this.widgetStrip.getClasses();
     } else {
@@ -178,7 +178,7 @@ export class Carousel extends CarouselCore {
     }
   }
 
-  protected directAppend(widget: Widget) {
+  protected directAppend(widget: Widget): void {
     super.appendChildWidget(widget);
   }
 }
