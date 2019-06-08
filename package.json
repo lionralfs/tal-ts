@@ -24,7 +24,7 @@
     "@types/requirejs": "^2.1.31",
     "tslint": "^5.9.1",
     "tslint-config-prettier": "^1.6.0",
-    "typedoc": "^0.9.0",
-    "typescript": "^2.6.2"
+    "typedoc": "^0.14.2",
+    "typescript": "^3.5.1"
   }
 }
